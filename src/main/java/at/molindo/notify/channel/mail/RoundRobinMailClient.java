@@ -30,6 +30,7 @@ public class RoundRobinMailClient implements IMailClient {
 
 	private CopyOnWriteArrayList<IMailClient> _clients = new CopyOnWriteArrayList<IMailClient>();
 	
+	private Object _mutex = new Object();
 	private Iterator<IMailClient> _iter = newIterator();
 
 	@Override
@@ -38,7 +39,7 @@ public class RoundRobinMailClient implements IMailClient {
 	}
 
 	private IMailClient getNext() throws MailException {
-		synchronized (_iter) {
+		synchronized (_mutex) {
 			try {
 				return _iter.next();
 			} catch (NoSuchElementException e) {
@@ -48,7 +49,7 @@ public class RoundRobinMailClient implements IMailClient {
 	}
 
 	public void setClients(Collection<IMailClient> clients) {
-		synchronized (_iter) {
+		synchronized (_mutex) {
 			_clients.clear();
 			_clients.addAll(clients);
 			_iter = newIterator();

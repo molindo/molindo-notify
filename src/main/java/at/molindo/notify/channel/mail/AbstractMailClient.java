@@ -96,8 +96,10 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 			};
 			mm.setFrom(_from);
 			mm.setSender(_from);
-			if (_replyTo != null) {
-				mm.setReplyTo(new Address[] { _replyTo });
+			
+			InternetAddress replyTo = getReplyTo();
+			if (replyTo != null) {
+				mm.setReplyTo(new Address[] { replyTo });
 			}
 			mm.setHeader("X-Mailer", "molindo-notify");
 			mm.setSentDate(new Date());
