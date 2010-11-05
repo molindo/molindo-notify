@@ -36,7 +36,6 @@ import at.molindo.notify.test.util.MockTest;
 
 public class TemplateRenderServiceTest {
 
-	private static final String RESULT = "this is a test";
 	private static final Date START = new Date();
 
 	public static TemplateRenderService svc(EasyMockContext context) {
@@ -56,7 +55,7 @@ public class TemplateRenderServiceTest {
 	}
 
 	public static Message result() {
-		return new Message("subject", "this is a test",
+		return new Message("Test", "this is a test",
 				IRenderService.Type.HTML);
 	}
 
@@ -81,14 +80,14 @@ public class TemplateRenderServiceTest {
 						context.get(ITemplateDAO.class).findTemplates(
 								_t.getKey())).andReturn(Arrays.asList(t()));
 				expect(context.get(ITemplateRenderer.class).render(_t, _params))
-						.andReturn(RESULT);
+						.andReturn("Subject: Test\n\nthis is a test");
 			}
 
 			@Override
 			protected void test(EasyMockContext context) throws RenderException {
 				Message result = _svc.render(_t.getKey(), _t.getVersion(),
 						_params);
-				assertEquals(RESULT, result);
+				assertEquals(result(), result);
 			}
 
 		}.run();

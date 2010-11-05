@@ -59,7 +59,7 @@ public class Message {
 				} else {
 					int split = line.indexOf(':');
 					if (split < 0) {
-
+						throw new RenderException("illegal line: " + line);
 					}
 					String fieldName = line.substring(0, split).trim();
 					String fieldValue = line.substring(split + 1).trim();
@@ -146,4 +146,56 @@ public class Message {
 		}
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((getMessage() == null) ? 0 : getMessage().hashCode());
+		result = prime * result
+				+ ((getSubject() == null) ? 0 : getSubject().hashCode());
+		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Message)) {
+			return false;
+		}
+		Message other = (Message) obj;
+		if (getMessage() == null) {
+			if (other.getMessage() != null) {
+				return false;
+			}
+		} else if (!getMessage().equals(other.getMessage())) {
+			return false;
+		}
+		if (getSubject() == null) {
+			if (other.getSubject() != null) {
+				return false;
+			}
+		} else if (!getSubject().equals(other.getSubject())) {
+			return false;
+		}
+		if (getType() != other.getType()) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Message [type=" + getType() + ", subject=" + getSubject()
+				+ ", message=" + getMessage() + "]";
+	}
+
+	
+	
 }

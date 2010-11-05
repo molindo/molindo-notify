@@ -82,7 +82,7 @@ public class SimpleMailClient extends AbstractMailClient implements
 					"javax.net.ssl.SSLSocketFactory");
 		}
 		// props.put("mail.debug", "true");
-		return Session.getDefaultInstance(props,
+		return Session.getInstance(props,
 				new javax.mail.Authenticator() {
 
 					@Override

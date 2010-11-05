@@ -76,7 +76,7 @@ public class DirectMailClient extends AbstractMailClient implements
 			props.setProperty("mail.smtp.auth", "false");
 			props.setProperty("mail.smtp.starttls.enable", "true");
 			// props.put("mail.debug", "true");
-			return Session.getDefaultInstance(props);
+			return Session.getInstance(props);
 		} catch (NamingException e) {
 			throw new MailException("can't lookup mail host", e, true);
 		}
