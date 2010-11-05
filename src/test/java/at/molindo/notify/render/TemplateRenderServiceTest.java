@@ -38,14 +38,14 @@ public class TemplateRenderServiceTest {
 
 	private static final String RESULT = "this is a test";
 	private static final Date START = new Date();
-	
+
 	public static TemplateRenderService svc(EasyMockContext context) {
 		TemplateRenderService svc = new TemplateRenderService();
 		svc.setTemplateDAO(context.create(ITemplateDAO.class));
 		svc.setRenderer(context.create(ITemplateRenderer.class));
 		return svc;
 	}
-	
+
 	public static Template t() {
 		Template t = new Template();
 		t.setKey("test");
@@ -54,37 +54,43 @@ public class TemplateRenderServiceTest {
 		t.setContent("Subject: Test\n\nthis is a ${word}");
 		return t;
 	}
-	
+
 	public static Message result() {
-		return new Message("subject", "this is a test", IRenderService.Type.HTML);
+		return new Message("subject", "this is a test",
+				IRenderService.Type.HTML);
 	}
-	
+
 	@Test
 	public void testRenderStringVersionParams() throws Exception {
 		new MockTest() {
-			
+
 			private TemplateRenderService _svc;
 			private Template _t;
 			private Params _params;
-			
+
 			@Override
-			protected void setup(EasyMockContext context) throws RenderException {
+			protected void setup(EasyMockContext context)
+					throws RenderException {
 				_svc = svc(context);
 				_t = t();
-				
+
 				_params = new Params();
 				_params.set(Param.p("word", String.class), "test");
-				
-				expect(context.get(ITemplateDAO.class).findTemplates(_t.getKey())).andReturn(Arrays.asList(t()));
-				expect(context.get(ITemplateRenderer.class).render(_t, _params)).andReturn(RESULT);
+
+				expect(
+						context.get(ITemplateDAO.class).findTemplates(
+								_t.getKey())).andReturn(Arrays.asList(t()));
+				expect(context.get(ITemplateRenderer.class).render(_t, _params))
+						.andReturn(RESULT);
 			}
-			
+
 			@Override
 			protected void test(EasyMockContext context) throws RenderException {
-				Message result = _svc.render(_t.getKey(), _t.getVersion(), _params);
+				Message result = _svc.render(_t.getKey(), _t.getVersion(),
+						_params);
 				assertEquals(RESULT, result);
 			}
-			
+
 		}.run();
 	}
 

@@ -20,14 +20,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-import com.sun.syndication.feed.WireFeed;
-import com.sun.syndication.feed.atom.Content;
-import com.sun.syndication.feed.atom.Entry;
-import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.feed.atom.Person;
-import com.sun.syndication.io.FeedException;
-
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.dao.INotificationsDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
@@ -42,18 +34,27 @@ import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.notify.util.NotifyUtils;
 
+import com.google.common.collect.Lists;
+import com.sun.syndication.feed.WireFeed;
+import com.sun.syndication.feed.atom.Content;
+import com.sun.syndication.feed.atom.Entry;
+import com.sun.syndication.feed.atom.Feed;
+import com.sun.syndication.feed.atom.Person;
+import com.sun.syndication.io.FeedException;
+
 public abstract class AbstractFeedChannel implements IPullChannel {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(AbstractFeedChannel.class);
-	
-	public static final Param<Integer> AMOUNT =  Param.p("amount", Integer.class);
-	
+
+	public static final Param<Integer> AMOUNT = Param
+			.p("amount", Integer.class);
+
 	public static final int MAX_AMOUNT = 100;
 	public static final int DEFAULT_AMOUNT = 25;
 
 	private Integer _defaultAmount = DEFAULT_AMOUNT;
-	
+
 	private INotificationsDAO _notificationsDAO;
 	private IPreferencesDAO _preferencesDAO;
 	private IRenderService _renderService;
@@ -67,13 +68,12 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 
 		int amount = cPrefs.getParams().get(AMOUNT);
 
-		
 		List<Notification> notifications = _notificationsDAO.getRecent(userId,
 				getNotificationTypes(), 0, amount);
 		if (notifications.size() == 0) {
 			throw new PullException("no notifications found");
 		}
-		
+
 		try {
 			WireFeed feed = toFeed(notifications, prefs, cPrefs);
 			return FeedUtils.toFeedXml(feed);
@@ -83,10 +83,11 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 			log.info("failed to render feed", e);
 			return null;
 		}
-	
+
 	}
 
-	public WireFeed toFeed(List<Notification> notifications, Preferences prefs, ChannelPreferences cPrefs) throws RenderException {
+	public WireFeed toFeed(List<Notification> notifications, Preferences prefs,
+			ChannelPreferences cPrefs) throws RenderException {
 		final Feed f = new Feed("atom_1.0");
 		f.setTitle("TODO title");
 
@@ -104,8 +105,9 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 			final Entry e = new Entry();
 			final Content c = new Content();
 
-			Message msg = NotifyUtils.render(_renderService, notification, prefs, cPrefs);
-			
+			Message msg = NotifyUtils.render(_renderService, notification,
+					prefs, cPrefs);
+
 			c.setType("text/html");
 			c.setValue(msg.getHtml());
 
@@ -113,14 +115,15 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 			e.setContents(Arrays.asList(c));
 			entries.add(e);
 		}
-			
+
 		f.setEntries(entries);
 		return f;
 	}
-	
+
 	@Override
 	public ChannelPreferences newDefaultPreferences() {
-		ChannelPreferences prefs = new FeedChannelPreferences(new Params().set(AMOUNT, _defaultAmount));
+		ChannelPreferences prefs = new FeedChannelPreferences(new Params().set(
+				AMOUNT, _defaultAmount));
 		prefs.setVersion(Version.LONG);
 		return prefs;
 	}
@@ -158,5 +161,5 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 	public void setRenderService(IRenderService renderService) {
 		_renderService = renderService;
 	}
-	
+
 }

@@ -65,32 +65,34 @@ public class PollingPushDispatcherTest {
 		n.setPushScheduled(START);
 		n.setKey("test");
 		n.setType(Type.PRIVATE);
-		n.setParams(new Params().set(Param.p("test", String.class), "this is a test"));
-		
+		n.setParams(new Params().set(Param.p("test", String.class),
+				"this is a test"));
+
 		return n;
 	}
-	
+
 	private static Preferences p() {
 		Preferences p = new Preferences();
-		
+
 		p.setUserId(USERID);
-		
+
 		Map<String, PushChannelPreferences> map = Maps.newHashMap();
 		map.put(CHANNEL_ID, new PushChannelPreferences());
 		p.setChannelPrefs(map);
-		
-		return p ;
-	
+
+		return p;
+
 	}
 
 	private static Message m() throws RenderException {
-		return Message.parse("Subject: Test\n\nThis is a test", IRenderService.Type.TEXT);
+		return Message.parse("Subject: Test\n\nThis is a test",
+				IRenderService.Type.TEXT);
 	}
-	
+
 	private abstract class PollingPushDispatcherMockTest extends MockTest {
 		PollingPushDispatcher dispatcher;
 		PushException ex = new IPushChannel.PushException(true);
-		
+
 		@Override
 		protected void setup(EasyMockContext context) throws Exception {
 
@@ -114,25 +116,37 @@ public class PollingPushDispatcherTest {
 			@Override
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
-				
-				expect(context.get(INotificationsDAO.class).getNext()).andReturn(n());
-				
-				expect(context.get(IPreferencesDAO.class).getPreferences(n().getUserId())).andReturn(p());
-				expect(context.get(IPushChannel.class).getId()).andReturn(CHANNEL_ID);
-				expect(context.get(IPushChannel.class).isConfigured(anyObject(PushChannelPreferences.class))).andReturn(true);
-				expect(context.get(IPushChannel.class).getNotificationTypes()).andReturn(Type.TYPES_ALL);
-				
-				expect(context.get(IRenderService.class).render(eq(n().getKey()), anyObject(Version.class), anyObject(Params.class))).andReturn(m());
-				
-				context.get(IPushChannel.class).push(eq(m()), anyObject(PushChannelPreferences.class));
+
+				expect(context.get(INotificationsDAO.class).getNext())
+						.andReturn(n());
+
+				expect(
+						context.get(IPreferencesDAO.class).getPreferences(
+								n().getUserId())).andReturn(p());
+				expect(context.get(IPushChannel.class).getId()).andReturn(
+						CHANNEL_ID);
+				expect(
+						context.get(IPushChannel.class).isConfigured(
+								anyObject(PushChannelPreferences.class)))
+						.andReturn(true);
+				expect(context.get(IPushChannel.class).getNotificationTypes())
+						.andReturn(Type.TYPES_ALL);
+
+				expect(
+						context.get(IRenderService.class).render(
+								eq(n().getKey()), anyObject(Version.class),
+								anyObject(Params.class))).andReturn(m());
+
+				context.get(IPushChannel.class).push(eq(m()),
+						anyObject(PushChannelPreferences.class));
 				expectLastCall().andThrow(ex);
 
 				reportMatcher(new IArgumentMatcher() {
-					
+
 					@Override
 					public boolean matches(Object argument) {
 						Notification n = (Notification) argument;
-						
+
 						if (n.getPushErrors() != 1) {
 							return false;
 						}
@@ -140,22 +154,23 @@ public class PollingPushDispatcherTest {
 						if (n.getPushState() != PushState.QUEUED) {
 							return false;
 						}
-						
+
 						if (!n.getPushScheduled().after(n().getPushScheduled())) {
 							return false;
 						}
-						
+
 						return true;
 					}
-					
+
 					@Override
 					public void appendTo(StringBuffer buffer) {
 						buffer.append("rescheduling failed");
 					}
 				});
 				context.get(INotificationsDAO.class).update(null);
-				
-				context.get(IErrorListener.class).error(n(), context.get(IPushChannel.class), ex);
+
+				context.get(IErrorListener.class).error(n(),
+						context.get(IPushChannel.class), ex);
 			}
 
 			@Override
@@ -166,18 +181,19 @@ public class PollingPushDispatcherTest {
 
 		}.run();
 	}
-	
+
 	@Test
 	public void testIdle() throws Exception {
 		new PollingPushDispatcherMockTest() {
 
 			PushException ex = new IPushChannel.PushException(true);
-			
+
 			@Override
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
-				
-				expect(context.get(INotificationsDAO.class).getNext()).andReturn(null);
+
+				expect(context.get(INotificationsDAO.class).getNext())
+						.andReturn(null);
 
 				// verify delay
 				context.get(IErrorListener.class).error(null, null, ex);
@@ -192,7 +208,7 @@ public class PollingPushDispatcherTest {
 						// verify delay
 						context.get(IErrorListener.class).error(null, null, ex);
 					}
-					
+
 				};
 				polling.run();
 			}

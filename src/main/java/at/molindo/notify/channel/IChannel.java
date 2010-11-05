@@ -18,11 +18,12 @@ package at.molindo.notify.channel;
 
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Notification;
+
 import com.google.common.collect.ImmutableSet;
 
 public interface IChannel {
 	String getId();
-	
+
 	ImmutableSet<Notification.Type> getNotificationTypes();
 
 	/**
@@ -31,11 +32,11 @@ public interface IChannel {
 	 * @return
 	 */
 	ChannelPreferences newDefaultPreferences();
-	
+
 	/**
 	 * @param prefs
 	 * @return true if channel is sufficiently configured
 	 */
 	boolean isConfigured(ChannelPreferences prefs);
-	
+
 }

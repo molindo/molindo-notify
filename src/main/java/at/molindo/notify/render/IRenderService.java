@@ -17,21 +17,22 @@
 package at.molindo.notify.render;
 
 import at.molindo.notify.INotificationService.NotifyException;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Message;
+import at.molindo.notify.model.Params;
 
 public interface IRenderService {
-	
+
 	public enum Type {
 		HTML, TEXT;
 	}
-	
+
 	public enum Version {
 		LONG, SHORT;
 	}
-	
-	Message render(String key, Version version, Params params) throws RenderException;
-	
+
+	Message render(String key, Version version, Params params)
+			throws RenderException;
+
 	public class RenderException extends NotifyException {
 
 		private static final long serialVersionUID = 1L;
@@ -51,9 +52,7 @@ public interface IRenderService {
 		public RenderException(Throwable cause) {
 			super(cause);
 		}
-		
+
 	}
-
-
 
 }

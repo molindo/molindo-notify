@@ -22,45 +22,45 @@ import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 
 public interface INotificationService {
-	
+
 	public static final String MAIL_CHANNEL = "mail";
 	public static final String PRIVATE_FEED_CHANNEL = "private-feed";
 	public static final String PUBLIC_FEED_CHANNEL = "public-feed";
-	
+
 	Preferences getPreferences(String userId);
-	
+
 	Preferences newPreferences(String userId);
-	
+
 	void setPreferences(Preferences prefs);
-	
+
 	void removePreferences(String userId);
-	
+
 	void notify(Notification notification);
-	
+
 	void notifyNow(Notification notification) throws NotifyException;
-	
+
 	void confirm(Notification notification);
-	
+
 	void confirmNow(Notification notification) throws NotifyException;
-	
+
 	void addErrorListener(IErrorListener listener);
 
 	void removeErrorListener(IErrorListener listener);
-	
+
 	void addNotificationListener(INotificationListner listner);
-	
+
 	void removeNotificationListener(INotificationListner listner);
-	
+
 	public interface INotificationListner {
 		void notification(Notification notification);
 	}
-	
+
 	public interface IConfirmationListener {
 		void confirm(Notification notification);
 	}
-	
+
 	public interface IErrorListener {
-		
+
 		/**
 		 * called if notification can't be pushed to any channel
 		 * 
@@ -68,7 +68,8 @@ public interface INotificationService {
 		 * @param channel
 		 * @param e
 		 */
-		void error(Notification notification, IPushChannel channel, PushException e);
+		void error(Notification notification, IPushChannel channel,
+				PushException e);
 	}
 
 	public static class NotifyException extends Exception {
@@ -92,7 +93,7 @@ public interface INotificationService {
 		}
 
 	}
-	
+
 	public static class NotifyRuntimeException extends RuntimeException {
 
 		private static final long serialVersionUID = 1L;

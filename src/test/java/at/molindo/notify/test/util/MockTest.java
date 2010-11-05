@@ -19,18 +19,18 @@ package at.molindo.notify.test.util;
 public abstract class MockTest {
 
 	abstract protected void setup(EasyMockContext context) throws Exception;
-	
+
 	abstract protected void test(EasyMockContext context) throws Exception;
-	
+
 	public final void run() throws Exception {
 		EasyMockContext context = new EasyMockContext();
-		
+
 		setup(context);
-		
+
 		context.replay();
-		
+
 		test(context);
-		
+
 		context.verify();
 	}
 }

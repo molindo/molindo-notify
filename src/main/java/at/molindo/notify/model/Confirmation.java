@@ -26,21 +26,21 @@ public class Confirmation {
 	private Integer _id;
 
 	private Notification _notification;
-	
+
 	private String _key;
-	
+
 	private Date _touched;
 
 	public Confirmation() {
 		setTouched(new Date());
 		setKey(UUID.randomUUID().toString());
 	}
-	
+
 	public Confirmation(Notification notification) {
 		this();
 		setNotification(notification);
 	}
-	
+
 	public Integer getId() {
 		return _id;
 	}
@@ -75,5 +75,5 @@ public class Confirmation {
 	public void setKey(String key) {
 		_key = key;
 	}
-	
+
 }

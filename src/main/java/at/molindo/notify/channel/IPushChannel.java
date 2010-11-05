@@ -17,21 +17,24 @@
 package at.molindo.notify.channel;
 
 import at.molindo.notify.INotificationService.NotifyException;
-import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.model.Message;
+import at.molindo.notify.model.PushChannelPreferences;
 
 public interface IPushChannel extends IChannel {
 
+	@Override
 	PushChannelPreferences newDefaultPreferences();
-	
+
 	/**
 	 * deliver notification
 	 * 
 	 * @param notification
 	 * @param cPrefs
-	 * @throws PushException if delivery failed
+	 * @throws PushException
+	 *             if delivery failed
 	 */
-	void push(Message message, PushChannelPreferences cPrefs) throws PushException;
+	void push(Message message, PushChannelPreferences cPrefs)
+			throws PushException;
 
 	public class PushException extends NotifyException {
 
@@ -43,7 +46,8 @@ public interface IPushChannel extends IChannel {
 			_temporaryError = temporaryError;
 		}
 
-		public PushException(String message, Throwable cause, boolean temporaryError) {
+		public PushException(String message, Throwable cause,
+				boolean temporaryError) {
 			super(message, cause);
 			_temporaryError = temporaryError;
 		}
@@ -61,6 +65,6 @@ public interface IPushChannel extends IChannel {
 		public boolean isTemporaryError() {
 			return _temporaryError;
 		}
-		
+
 	}
 }

@@ -16,7 +16,6 @@
 
 package at.molindo.notify.render.velocity;
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
@@ -34,7 +33,7 @@ public class VelocityTemplateRendererTest {
 	public static VelocityTemplateRenderer r() {
 		return new VelocityTemplateRenderer();
 	}
-	
+
 	public static Template t() {
 		Template t = new Template();
 		t.setKey("test");
@@ -43,7 +42,7 @@ public class VelocityTemplateRendererTest {
 		t.setContent("this is a ${word}");
 		return t;
 	}
-	
+
 	@Test
 	public void testRenderTemplateParams() throws RenderException {
 		Template t = t();
@@ -51,11 +50,11 @@ public class VelocityTemplateRendererTest {
 
 		Params params = new Params();
 		params.set(Param.p("word", String.class), "test");
-		
+
 		String result = r.render(t, params);
-		
+
 		assertEquals("this is a test", result);
-		
+
 	}
 
 }

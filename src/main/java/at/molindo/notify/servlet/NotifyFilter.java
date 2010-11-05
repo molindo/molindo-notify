@@ -40,8 +40,9 @@ public class NotifyFilter implements Filter {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(NotifyFilter.class);
-	
-	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName() + ".channel";
+
+	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class
+			.getName() + ".channel";
 	private ServletContext _context;
 
 	@Override
@@ -55,37 +56,38 @@ public class NotifyFilter implements Filter {
 
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
-	
+
 		// TODO get channelId and userId from request
 		String channelId = "feed-public";
 		String userId = "JohnDoe";
-		
+
 		IPullChannel channel = getChannel(channelId);
 		if (StringUtils.empty(userId) || StringUtils.empty(channelId)) {
 			resp.sendError(404);
 			return;
 		}
-		
+
 		ChannelPreferences prefs = channel.newDefaultPreferences();
-		
+
 		if (prefs instanceof IRequestConfigurable) {
 			try {
 				Map<?, ?> queryParams = req.getParameterMap();
-				
+
 				for (Map.Entry<?, ?> e : queryParams.entrySet()) {
 					Object value = e.getValue();
 					if (value != null && value.getClass().isArray()) {
 						String[] vals = (String[]) value;
 						value = vals.length > 0 ? vals[0] : null;
 					}
-					((IRequestConfigurable)prefs).setParam((String)e.getKey(), (String)value);
+					((IRequestConfigurable) prefs).setParam(
+							(String) e.getKey(), (String) value);
 				}
 			} catch (NotifyException e) {
 				resp.sendError(404);
 				return;
 			}
 		}
-		
+
 		if (channel.isConfigured(prefs)) {
 			try {
 				String output = channel.pull(userId, prefs);
@@ -104,13 +106,13 @@ public class NotifyFilter implements Filter {
 	}
 
 	private IPullChannel getChannel(String channelId) {
-		
+
 		Object attr = _context.getAttribute(ATTRIBUTE_CHANNEL);
 		if (attr instanceof IPullChannel) {
 			IPullChannel c = (IPullChannel) attr;
 			return channelId.equals(c.getId()) ? c : null;
 		} else if (attr instanceof Iterable<?>) {
-			for (Object o : (Iterable<?>)attr) {
+			for (Object o : (Iterable<?>) attr) {
 				if (o instanceof IPullChannel) {
 					IPullChannel c = (IPullChannel) o;
 					return channelId.equals(c.getId()) ? c : null;

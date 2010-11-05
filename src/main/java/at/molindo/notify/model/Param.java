@@ -26,16 +26,16 @@ public class Param<T> {
 	public static <T> Param<T> p(String name, Class<T> type) {
 		return new Param<T>(name, type);
 	}
-	
+
 	protected Param() {
-		
+
 	}
-	
+
 	public Param(String name, Class<T> type) {
 		setName(name);
 		setType(type);
 	}
-	
+
 	public String getName() {
 		return _name;
 	}
@@ -65,8 +65,10 @@ public class Param<T> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result + ((getType() == null) ? 0 : getType().getName().hashCode());
+		result = prime * result
+				+ ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result
+				+ ((getType() == null) ? 0 : getType().getName().hashCode());
 		return result;
 	}
 
@@ -101,8 +103,8 @@ public class Param<T> {
 
 	@Override
 	public String toString() {
-		return "Param [name=" + _name + ", type=" + _type == null ? null : _type.getSimpleName() + "]";
+		return "Param [name=" + _name + ", type=" + _type == null ? null
+				: _type.getSimpleName() + "]";
 	}
-	
-	
+
 }

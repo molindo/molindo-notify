@@ -26,7 +26,7 @@ public class Params implements Cloneable {
 	private Map<String, Object> _params = Maps.newHashMap();
 
 	private final Params _defaults;
-	
+
 	public Params() {
 		this(null);
 	}
@@ -39,7 +39,7 @@ public class Params implements Cloneable {
 			_defaults = null;
 		}
 	}
-	
+
 	public <T> Params set(Param<T> param, T value) {
 		if (value == null) {
 			if (_params.remove(param.getName()) != null && _defaults != null) {
@@ -81,7 +81,7 @@ public class Params implements Cloneable {
 		map.putAll(_params);
 		return map;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -127,8 +127,7 @@ public class Params implements Cloneable {
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("can't clone object?", e);
 		}
-		
+
 	}
-	
-	
+
 }

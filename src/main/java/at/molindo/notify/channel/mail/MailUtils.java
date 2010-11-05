@@ -47,11 +47,12 @@ public class MailUtils {
 		try {
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
 			mm.writeTo(os);
-	
+
 			String message = new String(os.toByteArray(), CharsetUtils.US_ASCII);
 			return message;
 		} catch (IOException e) {
-			throw new RuntimeException("can't write to ByteArrayOutputStream", e);
+			throw new RuntimeException("can't write to ByteArrayOutputStream",
+					e);
 		}
 	}
 }

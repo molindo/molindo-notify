@@ -71,16 +71,16 @@ public class AbstractFeedChannelTest {
 		c.setDefaultAmount(20);
 		return c;
 	}
-	
+
 	private static Preferences p() {
 		Preferences p = new Preferences();
 		p.setUserId(USER_ID);
 		return p;
 	}
-	
+
 	private static List<Notification> n() {
 		List<Notification> n = Lists.newArrayList();
-		
+
 		Notification n1 = new Notification();
 		n1.setDate(new Date());
 		n1.setKey(NOTIFICATION_KEY);
@@ -92,9 +92,10 @@ public class AbstractFeedChannelTest {
 	}
 
 	private static Message m() throws RenderException {
-		return Message.parse("Subject: Test\n\nThis is a test", IRenderService.Type.TEXT);
+		return Message.parse("Subject: Test\n\nThis is a test",
+				IRenderService.Type.TEXT);
 	}
-	
+
 	@Test
 	public void testPull() throws Exception {
 		new FeedMockTest() {
@@ -102,10 +103,17 @@ public class AbstractFeedChannelTest {
 			@Override
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
-				
-				expect(context.get(IPreferencesDAO.class).getPreferences(USER_ID)).andReturn(p());
-				expect(context.get(INotificationsDAO.class).getRecent(USER_ID, Type.TYPES_ALL, 0, 20)).andReturn(n());
-				expect(context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG), anyObject(Params.class))).andReturn(m());
+
+				expect(
+						context.get(IPreferencesDAO.class).getPreferences(
+								USER_ID)).andReturn(p());
+				expect(
+						context.get(INotificationsDAO.class).getRecent(USER_ID,
+								Type.TYPES_ALL, 0, 20)).andReturn(n());
+				expect(
+						context.get(IRenderService.class).render(
+								eq(NOTIFICATION_KEY), same(Version.LONG),
+								anyObject(Params.class))).andReturn(m());
 			}
 
 			@Override
@@ -116,19 +124,22 @@ public class AbstractFeedChannelTest {
 				assertTrue(str, str.startsWith("<feed"));
 				assertTrue(str, str.endsWith("</feed>"));
 			}
-			
+
 		}.run();
 	}
 
 	@Test
 	public void testToFeed() throws Exception {
-		
+
 		new FeedMockTest() {
 
 			@Override
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
-				expect(context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG), anyObject(Params.class))).andReturn(m());
+				expect(
+						context.get(IRenderService.class).render(
+								eq(NOTIFICATION_KEY), same(Version.LONG),
+								anyObject(Params.class))).andReturn(m());
 			}
 
 			@Override
@@ -136,7 +147,7 @@ public class AbstractFeedChannelTest {
 				WireFeed f = c.toFeed(n(), p(), c.newDefaultPreferences());
 				assertNotNull(f);
 				assertTrue(f instanceof Feed);
-				assertEquals(1, ((Feed)f).getEntries().size());
+				assertEquals(1, ((Feed) f).getEntries().size());
 			}
 		}.run();
 	}
@@ -144,7 +155,7 @@ public class AbstractFeedChannelTest {
 	@Test
 	public void testNewDefaultPreferences() {
 		ChannelPreferences p = c().newDefaultPreferences();
-		
+
 		assertTrue(p instanceof IRequestConfigurable);
 		// configured by default
 		assertTrue(c().isConfigured(p));

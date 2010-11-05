@@ -20,7 +20,7 @@ import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.model.ChannelPreferences;
 
 public interface IPullChannel extends IChannel {
-	
+
 	String pull(String userId, ChannelPreferences prefs) throws PullException;
 
 	public class PullException extends NotifyException {
@@ -42,6 +42,6 @@ public interface IPullChannel extends IChannel {
 		public PullException(Throwable cause) {
 			super(cause);
 		}
-		
+
 	}
 }

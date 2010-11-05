@@ -25,9 +25,6 @@ import javax.naming.NamingException;
 
 import org.junit.Test;
 
-import at.molindo.notify.channel.mail.MailChannel;
-import at.molindo.notify.channel.mail.MailUtils;
-import at.molindo.notify.channel.mail.SimpleMailClient;
 import at.molindo.notify.channel.mail.IMailClient.MailException;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.PushChannelPreferences;
@@ -44,30 +41,37 @@ public class SimpleMailClientTest {
 			RenderException, MailException {
 
 		final boolean[] sent = { false };
-		
+
 		SimpleMailClient client = (SimpleMailClient) new SimpleMailClient() {
+			@Override
 			protected void send(MimeMessage mm) throws MessagingException {
 				String message = MailUtils.toString(mm);
-				//System.out.println(message);
-				
-				assertTrue(message.contains("From: SimpleMailClientTest <test@test.molindo.at>"));
-				assertTrue(message.contains("Sender: SimpleMailClientTest <test@test.molindo.at>"));
-				assertTrue(message.contains("To: sfussenegger <stf+test@molindo.at>"));
+				// System.out.println(message);
+
+				assertTrue(message
+						.contains("From: SimpleMailClientTest <test@test.molindo.at>"));
+				assertTrue(message
+						.contains("Sender: SimpleMailClientTest <test@test.molindo.at>"));
+				assertTrue(message
+						.contains("To: sfussenegger <stf+test@molindo.at>"));
 				assertTrue(message.contains("Subject: Test"));
-				assertTrue(message.contains("Content-Type: multipart/alternative;"));
+				assertTrue(message
+						.contains("Content-Type: multipart/alternative;"));
 				assertTrue(message.contains("X-Mailer: molindo-notify"));
-				assertTrue(message.contains("Content-Type: text/plain; charset=UTF-8"));
-				assertTrue(message.contains("Content-Type: text/html; charset=UTF-8"));
-				
+				assertTrue(message
+						.contains("Content-Type: text/plain; charset=UTF-8"));
+				assertTrue(message
+						.contains("Content-Type: text/html; charset=UTF-8"));
+
 				if (SEND) {
 					super.send(mm);
 				}
-				
+
 				sent[0] = true;
 			}
 		}.setServer(DnsUtils.lookupMailHosts("molindo.at")[0])
-				.setFrom("test@test.molindo.at", SimpleMailClientTest.class.getSimpleName())
-				.init();
+				.setFrom("test@test.molindo.at",
+						SimpleMailClientTest.class.getSimpleName()).init();
 
 		Message message = Message.parse(
 				"Subject: Test\n\nThis is a <strong>test</strong>", Type.HTML);
@@ -77,7 +81,7 @@ public class SimpleMailClientTest {
 		MailChannel.setRecipientName(cPrefs, "sfussenegger");
 
 		client.send(message, cPrefs);
-		
+
 		// poor man's assertion
 		assertTrue(sent[0]);
 	}

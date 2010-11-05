@@ -21,16 +21,16 @@ public class PushChannelPreferences extends ChannelPreferences {
 	public enum Frequency {
 		INSTANT, DAILY, WEEKLY, MONTHLY;
 	}
-	
+
 	private Frequency _frequency = Frequency.INSTANT;
 
 	public PushChannelPreferences() {
 	}
-	
+
 	public PushChannelPreferences(Params defaults) {
 		super(defaults);
 	}
-	
+
 	public void setFrequency(Frequency frequency) {
 		_frequency = frequency;
 	}
@@ -39,11 +39,11 @@ public class PushChannelPreferences extends ChannelPreferences {
 		return _frequency;
 	}
 
-
+	@Override
 	public PushChannelPreferences clone() {
 		return (PushChannelPreferences) super.clone();
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

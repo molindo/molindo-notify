@@ -53,7 +53,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	private int _poolSize = DEFAULT_POOL_SIZE;
 
 	private IRenderService _renderService;
-	
+
 	private INotificationsDAO _notificationsDAO;
 	private IPreferencesDAO _preferencesDAO;
 
@@ -69,7 +69,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	enum PushResult {
 		SUCCESS, TEMPORARY_ERROR, PERSISTENT_ERROR;
 	}
-	
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (_pushChannels.size() == 0) {
@@ -89,11 +89,11 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	@Override
 	public void destroy() {
 		_executor.shutdown();
-		
+
 		synchronized (_wait) {
 			_wait.notifyAll();
 		}
-		
+
 		if (_executor.isTerminating()) {
 			log.info("waiting for termination of running notification tasks");
 			try {
@@ -107,7 +107,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			}
 		}
 	}
-	
+
 	@Override
 	public void notification(Notification notification) {
 		synchronized (_wait) {
@@ -138,12 +138,14 @@ public class PollingPushDispatcher implements IPushDispatcher,
 
 		PushResult result = PushResult.PERSISTENT_ERROR;
 		for (IPushChannel channel : _pushChannels) {
-			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
-			
+			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(
+					channel.getId());
+
 			if (isAllowed(dc, channel, cPrefs, Frequency.INSTANT)) {
 				try {
-					
-					channel.push(NotifyUtils.render(_renderService, dc.notification, prefs, cPrefs), cPrefs);
+
+					channel.push(NotifyUtils.render(_renderService,
+							dc.notification, prefs, cPrefs), cPrefs);
 					result = PushResult.SUCCESS;
 				} catch (PushException e) {
 					if (e.isTemporaryError()) {
@@ -152,20 +154,23 @@ public class PollingPushDispatcher implements IPushDispatcher,
 					if (_errorListener != null) {
 						_errorListener.error(dc.notification, channel, e);
 					} else {
-						log.warn("failed to deliver notification " + dc.notification + " on channel " + channel.getId(), e);
+						log.warn(
+								"failed to deliver notification "
+										+ dc.notification + " on channel "
+										+ channel.getId(), e);
 					}
 				} catch (RenderException e) {
-					log.error("failed to render notification " + dc.notification, e);
+					log.error("failed to render notification "
+							+ dc.notification, e);
 				}
 			}
 		}
-			
+
 		return result;
 	}
 
-	boolean isAllowed(DispatchConf dc,
-			IPushChannel channel, PushChannelPreferences prefs,
-			Frequency frequency) {
+	boolean isAllowed(DispatchConf dc, IPushChannel channel,
+			PushChannelPreferences prefs, Frequency frequency) {
 
 		if (prefs == null) {
 			// no preferences for this channel
@@ -181,15 +186,14 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			return false;
 		}
 
-		if (!channel.getNotificationTypes()
-				.contains(dc.notification.getType())) {
+		if (!channel.getNotificationTypes().contains(dc.notification.getType())) {
 			// channel not applicable for type
 			return false;
 		}
 
 		return true;
 	}
-	
+
 	public int getPoolSize() {
 		return _poolSize;
 	}
@@ -219,7 +223,8 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		public void run() {
 			Notification notification = _notificationsDAO.getNext();
 			if (notification != null) {
-				recordPushAttempt(notification, push(new DispatchConf(notification)));
+				recordPushAttempt(notification, push(new DispatchConf(
+						notification)));
 			} else {
 				// add a polling delay
 				delay();
@@ -240,16 +245,16 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		}
 
 	}
-	
+
 	static class DispatchConf {
-		
+
 		final Notification notification;
 		final boolean instant;
 
 		DispatchConf(Notification notification) {
 			this(notification, false);
 		}
-		
+
 		DispatchConf(Notification notification, boolean instant) {
 			if (notification == null) {
 				throw new NullPointerException("notification");
@@ -261,7 +266,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	}
 
 	public void recordPushAttempt(Notification notification, PushResult result) {
-		
+
 		if (result == PushResult.SUCCESS) {
 			notification.setPushState(PushState.PUSHED);
 			notification.setPushDate(new Date());
@@ -269,20 +274,22 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			notification.setPushDate(null);
 			int errorCount = notification.recordPushError();
 
-			if (errorCount > _maxErrorCount || result == PushResult.PERSISTENT_ERROR) {
+			if (errorCount > _maxErrorCount
+					|| result == PushResult.PERSISTENT_ERROR) {
 				notification.setPushState(PushState.UNDELIVERABLE);
 				notification.setPushScheduled(null);
 			} else {
 				notification.setPushState(PushState.QUEUED);
-				notification.setPushScheduled(new Date(System.currentTimeMillis()
-						+ waitAfter(errorCount)));
+				notification.setPushScheduled(new Date(System
+						.currentTimeMillis() + waitAfter(errorCount)));
 			}
 
 		}
-		
+
 		_notificationsDAO.update(notification);
 
 	}
+
 	private long waitAfter(final int errorCount) {
 		switch (errorCount) {
 		case 0:

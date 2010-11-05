@@ -98,8 +98,10 @@ public class Template implements Cloneable {
 				+ ((getKey() == null) ? 0 : getKey().hashCode());
 		result = prime * result + getVersion().hashCode();
 		result = prime * result + getType().hashCode();
-		result = prime * result
-				+ ((getLastModified() == null) ? 0 : getLastModified().hashCode());
+		result = prime
+				* result
+				+ ((getLastModified() == null) ? 0 : getLastModified()
+						.hashCode());
 		result = prime * result
 				+ ((getLocale() == null) ? 0 : getLocale().hashCode());
 		return result;
@@ -194,13 +196,14 @@ public class Template implements Cloneable {
 	protected Template clone() {
 		try {
 			Template t = (Template) super.clone();
-			if (_lastModified != null) t._lastModified = new Date(_lastModified.getTime());
-			if (_locale != null) t._locale = (Locale) _locale.clone();
+			if (_lastModified != null)
+				t._lastModified = new Date(_lastModified.getTime());
+			if (_locale != null)
+				t._locale = (Locale) _locale.clone();
 			return t;
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("clone object not supported?", e);
 		}
 	}
-	
-	
+
 }

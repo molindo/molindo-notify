@@ -57,24 +57,26 @@ public class FeedUtils {
 	 * @throws IllegalArgumentException
 	 *             if title or updated aren't set
 	 */
-	public static String toFeedXml(final WireFeed feed, final boolean debug) throws FeedException {
-		
+	public static String toFeedXml(final WireFeed feed, final boolean debug)
+			throws FeedException {
+
 		if (feed instanceof Feed) {
-			if (((Feed)feed).getTitle() == null) {
+			if (((Feed) feed).getTitle() == null) {
 				throw new IllegalArgumentException("feed title must be set");
 			}
-			if (((Feed)feed).getUpdated() == null) {
+			if (((Feed) feed).getUpdated() == null) {
 				throw new IllegalArgumentException("feed updated must be set");
 			}
 		} else if (feed instanceof Channel) {
-			if (((Channel)feed).getTitle() == null) {
+			if (((Channel) feed).getTitle() == null) {
 				throw new IllegalArgumentException("feed title must be set");
 			}
 		}
-		
+
 		final Document doc = new WireFeedOutput().outputJDom(feed);
 
-		final Format format = debug ? Format.getPrettyFormat() : Format.getRawFormat();
+		final Format format = debug ? Format.getPrettyFormat() : Format
+				.getRawFormat();
 		format.setOmitDeclaration(true);
 		format.setOmitEncoding(true);
 

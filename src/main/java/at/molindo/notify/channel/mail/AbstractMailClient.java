@@ -21,10 +21,10 @@ import java.util.Date;
 import java.util.UUID;
 
 import javax.mail.Address;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Message.RecipientType;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -37,7 +37,8 @@ import at.molindo.notify.model.Message;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.utils.io.CharsetUtils;
 
-public abstract class AbstractMailClient implements IMailClient, InitializingBean {
+public abstract class AbstractMailClient implements IMailClient,
+		InitializingBean {
 
 	public enum Security {
 		NONE(25), SSL(465), TLS(587);
@@ -74,6 +75,7 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 		return this;
 	}
 
+	@Override
 	public synchronized void send(Message message, PushChannelPreferences cPrefs)
 			throws MailException {
 
@@ -84,6 +86,7 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 
 		try {
 			MimeMessage mm = new MimeMessage(getSmtpSession(recipient)) {
+				@Override
 				protected void updateMessageID() throws MessagingException {
 					String domain = _from.getAddress();
 					int idx = _from.getAddress().indexOf('@');
@@ -96,7 +99,7 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 			};
 			mm.setFrom(_from);
 			mm.setSender(_from);
-			
+
 			InternetAddress replyTo = getReplyTo();
 			if (replyTo != null) {
 				mm.setReplyTo(new Address[] { replyTo });
@@ -159,8 +162,9 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 		return true;
 	}
 
-	protected abstract Session getSmtpSession(String recipient) throws MailException;
-	
+	protected abstract Session getSmtpSession(String recipient)
+			throws MailException;
+
 	public InternetAddress getFrom() {
 		return _from;
 	}
@@ -193,7 +197,8 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 		return this;
 	}
 
-	public AbstractMailClient setReplyTo(String address) throws AddressException {
+	public AbstractMailClient setReplyTo(String address)
+			throws AddressException {
 		return setReplyTo(new InternetAddress(address));
 	}
 

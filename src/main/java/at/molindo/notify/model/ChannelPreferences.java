@@ -16,7 +16,6 @@
 
 package at.molindo.notify.model;
 
-
 import at.molindo.notify.render.IRenderService.Version;
 
 public class ChannelPreferences implements Cloneable {
@@ -27,7 +26,7 @@ public class ChannelPreferences implements Cloneable {
 	public ChannelPreferences() {
 		this(null);
 	}
-	
+
 	public ChannelPreferences(Params defaults) {
 		_params = new Params(defaults);
 	}
@@ -49,11 +48,12 @@ public class ChannelPreferences implements Cloneable {
 		}
 		_params = params;
 	}
-	
+
 	public Params getParams() {
 		return _params;
 	}
 
+	@Override
 	public ChannelPreferences clone() {
 		try {
 			ChannelPreferences p = (ChannelPreferences) super.clone();
@@ -63,13 +63,15 @@ public class ChannelPreferences implements Cloneable {
 			throw new RuntimeException("clone object not supported?", e);
 		}
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
-		result = prime * result + ((getParams() == null) ? 0 : getParams().hashCode());
+		result = prime * result
+				+ ((getVersion() == null) ? 0 : getVersion().hashCode());
+		result = prime * result
+				+ ((getParams() == null) ? 0 : getParams().hashCode());
 		return result;
 	}
 

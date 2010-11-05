@@ -21,12 +21,15 @@ import at.molindo.notify.INotificationService.IErrorListener;
 import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.model.Notification;
 
-public interface IPushDispatcher extends INotificationService.INotificationListner {
+public interface IPushDispatcher extends
+		INotificationService.INotificationListner {
 
 	/**
-	 * @throws NotifyException if <strong>all</strong> channels failed to dispatch a notification.
+	 * @throws NotifyException
+	 *             if <strong>all</strong> channels failed to dispatch a
+	 *             notification.
 	 */
 	void dispatchNow(Notification notification) throws NotifyException;
-	
+
 	void setErrorListener(IErrorListener errorListener);
 }

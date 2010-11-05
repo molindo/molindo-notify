@@ -24,7 +24,7 @@ import com.google.common.collect.Maps;
 
 public class EasyMockContext {
 	private Map<Class<?>, Object> _mocks = Maps.newHashMap();
-	
+
 	public <T> T create(Class<T> cls) {
 		T mock = EasyMock.createMock(cls);
 		if (_mocks.put(cls, mock) != null) {
@@ -32,7 +32,7 @@ public class EasyMockContext {
 		}
 		return mock;
 	}
-	
+
 	public <T> T get(Class<T> cls) {
 		T mock = cls.cast(_mocks.get(cls));
 		if (mock == null) {
@@ -40,11 +40,11 @@ public class EasyMockContext {
 		}
 		return mock;
 	}
-	
+
 	public void replay() {
 		EasyMock.replay(_mocks.values().toArray());
 	}
-	
+
 	public void verify() {
 		EasyMock.verify(_mocks.values().toArray());
 	}

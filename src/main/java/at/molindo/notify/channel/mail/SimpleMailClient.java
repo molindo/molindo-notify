@@ -50,6 +50,7 @@ public class SimpleMailClient extends AbstractMailClient implements
 		init();
 	}
 
+	@Override
 	public SimpleMailClient init() throws MailException {
 		if (_smtpSession == null) {
 			_smtpSession = createSmtpSession();

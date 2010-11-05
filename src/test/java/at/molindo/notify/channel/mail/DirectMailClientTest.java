@@ -25,9 +25,6 @@ import javax.naming.NamingException;
 
 import org.junit.Test;
 
-import at.molindo.notify.channel.mail.DirectMailClient;
-import at.molindo.notify.channel.mail.MailChannel;
-import at.molindo.notify.channel.mail.MailUtils;
 import at.molindo.notify.channel.mail.IMailClient.MailException;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.PushChannelPreferences;
@@ -43,20 +40,21 @@ public class DirectMailClientTest {
 			RenderException, MailException {
 
 		final boolean[] sent = { false };
-		
+
 		DirectMailClient client = (DirectMailClient) new DirectMailClient() {
+			@Override
 			protected void send(MimeMessage mm) throws MessagingException {
 				String message = MailUtils.toString(mm);
 				System.out.println(message);
-				
+
 				if (SEND) {
 					super.send(mm);
 				}
-				
+
 				sent[0] = true;
 			}
-		}.setFrom("test@test.molindo.at", DirectMailClientTest.class.getSimpleName())
-				.init();
+		}.setFrom("test@test.molindo.at",
+				DirectMailClientTest.class.getSimpleName()).init();
 
 		Message message = Message.parse(
 				"Subject: Test\n\nThis is a <strong>test</strong>", Type.HTML);
@@ -66,7 +64,7 @@ public class DirectMailClientTest {
 		MailChannel.setRecipientName(cPrefs, "sfussenegger");
 
 		client.send(message, cPrefs);
-		
+
 		// poor man's assertion
 		assertTrue(sent[0]);
 	}

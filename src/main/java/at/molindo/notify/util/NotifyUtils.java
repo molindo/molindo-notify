@@ -26,22 +26,26 @@ import at.molindo.notify.render.IRenderService.RenderException;
 
 public class NotifyUtils {
 
-	private NotifyUtils() {};
-	
-	public static Message render(IRenderService renderService,  Notification notification, Preferences prefs,
+	private NotifyUtils() {
+	};
+
+	public static Message render(IRenderService renderService,
+			Notification notification, Preferences prefs,
 			ChannelPreferences cPrefs) throws RenderException {
-		
-		Params params = new Params().setAll(prefs.getParams()).setAll(cPrefs.getParams()).setAll(notification.getParams());
-		Message msg = renderService.render(notification.getKey(), cPrefs.getVersion(), params);
+
+		Params params = new Params().setAll(prefs.getParams())
+				.setAll(cPrefs.getParams()).setAll(notification.getParams());
+		Message msg = renderService.render(notification.getKey(),
+				cPrefs.getVersion(), params);
 		return msg;
-		
+
 	}
-	
+
 	public static String html2text(String html) {
 		// TODO
-		return html.replaceAll("\\<.*?>","");
+		return html.replaceAll("\\<.*?>", "");
 	}
-	
+
 	public static String text2html(String text) {
 		// TODO
 		return text.replaceAll("\n", "<br />");

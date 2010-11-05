@@ -27,9 +27,9 @@ public interface INotificationsDAO {
 	void save(Notification notification);
 
 	void update(Notification notification);
-	
+
 	void delete(Notification notification);
-	
+
 	/**
 	 * @return next notification from push queue
 	 */
@@ -38,8 +38,7 @@ public interface INotificationsDAO {
 	/**
 	 * @return recent notifications for userId (pull)
 	 */
-	List<Notification> getRecent(String userId, Set<Type> types, int first, int count);
-
-
+	List<Notification> getRecent(String userId, Set<Type> types, int first,
+			int count);
 
 }
