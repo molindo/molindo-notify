@@ -16,6 +16,7 @@
 
 package at.molindo.notify.dispatch;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,6 +35,7 @@ import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.model.PushChannelPreferences.Frequency;
+import at.molindo.notify.model.PushState;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.util.NotifyUtils;
@@ -46,6 +48,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			.getLogger(PollingPushDispatcher.class);
 
 	private static final int DEFAULT_POOL_SIZE = 3;
+	private static final int DEFAULT_MAX_ERROR = 3;
 
 	private int _poolSize = DEFAULT_POOL_SIZE;
 
@@ -61,6 +64,12 @@ public class PollingPushDispatcher implements IPushDispatcher,
 
 	private IErrorListener _errorListener;
 
+	private int _maxErrorCount = DEFAULT_MAX_ERROR;
+
+	enum PushResult {
+		SUCCESS, TEMPORARY_ERROR, PERSISTENT_ERROR;
+	}
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (_pushChannels.size() == 0) {
@@ -108,7 +117,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 
 	@Override
 	public void dispatchNow(Notification notification) throws NotifyException {
-		if (!push(new DispatchConf(notification, true))) {
+		if (push(new DispatchConf(notification, true)) != PushResult.SUCCESS) {
 			throw new NotifyException("failed to dispatch now: " + notification);
 		}
 	}
@@ -118,16 +127,16 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		_errorListener = errorListener;
 	}
 
-	boolean push(DispatchConf dc) {
+	PushResult push(DispatchConf dc) {
 		Preferences prefs = _preferencesDAO.getPreferences(dc.notification
 				.getUserId());
 		if (prefs == null) {
 			log.warn("can't push to unknown user "
 					+ dc.notification.getUserId());
-			return false;
+			return PushResult.PERSISTENT_ERROR;
 		}
 
-		boolean dispatched = false;
+		PushResult result = PushResult.PERSISTENT_ERROR;
 		for (IPushChannel channel : _pushChannels) {
 			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
 			
@@ -135,8 +144,11 @@ public class PollingPushDispatcher implements IPushDispatcher,
 				try {
 					
 					channel.push(NotifyUtils.render(_renderService, dc.notification, prefs, cPrefs), cPrefs);
-					dispatched = true;
+					result = PushResult.SUCCESS;
 				} catch (PushException e) {
+					if (e.isTemporaryError()) {
+						result = PushResult.TEMPORARY_ERROR;
+					}
 					if (_errorListener != null) {
 						_errorListener.error(dc.notification, channel, e);
 					} else {
@@ -147,7 +159,8 @@ public class PollingPushDispatcher implements IPushDispatcher,
 				}
 			}
 		}
-		return dispatched;
+			
+		return result;
 	}
 
 	boolean isAllowed(DispatchConf dc,
@@ -206,7 +219,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		public void run() {
 			Notification notification = _notificationsDAO.getNext();
 			if (notification != null) {
-				push(new DispatchConf(notification));
+				recordPushAttempt(notification, push(new DispatchConf(notification)));
 			} else {
 				// add a polling delay
 				delay();
@@ -245,5 +258,45 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			this.instant = instant;
 		}
 
+	}
+
+	public void recordPushAttempt(Notification notification, PushResult result) {
+		
+		if (result == PushResult.SUCCESS) {
+			notification.setPushState(PushState.PUSHED);
+			notification.setPushDate(new Date());
+		} else {
+			notification.setPushDate(null);
+			int errorCount = notification.recordPushError();
+
+			if (errorCount > _maxErrorCount || result == PushResult.PERSISTENT_ERROR) {
+				notification.setPushState(PushState.UNDELIVERABLE);
+				notification.setPushScheduled(null);
+			} else {
+				notification.setPushState(PushState.QUEUED);
+				notification.setPushScheduled(new Date(System.currentTimeMillis()
+						+ waitAfter(errorCount)));
+			}
+
+		}
+		
+		_notificationsDAO.update(notification);
+
+	}
+	private long waitAfter(final int errorCount) {
+		switch (errorCount) {
+		case 0:
+			return 0;
+		case 1:
+			return 60000; // 60 seconds
+		case 2:
+			return 900000; // 15 minutes
+		case 3:
+			return 7200000; // 2 hours
+		case 4:
+			return 86400000; // 1 day
+		default:
+			return 259200000; // 3 days
+		}
 	}
 }

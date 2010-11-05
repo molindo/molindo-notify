@@ -24,6 +24,7 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationsDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.IPushDispatcher;
+import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 
@@ -71,7 +72,25 @@ public class NotificationService implements INotificationService, INotificationS
 	
 	@Override
 	public void notifyNow(Notification notification) throws NotifyException {
-		_instantDispatcher.dispatchNow(notification);
+		try {
+			_notificationDAO.save(notification);
+			_instantDispatcher.dispatchNow(notification);
+		} catch (NotifyException e) {
+			_notificationDAO.delete(notification);
+			throw e;
+		}
+	}
+
+	@Override
+	public void confirm(Notification notification) {
+		notification.setConfirmation(new Confirmation());
+		notify(notification);
+	}
+
+	@Override
+	public void confirmNow(Notification notification) throws NotifyException {
+		notification.setConfirmation(new Confirmation());
+		notifyNow(notification);
 	}
 
 	@Override

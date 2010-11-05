@@ -20,6 +20,7 @@ import java.util.List;
 
 import at.molindo.notify.dao.ITemplateDAO;
 import at.molindo.notify.model.Params;
+import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Template;
 
 public class TemplateRenderService implements IRenderService {
@@ -28,7 +29,7 @@ public class TemplateRenderService implements IRenderService {
 	private ITemplateRenderer _renderer;
 	
 	@Override
-	public String render(String key, Version version, Params params) throws RenderException {
+	public Message render(String key, Version version, Params params) throws RenderException {
 		
 		List<Template> templates = _templateDAO.findTemplates(key);
 		
@@ -38,7 +39,7 @@ public class TemplateRenderService implements IRenderService {
 			throw new RenderException("no template available for '" + key + "' (" + version + ")");
 		}
 		
-		return _renderer.render(template, params);
+		return Message.parse(_renderer.render(template, params), template.getType());
 	}
 
 	private Template choose(List<Template> templates, Version version) {

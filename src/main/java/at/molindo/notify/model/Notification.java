@@ -35,6 +35,13 @@ public class Notification {
 	private Type _type = Type.PRIVATE;
 	private Date _date = new Date();
 	private Params _params;
+	private Confirmation _confirmation;
+	
+	// push
+	private PushState _pushState = PushState.QUEUED;
+	private Date _pushScheduled = new Date();
+	private Date _pushDate;
+	private int _pushErrors = 0;
 	
 	public String getUserId() {
 		return _userId;
@@ -76,6 +83,59 @@ public class Notification {
 		_params = params;
 	}
 
+	public Confirmation getConfirmation() {
+		return _confirmation;
+	}
+
+	public void setConfirmation(Confirmation confirmation) {
+		_confirmation = confirmation;
+		if (_confirmation != null && _confirmation.getNotification() != this) {
+			_confirmation.setNotification(this);
+		}
+	}
+
+	public PushState getPushState() {
+		return _pushState;
+	}
+
+	public void setPushState(PushState pushState) {
+		if (pushState == null) {
+			throw new NullPointerException("pushState");
+		}
+		_pushState = pushState;
+	}
+
+	public Date getPushScheduled() {
+		return _pushScheduled;
+	}
+
+	public void setPushScheduled(Date pushScheduled) {
+		_pushScheduled = pushScheduled;
+	}
+
+	public Date getPushDate() {
+		return _pushDate;
+	}
+
+	public void setPushDate(Date pushDate) {
+		_pushDate = pushDate;
+	}
+
+	public int getPushErrors() {
+		return _pushErrors;
+	}
+
+	void setPushErrors(int pushErrors) {
+		_pushErrors = pushErrors;
+	}
+
+	/**
+	 * @return new error count
+	 */
+	public int recordPushError() {
+		return ++_pushErrors;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

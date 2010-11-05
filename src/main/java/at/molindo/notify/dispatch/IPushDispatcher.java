@@ -24,8 +24,6 @@ import at.molindo.notify.model.Notification;
 public interface IPushDispatcher extends INotificationService.INotificationListner {
 
 	/**
-	 * @param notification a transient notification
-	 * 
 	 * @throws NotifyException if <strong>all</strong> channels failed to dispatch a notification.
 	 */
 	void dispatchNow(Notification notification) throws NotifyException;

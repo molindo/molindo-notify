@@ -16,33 +16,51 @@
 
 package at.molindo.notify.channel.mail;
 
-import javax.mail.Address;
-
 import com.google.common.collect.ImmutableSet;
 
+import at.molindo.notify.INotificationService;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Notification.Type;
+import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.PushChannelPreferences;
+import at.molindo.utils.net.DnsUtils;
 
 public class MailChannel implements IPushChannel {
 
-	private static final String CHANNEL_ID = "mail";
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
+			.getLogger(MailChannel.class);
 	
-	public static final Param<Address> RECIPIENT = new Param<Address>("recipient", Address.class);
+	public static final Param<String> RECIPIENT = new Param<String>("recipient", String.class);
+	public static final Param<String> RECIPIENT_NAME = new Param<String>("name", String.class);
 	
 	private ImmutableSet<Type> _notificationTypes = ImmutableSet.of(Type.PRIVATE);
 
 	private PushChannelPreferences _defaultPreferences;
 	
+	private IMailClient _mailClient;
+	
+	public static void setRecipient(PushChannelPreferences cPrefs, String recipient) {
+		cPrefs.getParams().set(RECIPIENT, recipient);
+	}
+	
+	public static void setRecipientName(PushChannelPreferences cPrefs, String recipientName) {
+		cPrefs.getParams().set(RECIPIENT_NAME, recipientName);
+	}
+	
 	public MailChannel() {
-		
+		final String localHostName = DnsUtils.getLocalHostName();
+		if (localHostName == null || localHostName.indexOf('.') < 0) {
+			log.warn("hostname of localhost seems not to be correct: " + localHostName);
+		} else {
+			log.info("hostname of localhost seems to be correct: " + localHostName);
+		}
 	}
 	
 	@Override
 	public String getId() {
-		return CHANNEL_ID;
+		return INotificationService.MAIL_CHANNEL;
 	}
 
 	@Override
@@ -56,10 +74,11 @@ public class MailChannel implements IPushChannel {
 	}
 
 	@Override
-	public void push(String message, PushChannelPreferences prefs)
-			throws PushException {
+	public void push(Message message, PushChannelPreferences cPrefs) throws PushException {
 		
-		System.err.println("send: " + message + " to " + prefs.getParams().get(RECIPIENT));
+		_mailClient.send(message, cPrefs);
+		
+		System.err.println("send: " + message + " to " + cPrefs.getParams().get(RECIPIENT));
 	}
 
 	@Override

@@ -14,23 +14,8 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.channel.feed;
+package at.molindo.notify.model;
 
-import at.molindo.notify.INotificationService;
-import at.molindo.notify.model.Notification.Type;
-
-import com.google.common.collect.ImmutableSet;
-
-public class PrivateFeedChannel extends AbstractFeedChannel {
-
-	@Override
-	public String getId() {
-		return INotificationService.PRIVATE_FEED_CHANNEL;
-	}
-
-	@Override
-	public ImmutableSet<Type> getNotificationTypes() {
-		return Type.TYPES_PUBLIC;
-	}
-
+public enum PushState {
+	QUEUED, PUSHED, UNDELIVERABLE;
 }

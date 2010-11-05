@@ -18,14 +18,19 @@ package at.molindo.notify.render;
 
 import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.model.Params;
+import at.molindo.notify.model.Message;
 
 public interface IRenderService {
+	
+	public enum Type {
+		HTML, TEXT;
+	}
 	
 	public enum Version {
 		LONG, SHORT;
 	}
 	
-	String render(String key, Version version, Params params) throws RenderException;
+	Message render(String key, Version version, Params params) throws RenderException;
 	
 	public class RenderException extends NotifyException {
 

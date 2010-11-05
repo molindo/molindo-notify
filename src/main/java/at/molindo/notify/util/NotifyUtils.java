@@ -17,6 +17,7 @@
 package at.molindo.notify.util;
 
 import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
@@ -27,12 +28,22 @@ public class NotifyUtils {
 
 	private NotifyUtils() {};
 	
-	public static String render(IRenderService renderService,  Notification notification, Preferences prefs,
+	public static Message render(IRenderService renderService,  Notification notification, Preferences prefs,
 			ChannelPreferences cPrefs) throws RenderException {
 		
 		Params params = new Params().setAll(prefs.getParams()).setAll(cPrefs.getParams()).setAll(notification.getParams());
-		String msg = renderService.render(notification.getKey(), cPrefs.getVersion(), params);
+		Message msg = renderService.render(notification.getKey(), cPrefs.getVersion(), params);
 		return msg;
 		
+	}
+	
+	public static String html2text(String html) {
+		// TODO
+		return html.replaceAll("\\<.*?>","");
+	}
+	
+	public static String text2html(String text) {
+		// TODO
+		return text.replaceAll("\n", "<br />");
 	}
 }

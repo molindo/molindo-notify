@@ -16,8 +16,13 @@
 
 package at.molindo.notify.channel.feed;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.same;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
@@ -28,11 +33,13 @@ import at.molindo.notify.dao.INotificationsDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
+import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService;
+import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
@@ -83,6 +90,10 @@ public class AbstractFeedChannelTest {
 
 		return n;
 	}
+
+	private static Message m() throws RenderException {
+		return Message.parse("Subject: Test\n\nThis is a test", IRenderService.Type.TEXT);
+	}
 	
 	@Test
 	public void testPull() throws Exception {
@@ -94,7 +105,7 @@ public class AbstractFeedChannelTest {
 				
 				expect(context.get(IPreferencesDAO.class).getPreferences(USER_ID)).andReturn(p());
 				expect(context.get(INotificationsDAO.class).getRecent(USER_ID, Type.TYPES_ALL, 0, 20)).andReturn(n());
-				expect(context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG), anyObject(Params.class))).andReturn("your feed");
+				expect(context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG), anyObject(Params.class))).andReturn(m());
 			}
 
 			@Override
@@ -117,7 +128,7 @@ public class AbstractFeedChannelTest {
 			@Override
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
-				expect(context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG), anyObject(Params.class))).andReturn("your feed");
+				expect(context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG), anyObject(Params.class))).andReturn(m());
 			}
 
 			@Override

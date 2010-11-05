@@ -32,6 +32,7 @@ import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.dao.INotificationsDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
@@ -103,9 +104,12 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 			final Entry e = new Entry();
 			final Content c = new Content();
 
-			c.setType("text/plain");
-			c.setValue(NotifyUtils.render(_renderService, notification, prefs, cPrefs));
+			Message msg = NotifyUtils.render(_renderService, notification, prefs, cPrefs);
+			
+			c.setType("text/html");
+			c.setValue(msg.getHtml());
 
+			e.setTitle(msg.getSubject());
 			e.setContents(Arrays.asList(c));
 			entries.add(e);
 		}

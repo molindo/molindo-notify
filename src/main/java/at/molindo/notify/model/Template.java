@@ -17,14 +17,18 @@
 package at.molindo.notify.model;
 
 import java.util.Date;
+import java.util.Locale;
 
+import at.molindo.notify.render.IRenderService.Type;
 import at.molindo.notify.render.IRenderService.Version;
 
-public class Template {
+public class Template implements Cloneable {
 
 	private String _key;
+	private Type _type = Type.HTML;
 	private Version _version = Version.LONG;
 	private Date _lastModified;
+	private Locale _locale;
 	private String _content;
 
 	public String getKey() {
@@ -35,11 +39,25 @@ public class Template {
 		_key = key;
 	}
 
+	public Type getType() {
+		return _type;
+	}
+
+	public void setType(Type type) {
+		if (type == null) {
+			throw new NullPointerException("type");
+		}
+		_type = type;
+	}
+
 	public Version getVersion() {
 		return _version;
 	}
 
 	public void setVersion(Version version) {
+		if (version == null) {
+			throw new NullPointerException("version");
+		}
 		_version = version;
 	}
 
@@ -64,20 +82,26 @@ public class Template {
 				getKey(), getVersion());
 	}
 
+	public Locale getLocale() {
+		return _locale;
+	}
+
+	public void setLocale(Locale locale) {
+		_locale = locale;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
-				+ ((getContent() == null) ? 0 : getContent().hashCode());
-		result = prime * result
 				+ ((getKey() == null) ? 0 : getKey().hashCode());
-		result = prime
-				* result
-				+ ((getLastModified() == null) ? 0 : getLastModified()
-						.hashCode());
+		result = prime * result + getVersion().hashCode();
+		result = prime * result + getType().hashCode();
 		result = prime * result
-				+ ((getVersion() == null) ? 0 : getVersion().hashCode());
+				+ ((getLastModified() == null) ? 0 : getLastModified().hashCode());
+		result = prime * result
+				+ ((getLocale() == null) ? 0 : getLocale().hashCode());
 		return result;
 	}
 
@@ -90,22 +114,29 @@ public class Template {
 		if (obj instanceof Template == false)
 			return false;
 		Template other = (Template) obj;
-		if (getContent() == null) {
-			if (other.getContent() != null)
-				return false;
-		} else if (!getContent().equals(other.getContent()))
-			return false;
 		if (getKey() == null) {
 			if (other.getKey() != null)
 				return false;
 		} else if (!getKey().equals(other.getKey()))
+			return false;
+		if (getType() != other.getType())
+			return false;
+		if (getVersion() != other.getVersion())
 			return false;
 		if (getLastModified() == null) {
 			if (other.getLastModified() != null)
 				return false;
 		} else if (!getLastModified().equals(other.getLastModified()))
 			return false;
-		if (getVersion() != other.getVersion())
+		if (getLocale() == null) {
+			if (other.getLocale() != null)
+				return false;
+		} else if (!getLocale().equals(other.getLocale()))
+			return false;
+		if (getContent() == null) {
+			if (other.getContent() != null)
+				return false;
+		} else if (!getContent().equals(other.getContent()))
 			return false;
 		return true;
 	}
@@ -158,4 +189,18 @@ public class Template {
 			return true;
 		}
 	}
+
+	@Override
+	protected Template clone() {
+		try {
+			Template t = (Template) super.clone();
+			if (_lastModified != null) t._lastModified = new Date(_lastModified.getTime());
+			if (_locale != null) t._locale = (Locale) _locale.clone();
+			return t;
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException("clone object not supported?", e);
+		}
+	}
+	
+	
 }

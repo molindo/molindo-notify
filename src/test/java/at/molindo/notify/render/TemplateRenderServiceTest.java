@@ -16,8 +16,8 @@
 
 package at.molindo.notify.render;
 
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -25,11 +25,10 @@ import java.util.Date;
 import org.junit.Test;
 
 import at.molindo.notify.dao.ITemplateDAO;
+import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Template;
-import at.molindo.notify.render.ITemplateRenderer;
-import at.molindo.notify.render.TemplateRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.notify.test.util.EasyMockContext;
@@ -52,8 +51,12 @@ public class TemplateRenderServiceTest {
 		t.setKey("test");
 		t.setLastModified(START);
 		t.setVersion(Version.LONG);
-		t.setContent("this is a ${word}");
+		t.setContent("Subject: Test\n\nthis is a ${word}");
 		return t;
+	}
+	
+	public static Message result() {
+		return new Message("subject", "this is a test", IRenderService.Type.HTML);
 	}
 	
 	@Test
@@ -78,7 +81,7 @@ public class TemplateRenderServiceTest {
 			
 			@Override
 			protected void test(EasyMockContext context) throws RenderException {
-				String result = _svc.render(_t.getKey(), _t.getVersion(), _params);
+				Message result = _svc.render(_t.getKey(), _t.getVersion(), _params);
 				assertEquals(RESULT, result);
 			}
 			

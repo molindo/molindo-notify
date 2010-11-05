@@ -16,15 +16,17 @@
 
 package at.molindo.notify.dispatch;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.reportMatcher;
 
 import java.util.Date;
 import java.util.Map;
 
+import org.easymock.IArgumentMatcher;
 import org.junit.Test;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import at.molindo.notify.INotificationService.IErrorListener;
 import at.molindo.notify.channel.IPushChannel;
@@ -32,22 +34,27 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationsDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.PollingPushDispatcher.Polling;
+import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences;
+import at.molindo.notify.model.PushState;
 import at.molindo.notify.render.IRenderService;
+import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class PollingPushDispatcherTest {
 
 	private static final String CHANNEL_ID = "dummy";
 	private static final String USERID = "JohnDoe";
-	private static final String MSG = "this is a test";
 	private static final Date START = new Date();
 
 	private static Notification n() {
@@ -55,6 +62,7 @@ public class PollingPushDispatcherTest {
 
 		n.setUserId(USERID);
 		n.setDate(START);
+		n.setPushScheduled(START);
 		n.setKey("test");
 		n.setType(Type.PRIVATE);
 		n.setParams(new Params().set(Param.p("test", String.class), "this is a test"));
@@ -75,9 +83,13 @@ public class PollingPushDispatcherTest {
 	
 	}
 
+	private static Message m() throws RenderException {
+		return Message.parse("Subject: Test\n\nThis is a test", IRenderService.Type.TEXT);
+	}
+	
 	private abstract class PollingPushDispatcherMockTest extends MockTest {
 		PollingPushDispatcher dispatcher;
-		PushException ex = new IPushChannel.PushException();
+		PushException ex = new IPushChannel.PushException(true);
 		
 		@Override
 		protected void setup(EasyMockContext context) throws Exception {
@@ -104,16 +116,45 @@ public class PollingPushDispatcherTest {
 				super.setup(context);
 				
 				expect(context.get(INotificationsDAO.class).getNext()).andReturn(n());
+				
 				expect(context.get(IPreferencesDAO.class).getPreferences(n().getUserId())).andReturn(p());
 				expect(context.get(IPushChannel.class).getId()).andReturn(CHANNEL_ID);
 				expect(context.get(IPushChannel.class).isConfigured(anyObject(PushChannelPreferences.class))).andReturn(true);
 				expect(context.get(IPushChannel.class).getNotificationTypes()).andReturn(Type.TYPES_ALL);
 				
-				expect(context.get(IRenderService.class).render(eq(n().getKey()), anyObject(Version.class), anyObject(Params.class))).andReturn(MSG);
+				expect(context.get(IRenderService.class).render(eq(n().getKey()), anyObject(Version.class), anyObject(Params.class))).andReturn(m());
 				
-				context.get(IPushChannel.class).push(eq(MSG), anyObject(PushChannelPreferences.class));
+				context.get(IPushChannel.class).push(eq(m()), anyObject(PushChannelPreferences.class));
 				expectLastCall().andThrow(ex);
 
+				reportMatcher(new IArgumentMatcher() {
+					
+					@Override
+					public boolean matches(Object argument) {
+						Notification n = (Notification) argument;
+						
+						if (n.getPushErrors() != 1) {
+							return false;
+						}
+
+						if (n.getPushState() != PushState.QUEUED) {
+							return false;
+						}
+						
+						if (!n.getPushScheduled().after(n().getPushScheduled())) {
+							return false;
+						}
+						
+						return true;
+					}
+					
+					@Override
+					public void appendTo(StringBuffer buffer) {
+						buffer.append("rescheduling failed");
+					}
+				});
+				context.get(INotificationsDAO.class).update(null);
+				
 				context.get(IErrorListener.class).error(n(), context.get(IPushChannel.class), ex);
 			}
 
@@ -130,7 +171,7 @@ public class PollingPushDispatcherTest {
 	public void testIdle() throws Exception {
 		new PollingPushDispatcherMockTest() {
 
-			PushException ex = new IPushChannel.PushException();
+			PushException ex = new IPushChannel.PushException(true);
 			
 			@Override
 			protected void setup(EasyMockContext context) throws Exception {
