@@ -48,86 +48,96 @@ public class Notification {
 		return _userId;
 	}
 
-	public void setUserId(String userId) {
+	public Notification setUserId(String userId) {
 		_userId = userId;
+		return this;
 	}
 
 	public String getKey() {
 		return _key;
 	}
 
-	public void setKey(String key) {
+	public Notification setKey(String key) {
 		_key = key;
+		return this;
 	}
 
 	public Type getType() {
 		return _type;
 	}
 
-	public void setType(Type type) {
+	public Notification setType(Type type) {
 		_type = type;
+		return this;
 	}
 
 	public Date getDate() {
 		return _date;
 	}
 
-	public void setDate(Date date) {
+	public Notification setDate(Date date) {
 		_date = date;
+		return this;
 	}
 
 	public Params getParams() {
 		return _params;
 	}
 
-	public void setParams(Params params) {
+	public Notification setParams(Params params) {
 		_params = params;
+		return this;
 	}
 
 	public Confirmation getConfirmation() {
 		return _confirmation;
 	}
 
-	public void setConfirmation(Confirmation confirmation) {
+	public Notification setConfirmation(Confirmation confirmation) {
 		_confirmation = confirmation;
 		if (_confirmation != null && _confirmation.getNotification() != this) {
 			_confirmation.setNotification(this);
 		}
+		return this;
 	}
 
 	public PushState getPushState() {
 		return _pushState;
 	}
 
-	public void setPushState(PushState pushState) {
+	public Notification setPushState(PushState pushState) {
 		if (pushState == null) {
 			throw new NullPointerException("pushState");
 		}
 		_pushState = pushState;
+		return this;
 	}
 
 	public Date getPushScheduled() {
 		return _pushScheduled;
 	}
 
-	public void setPushScheduled(Date pushScheduled) {
+	public Notification setPushScheduled(Date pushScheduled) {
 		_pushScheduled = pushScheduled;
+		return this;
 	}
 
 	public Date getPushDate() {
 		return _pushDate;
 	}
 
-	public void setPushDate(Date pushDate) {
+	public Notification setPushDate(Date pushDate) {
 		_pushDate = pushDate;
+		return this;
 	}
 
 	public int getPushErrors() {
 		return _pushErrors;
 	}
 
-	void setPushErrors(int pushErrors) {
+	Notification setPushErrors(int pushErrors) {
 		_pushErrors = pushErrors;
+		return this;
 	}
 
 	/**

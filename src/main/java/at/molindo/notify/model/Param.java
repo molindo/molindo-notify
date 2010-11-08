@@ -16,6 +16,8 @@
 
 package at.molindo.notify.model;
 
+import java.net.URL;
+
 import at.molindo.utils.data.StringUtils;
 
 public class Param<T> {
@@ -23,6 +25,38 @@ public class Param<T> {
 	private String _name;
 	private Class<T> _type;
 
+	public static Param<String> pString(String name) {
+		return p(name, String.class);
+	}
+	
+	public static Param<Integer> pInteger(String name) {
+		return p(name, Integer.class);
+	}
+	
+	public static Param<Long> pLong(String name) {
+		return p(name, Long.class);
+	}
+	
+	public static Param<Double> pDouble(String name) {
+		return p(name, Double.class);
+	}
+	
+	public static Param<Float> pFloat(String name) {
+		return p(name, Float.class);
+	}
+	
+	public static Param<Boolean> pBoolean(String name) {
+		return p(name, Boolean.class);
+	}
+	
+	public static Param<Character> pCharacter(String name) {
+		return p(name, Character.class);
+	}
+	
+	public static Param<URL> pURL(String name) {
+		return p(name, URL.class);
+	}
+	
 	public static <T> Param<T> p(String name, Class<T> type) {
 		return new Param<T>(name, type);
 	}

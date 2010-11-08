@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.dao;
+package at.molindo.notify.dao.dummy;
 
-import at.molindo.notify.model.Preferences;
+public class DummyUtils {
 
-public interface IPreferencesDAO {
-
-	Preferences getPreferences(String userId);
-
-	void savePreferences(Preferences prefs);
-
-	void removePreferences(String userId);
+	public static final String USER_ID = "JohnDoe";
+	public static final String KEY = "test";
+	
+	private DummyUtils() {}
+	
 }

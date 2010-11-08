@@ -16,13 +16,29 @@
 
 package at.molindo.notify.dao;
 
-import at.molindo.notify.model.Preferences;
+import java.util.List;
+import java.util.Set;
 
-public interface IPreferencesDAO {
+import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.Notification.Type;
 
-	Preferences getPreferences(String userId);
+public interface INotificationDAO {
 
-	void savePreferences(Preferences prefs);
+	void save(Notification notification);
 
-	void removePreferences(String userId);
+	void update(Notification notification);
+
+	void delete(Notification notification);
+
+	/**
+	 * @return next notification from push queue
+	 */
+	Notification getNext();
+
+	/**
+	 * @return recent notifications for userId (pull)
+	 */
+	List<Notification> getRecent(String userId, Set<Type> types, int first,
+			int count);
+
 }

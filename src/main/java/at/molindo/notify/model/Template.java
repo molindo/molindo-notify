@@ -31,50 +31,59 @@ public class Template implements Cloneable {
 	private Locale _locale;
 	private String _content;
 
+	public Template() {
+		
+	}
+	
 	public String getKey() {
 		return _key;
 	}
 
-	public void setKey(String key) {
+	public Template setKey(String key) {
 		_key = key;
+		return this;
 	}
 
 	public Type getType() {
 		return _type;
 	}
 
-	public void setType(Type type) {
+	public Template setType(Type type) {
 		if (type == null) {
 			throw new NullPointerException("type");
 		}
 		_type = type;
+		return this;
 	}
 
 	public Version getVersion() {
 		return _version;
 	}
 
-	public void setVersion(Version version) {
+	public Template setVersion(Version version) {
 		if (version == null) {
 			throw new NullPointerException("version");
 		}
 		_version = version;
+		return this;
 	}
 
 	public String getContent() {
 		return _content;
 	}
 
-	public void setContent(String content) {
+	public Template setContent(String content) {
 		_content = content;
+		return this;
 	}
 
 	public Date getLastModified() {
 		return _lastModified;
 	}
 
-	public void setLastModified(Date lastModified) {
+	public Template setLastModified(Date lastModified) {
 		_lastModified = lastModified;
+		return this;
 	}
 
 	public Key key() {
@@ -86,8 +95,9 @@ public class Template implements Cloneable {
 		return _locale;
 	}
 
-	public void setLocale(Locale locale) {
+	public Template setLocale(Locale locale) {
 		_locale = locale;
+		return this;
 	}
 
 	@Override
@@ -193,7 +203,7 @@ public class Template implements Cloneable {
 	}
 
 	@Override
-	protected Template clone() {
+	public Template clone() {
 		try {
 			Template t = (Template) super.clone();
 			if (_lastModified != null)

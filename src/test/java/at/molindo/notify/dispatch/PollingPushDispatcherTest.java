@@ -31,7 +31,7 @@ import org.junit.Test;
 import at.molindo.notify.INotificationService.IErrorListener;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
-import at.molindo.notify.dao.INotificationsDAO;
+import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.PollingPushDispatcher.Polling;
 import at.molindo.notify.model.Message;
@@ -100,8 +100,8 @@ public class PollingPushDispatcherTest {
 			dispatcher.setPoolSize(1);
 			dispatcher.setErrorListener(context.create(IErrorListener.class));
 			dispatcher.setRenderService(context.create(IRenderService.class));
-			dispatcher.setNotificationsDAO(context
-					.create(INotificationsDAO.class));
+			dispatcher.setNotificationDAO(context
+					.create(INotificationDAO.class));
 			dispatcher.setPreferencesDAO(context.create(IPreferencesDAO.class));
 			dispatcher.setPushChannels(Sets.newHashSet(context
 					.create(IPushChannel.class)));
@@ -117,7 +117,7 @@ public class PollingPushDispatcherTest {
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
 
-				expect(context.get(INotificationsDAO.class).getNext())
+				expect(context.get(INotificationDAO.class).getNext())
 						.andReturn(n());
 
 				expect(
@@ -167,7 +167,7 @@ public class PollingPushDispatcherTest {
 						buffer.append("rescheduling failed");
 					}
 				});
-				context.get(INotificationsDAO.class).update(null);
+				context.get(INotificationDAO.class).update(null);
 
 				context.get(IErrorListener.class).error(n(),
 						context.get(IPushChannel.class), ex);
@@ -192,7 +192,7 @@ public class PollingPushDispatcherTest {
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
 
-				expect(context.get(INotificationsDAO.class).getNext())
+				expect(context.get(INotificationDAO.class).getNext())
 						.andReturn(null);
 
 				// verify delay

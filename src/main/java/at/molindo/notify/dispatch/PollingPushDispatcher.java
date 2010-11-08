@@ -18,6 +18,7 @@ package at.molindo.notify.dispatch;
 
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -25,11 +26,12 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
+import at.molindo.notify.INotificationService;
 import at.molindo.notify.INotificationService.IErrorListener;
 import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
-import at.molindo.notify.dao.INotificationsDAO;
+import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
@@ -39,7 +41,6 @@ import at.molindo.notify.model.PushState;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.util.NotifyUtils;
-import at.molindo.utils.concurrent.FactoryBlockingQueue;
 
 public class PollingPushDispatcher implements IPushDispatcher,
 		InitializingBean, DisposableBean {
@@ -47,14 +48,15 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(PollingPushDispatcher.class);
 
-	private static final int DEFAULT_POOL_SIZE = 3;
+	private static final int DEFAULT_POOL_SIZE = 1;
 	private static final int DEFAULT_MAX_ERROR = 3;
 
 	private int _poolSize = DEFAULT_POOL_SIZE;
 
+	private INotificationService _notificationService;
 	private IRenderService _renderService;
 
-	private INotificationsDAO _notificationsDAO;
+	private INotificationDAO _notificationDAO;
 	private IPreferencesDAO _preferencesDAO;
 
 	private Set<IPushChannel> _pushChannels = new CopyOnWriteArraySet<IPushChannel>();
@@ -75,19 +77,38 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		if (_pushChannels.size() == 0) {
 			throw new IllegalStateException("no push channels configured");
 		}
-
+		if (_renderService == null) {
+			throw new IllegalStateException("no renderService configured");
+		}
+		if (_notificationDAO == null) {
+			throw new IllegalStateException("no notificationDAO configured");
+		}
+		if (_preferencesDAO == null) {
+			throw new IllegalStateException("no preferencesDAO configured");
+		}
+		
 		_executor = new ThreadPoolExecutor(_poolSize, _poolSize, 3,
-				TimeUnit.MINUTES, new FactoryBlockingQueue<Runnable>() {
+				TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(1)) {
 
 					@Override
-					protected Runnable create() {
-						return new Polling();
+					protected void afterExecute(Runnable r, Throwable t) {
+						if (!isShutdown()) {
+							execute(new Polling());
+						}
 					}
-				});
+			
+		};
+		for (int i = 0; i < _poolSize; i++) {
+			_executor.execute(new Polling());
+		}
+		
+		_notificationService.addNotificationListener(this);
 	}
 
 	@Override
 	public void destroy() {
+		_notificationService.removeNotificationListener(this);
+		
 		_executor.shutdown();
 
 		synchronized (_wait) {
@@ -206,8 +227,8 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		_renderService = renderService;
 	}
 
-	public void setNotificationsDAO(INotificationsDAO notificationsDAO) {
-		_notificationsDAO = notificationsDAO;
+	public void setNotificationDAO(INotificationDAO notificationDAO) {
+		_notificationDAO = notificationDAO;
 	}
 
 	public void setPreferencesDAO(IPreferencesDAO preferencesDAO) {
@@ -221,7 +242,8 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	class Polling implements Runnable {
 		@Override
 		public void run() {
-			Notification notification = _notificationsDAO.getNext();
+			// FIXME don't push notification with multiple threads at once!!
+			Notification notification = _notificationDAO.getNext();
 			if (notification != null) {
 				recordPushAttempt(notification, push(new DispatchConf(
 						notification)));
@@ -286,7 +308,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 
 		}
 
-		_notificationsDAO.update(notification);
+		_notificationDAO.update(notification);
 
 	}
 
@@ -305,5 +327,13 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		default:
 			return 259200000; // 3 days
 		}
+	}
+
+	public void setMaxErrorCount(int maxErrorCount) {
+		_maxErrorCount = maxErrorCount;
+	}
+
+	public void setNotificationService(INotificationService notificationService) {
+		_notificationService = notificationService;
 	}
 }

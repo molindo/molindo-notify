@@ -18,15 +18,27 @@ package at.molindo.notify.render;
 
 import java.util.List;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import at.molindo.notify.dao.ITemplateDAO;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Template;
 
-public class TemplateRenderService implements IRenderService {
+public class TemplateRenderService implements IRenderService, InitializingBean {
 
 	private ITemplateDAO _templateDAO;
 	private ITemplateRenderer _renderer;
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		if (_renderer == null) {
+			throw new Exception("renderer not configured");
+		}
+		if (_templateDAO == null) {
+			throw new Exception("templateDAO not configured");
+		}
+	}
 
 	@Override
 	public Message render(String key, Version version, Params params)

@@ -20,19 +20,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import at.molindo.notify.channel.IPullChannel;
-import at.molindo.notify.dao.INotificationsDAO;
-import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.Notification;
-import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
-import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
-import at.molindo.notify.render.IRenderService.Version;
-import at.molindo.notify.util.NotifyUtils;
 
 import com.google.common.collect.Lists;
 import com.sun.syndication.feed.WireFeed;
@@ -42,56 +33,32 @@ import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Person;
 import com.sun.syndication.io.FeedException;
 
-public abstract class AbstractFeedChannel implements IPullChannel {
+public abstract class AbstractFeedChannel extends AbstractPullChannel {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(AbstractFeedChannel.class);
 
-	public static final Param<Integer> AMOUNT = Param
-			.p("amount", Integer.class);
-
-	public static final int MAX_AMOUNT = 100;
-	public static final int DEFAULT_AMOUNT = 25;
-
-	private Integer _defaultAmount = DEFAULT_AMOUNT;
-
-	private INotificationsDAO _notificationsDAO;
-	private IPreferencesDAO _preferencesDAO;
-	private IRenderService _renderService;
 	private String _authorName;
 
 	@Override
-	public String pull(String userId, ChannelPreferences cPrefs)
-			throws PullException {
-
-		Preferences prefs = _preferencesDAO.getPreferences(userId);
-
-		int amount = cPrefs.getParams().get(AMOUNT);
-
-		List<Notification> notifications = _notificationsDAO.getRecent(userId,
-				getNotificationTypes(), 0, amount);
-		if (notifications.size() == 0) {
-			throw new PullException("no notifications found");
-		}
-
+	protected String pull(List<Message> messages, Date lastModified,
+			ChannelPreferences cPrefs, Preferences prefs) throws PullException {
+		
 		try {
-			WireFeed feed = toFeed(notifications, prefs, cPrefs);
-			return FeedUtils.toFeedXml(feed);
+			return FeedUtils.toFeedXml(toFeed(messages, lastModified, prefs, cPrefs));
 		} catch (FeedException e) {
 			throw new PullException("failed to serialize feed", e);
 		} catch (RenderException e) {
 			log.info("failed to render feed", e);
 			return null;
 		}
-
 	}
 
-	public WireFeed toFeed(List<Notification> notifications, Preferences prefs,
+	public WireFeed toFeed(List<Message> messages, Date lastModified, Preferences prefs,
 			ChannelPreferences cPrefs) throws RenderException {
 		final Feed f = new Feed("atom_1.0");
-		f.setTitle("TODO title");
 
-		final Date lastModified = notifications.iterator().next().getDate();
+		f.setTitle("TODO title");
 		f.setUpdated(lastModified == null ? new Date() : lastModified);
 
 		Person author = new Person();
@@ -101,12 +68,9 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 
 		final List<Entry> entries = Lists.newArrayList();
 
-		for (final Notification notification : notifications) {
+		for (final Message msg : messages) {
 			final Entry e = new Entry();
 			final Content c = new Content();
-
-			Message msg = NotifyUtils.render(_renderService, notification,
-					prefs, cPrefs);
 
 			c.setType("text/html");
 			c.setValue(msg.getHtml());
@@ -121,25 +85,9 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 	}
 
 	@Override
-	public ChannelPreferences newDefaultPreferences() {
-		ChannelPreferences prefs = new FeedChannelPreferences(new Params().set(
-				AMOUNT, _defaultAmount));
-		prefs.setVersion(Version.LONG);
-		return prefs;
-	}
-
-	@Override
 	public boolean isConfigured(ChannelPreferences prefs) {
 		// TODO validation
-		return prefs.getParams().containsAll(AbstractFeedChannel.AMOUNT);
-	}
-
-	public Integer getDefaultAmount() {
-		return _defaultAmount;
-	}
-
-	public void setDefaultAmount(Integer defaultAmount) {
-		_defaultAmount = defaultAmount;
+		return super.isConfigured(prefs);
 	}
 
 	public String getAuthorName() {
@@ -148,18 +96,6 @@ public abstract class AbstractFeedChannel implements IPullChannel {
 
 	public void setAuthorName(String authorName) {
 		_authorName = authorName;
-	}
-
-	public void setNotificationsDAO(INotificationsDAO notificationsDAO) {
-		_notificationsDAO = notificationsDAO;
-	}
-
-	public void setPreferencesDAO(IPreferencesDAO preferencesDAO) {
-		_preferencesDAO = preferencesDAO;
-	}
-
-	public void setRenderService(IRenderService renderService) {
-		_renderService = renderService;
 	}
 
 }

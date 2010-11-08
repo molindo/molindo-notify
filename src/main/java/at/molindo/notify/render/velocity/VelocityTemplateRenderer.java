@@ -27,6 +27,7 @@ import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeInstance;
 import org.apache.velocity.runtime.RuntimeServices;
 import org.apache.velocity.runtime.parser.ParseException;
@@ -40,21 +41,33 @@ import at.molindo.notify.render.ITemplateRenderer;
 
 import com.google.common.collect.MapMaker;
 
-public class VelocityTemplateRenderer implements ITemplateRenderer,
-		InitializingBean {
+public class VelocityTemplateRenderer implements ITemplateRenderer, InitializingBean {
 
 	private Map<Template.Key, org.apache.velocity.Template> _templateCache = new MapMaker()
 			.expiration(1, TimeUnit.HOURS).concurrencyLevel(4).makeMap();
 
 	private RuntimeServices _runtime = new RuntimeInstance();
 
+	public VelocityTemplateRenderer () {
+
+	}
+
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public final void afterPropertiesSet() throws Exception {
+		init();
+	}
+	
+	public VelocityTemplateRenderer init() throws Exception {
+		_runtime = new RuntimeInstance();
+		_runtime.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, new SLF4JLogChute());
+		_runtime.init();
+		return this;
 	}
 
 	@Override
 	public String render(Template template, Params params)
 			throws RenderException {
+		
 		try {
 			StringWriter writer = new StringWriter();
 			getVelocityTemplate(template).merge(buildContext(params), writer);

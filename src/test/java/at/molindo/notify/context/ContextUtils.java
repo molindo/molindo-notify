@@ -14,31 +14,15 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.dao;
+package at.molindo.notify.context;
 
-import java.util.List;
-import java.util.Set;
-
-import at.molindo.notify.model.Notification;
-import at.molindo.notify.model.Notification.Type;
-
-public interface INotificationsDAO {
-
-	void save(Notification notification);
-
-	void update(Notification notification);
-
-	void delete(Notification notification);
-
-	/**
-	 * @return next notification from push queue
-	 */
-	Notification getNext();
-
-	/**
-	 * @return recent notifications for userId (pull)
-	 */
-	List<Notification> getRecent(String userId, Set<Type> types, int first,
-			int count);
-
+public class ContextUtils {
+	
+	public static final String ROOT = "/at/molindo/notify/context";
+	public static final String MAIN = ROOT + "/main.xml";
+	public static final String CHANNELS = ROOT + "/channels.xml";
+	public static final String DAOS = ROOT + "/daos.xml";
+	public static final String RENDER = ROOT + "/render.xml";
+	
+	private ContextUtils() {};
 }

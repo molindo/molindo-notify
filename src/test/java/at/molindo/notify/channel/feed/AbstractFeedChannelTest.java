@@ -24,12 +24,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 
-import at.molindo.notify.dao.INotificationsDAO;
+import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
@@ -47,6 +48,8 @@ import at.molindo.notify.test.util.MockTest;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.sun.syndication.feed.WireFeed;
+import com.sun.syndication.feed.atom.Content;
+import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Feed;
 
 public class AbstractFeedChannelTest {
@@ -108,7 +111,7 @@ public class AbstractFeedChannelTest {
 						context.get(IPreferencesDAO.class).getPreferences(
 								USER_ID)).andReturn(p());
 				expect(
-						context.get(INotificationsDAO.class).getRecent(USER_ID,
+						context.get(INotificationDAO.class).getRecent(USER_ID,
 								Type.TYPES_ALL, 0, 20)).andReturn(n());
 				expect(
 						context.get(IRenderService.class).render(
@@ -136,18 +139,28 @@ public class AbstractFeedChannelTest {
 			@Override
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
-				expect(
-						context.get(IRenderService.class).render(
-								eq(NOTIFICATION_KEY), same(Version.LONG),
-								anyObject(Params.class))).andReturn(m());
 			}
 
 			@Override
 			protected void test(EasyMockContext context) throws Exception {
-				WireFeed f = c.toFeed(n(), p(), c.newDefaultPreferences());
+				WireFeed f = c.toFeed(Arrays.asList(m()), null, p(), c.newDefaultPreferences());
 				assertNotNull(f);
+				
 				assertTrue(f instanceof Feed);
-				assertEquals(1, ((Feed) f).getEntries().size());
+				Feed feed = (Feed) f;
+				
+				assertEquals(1, feed.getEntries().size());
+				assertTrue(feed.getEntries().get(0) instanceof Entry);
+				Entry entry = (Entry)feed.getEntries().get(0);
+				
+				assertEquals(1, entry.getContents().size());
+				assertTrue(entry.getContents().get(0) instanceof Content);
+				Content content = (Content)entry.getContents().get(0);
+				
+				assertEquals(m().getSubject(), entry.getTitle());
+				assertEquals("text/html", content.getType());
+				assertEquals(m().getHtml(), content.getValue());
+				
 			}
 		}.run();
 	}
@@ -173,7 +186,7 @@ public class AbstractFeedChannelTest {
 		@Override
 		protected void setup(EasyMockContext context) throws Exception {
 			c = c();
-			c.setNotificationsDAO(context.create(INotificationsDAO.class));
+			c.setNotificationDAO(context.create(INotificationDAO.class));
 			c.setPreferencesDAO(context.create(IPreferencesDAO.class));
 			c.setRenderService(context.create(IRenderService.class));
 		}

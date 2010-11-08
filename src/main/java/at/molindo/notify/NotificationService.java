@@ -16,12 +16,13 @@
 
 package at.molindo.notify;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
-import at.molindo.notify.dao.INotificationsDAO;
+import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.IPushDispatcher;
 import at.molindo.notify.model.Confirmation;
@@ -32,14 +33,14 @@ public class NotificationService implements INotificationService,
 		INotificationService.IErrorListener {
 
 	private IPreferencesDAO _preferencesDAO;
-	private INotificationsDAO _notificationDAO;
+	private INotificationDAO _notificationDAO;
 
 	private Set<IErrorListener> _errorListeners = new CopyOnWriteArraySet<IErrorListener>();
 	private Set<INotificationListner> _notificationListeners = new CopyOnWriteArraySet<INotificationListner>();
 
 	private IPushDispatcher _instantDispatcher;
 
-	private Preferences _defaultPreferences;
+	private Preferences _defaultPreferences = new Preferences();
 
 	@Override
 	public Preferences getPreferences(String userId) {
@@ -112,6 +113,11 @@ public class NotificationService implements INotificationService,
 		_errorListeners.remove(listener);
 	}
 
+	public void setNotificationListeners(Collection<? extends INotificationListner> listeners) {
+		_notificationListeners.clear();
+		_notificationListeners.addAll(listeners);
+	}
+	
 	@Override
 	public void addNotificationListener(INotificationListner listner) {
 		_notificationListeners.add(listner);
@@ -126,4 +132,17 @@ public class NotificationService implements INotificationService,
 		_instantDispatcher = instantDispatcher;
 	}
 
+	public void setPreferencesDAO(IPreferencesDAO preferencesDAO) {
+		_preferencesDAO = preferencesDAO;
+	}
+
+	public void setNotificationDAO(INotificationDAO notificationDAO) {
+		_notificationDAO = notificationDAO;
+	}
+
+	public void setDefaultPreferences(Preferences defaultPreferences) {
+		_defaultPreferences = defaultPreferences;
+	}
+
+	
 }

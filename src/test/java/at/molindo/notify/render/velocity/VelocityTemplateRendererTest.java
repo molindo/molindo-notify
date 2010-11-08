@@ -25,13 +25,12 @@ import org.junit.Test;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Template;
-import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 
 public class VelocityTemplateRendererTest {
 
-	public static VelocityTemplateRenderer r() {
-		return new VelocityTemplateRenderer();
+	public static VelocityTemplateRenderer r() throws Exception {
+		return new VelocityTemplateRenderer().init();
 	}
 
 	public static Template t() {
@@ -44,7 +43,7 @@ public class VelocityTemplateRendererTest {
 	}
 
 	@Test
-	public void testRenderTemplateParams() throws RenderException {
+	public void testRenderTemplateParams() throws Exception {
 		Template t = t();
 		VelocityTemplateRenderer r = r();
 

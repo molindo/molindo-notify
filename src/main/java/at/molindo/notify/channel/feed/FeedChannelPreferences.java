@@ -16,8 +16,8 @@
 
 package at.molindo.notify.channel.feed;
 
-import static at.molindo.notify.channel.feed.AbstractFeedChannel.AMOUNT;
-import static at.molindo.notify.channel.feed.AbstractFeedChannel.MAX_AMOUNT;
+import static at.molindo.notify.channel.feed.AbstractPullChannel.AMOUNT;
+import static at.molindo.notify.channel.feed.AbstractPullChannel.MAX_AMOUNT;
 import at.molindo.notify.INotificationService;
 import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.model.ChannelPreferences;

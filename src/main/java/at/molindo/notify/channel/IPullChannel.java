@@ -21,7 +21,7 @@ import at.molindo.notify.model.ChannelPreferences;
 
 public interface IPullChannel extends IChannel {
 
-	String pull(String userId, ChannelPreferences prefs) throws PullException;
+	String pull(String userId, ChannelPreferences cPrefs) throws PullException;
 
 	public class PullException extends NotifyException {
 

@@ -72,6 +72,10 @@ public abstract class AbstractMailClient implements IMailClient,
 	}
 
 	public AbstractMailClient init() throws MailException {
+		if (_from == null) {
+			throw new MailException("from address is not configured", true);
+		}
+		
 		return this;
 	}
 

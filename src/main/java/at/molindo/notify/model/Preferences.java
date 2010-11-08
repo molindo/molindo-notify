@@ -33,24 +33,33 @@ public class Preferences implements Cloneable {
 		return _userId;
 	}
 
-	public void setUserId(String userId) {
+	public Preferences setUserId(String userId) {
 		_userId = userId;
+		return this;
 	}
 
 	public Map<String, PushChannelPreferences> getChannelPrefs() {
 		return _channelPrefs;
 	}
 
-	public void setChannelPrefs(Map<String, PushChannelPreferences> channelPrefs) {
-		_channelPrefs = channelPrefs;
+	public Preferences setChannelPrefs(Map<String, PushChannelPreferences> channelPrefs) {
+		_channelPrefs.clear();
+		_channelPrefs.putAll(channelPrefs);
+		return this;
 	}
 
+	public Preferences addChannelPrefs(String channelId, PushChannelPreferences cPrefs) {
+		_channelPrefs.put(channelId, cPrefs);
+		return this;
+	}
+	
 	public Params getParams() {
 		return _params;
 	}
 
-	public void setParams(Params params) {
+	public Preferences setParams(Params params) {
 		_params = params;
+		return this;
 	}
 
 	@Override
