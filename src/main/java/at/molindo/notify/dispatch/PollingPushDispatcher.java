@@ -202,7 +202,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			return false;
 		}
 
-		if (!channel.isConfigured(prefs)) {
+		if (!channel.isConfigured(dc.notification.getUserId(), prefs)) {
 			// prefs not complete, e.g. recipient address missing
 			return false;
 		}

@@ -99,7 +99,7 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	}
 
 	@Override
-	public boolean isConfigured(ChannelPreferences prefs) {
+	public boolean isConfigured(String userId, ChannelPreferences prefs) {
 		return prefs.getParams().containsAll(RECIPIENT);
 	}
 

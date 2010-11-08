@@ -18,6 +18,8 @@ package at.molindo.notify.servlet;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,11 +31,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Maps;
+
 import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.channel.IPullChannel.PullException;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
+import at.molindo.notify.model.Notification.Type;
 import at.molindo.utils.data.StringUtils;
 
 public class NotifyFilter implements Filter {
@@ -41,10 +46,43 @@ public class NotifyFilter implements Filter {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
 			.getLogger(NotifyFilter.class);
 
-	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class
-			.getName() + ".channel";
+	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName()
+			+ ".channel";
+	
+	private static final Pattern PATTERN = Pattern.compile("^/([^/?]+)/([^/?]+).*$");
+	
 	private ServletContext _context;
 
+	public static void addChannel(IPullChannel channel, ServletContext context) {
+		if (channel == null) {
+			throw new NullPointerException("channel");
+		}
+		if (context == null) {
+			throw new NullPointerException("context");
+		}
+		
+		PullChannels channels = (PullChannels) context.getAttribute(ATTRIBUTE_CHANNEL);
+		if (channels == null) {
+			context.setAttribute(ATTRIBUTE_CHANNEL, new PullChannels(channel));
+		} else {
+			channels.add(channel);
+		}
+	}
+	
+	public static void removeChannel(IPullChannel channel, ServletContext context) {
+		if (channel == null) {
+			throw new NullPointerException("channel");
+		}
+		if (context == null) {
+			throw new NullPointerException("context");
+		}
+		
+		PullChannels channels = (PullChannels) context.getAttribute(ATTRIBUTE_CHANNEL);
+		if (channels != null) {
+			channels.remove(channel);
+		}
+	}
+	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		_context = filterConfig.getServletContext();
@@ -57,18 +95,34 @@ public class NotifyFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
 
-		// TODO get channelId and userId from request
-		String channelId = "feed-public";
-		String userId = "JohnDoe";
+		String path = StringUtils.afterFirst(req.getRequestURI(), req.getServletPath());
+		if (path == null) {
+			resp.sendError(404);
+			return;
+		}
 
-		IPullChannel channel = getChannel(channelId);
+		Matcher m = PATTERN.matcher(path);
+		if (!m.matches()) {
+			resp.sendError(404);
+			return;
+		}
+		
+		String channelId = m.group(1);
+		String userId = m.group(2);
+
 		if (StringUtils.empty(userId) || StringUtils.empty(channelId)) {
 			resp.sendError(404);
 			return;
 		}
 
+		
+		IPullChannel channel = getChannel(channelId);
+		if (channel == null) {
+			resp.sendError(404);
+			return;
+		}
+		
 		ChannelPreferences prefs = channel.newDefaultPreferences();
-
 		if (prefs instanceof IRequestConfigurable) {
 			try {
 				Map<?, ?> queryParams = req.getParameterMap();
@@ -88,7 +142,9 @@ public class NotifyFilter implements Filter {
 			}
 		}
 
-		if (channel.isConfigured(prefs)) {
+		if (channel.getNotificationTypes().contains(Type.PRIVATE) && !channel.isAuthorized(userId, prefs)) {
+			resp.sendError(403);
+		} else if (channel.isConfigured(userId, prefs)) {
 			try {
 				String output = channel.pull(userId, prefs);
 				if (StringUtils.empty(output)) {
@@ -107,24 +163,46 @@ public class NotifyFilter implements Filter {
 
 	private IPullChannel getChannel(String channelId) {
 
-		Object attr = _context.getAttribute(ATTRIBUTE_CHANNEL);
-		if (attr instanceof IPullChannel) {
-			IPullChannel c = (IPullChannel) attr;
-			return channelId.equals(c.getId()) ? c : null;
-		} else if (attr instanceof Iterable<?>) {
-			for (Object o : (Iterable<?>) attr) {
-				if (o instanceof IPullChannel) {
-					IPullChannel c = (IPullChannel) o;
-					return channelId.equals(c.getId()) ? c : null;
-				}
-			}
+		PullChannels channels = (PullChannels) _context.getAttribute(ATTRIBUTE_CHANNEL);
+		if (channels == null) {
+			return null;
 		}
-		return null;
+		
+		return channels.get(channelId);
 	}
 
 	@Override
 	public void destroy() {
-		_context = null;
+		if (_context != null) {
+			_context = null;
+		}
 	}
 
+	private static class PullChannels {
+		
+		private Map<String, IPullChannel> _channels = Maps.newHashMap();
+		
+		public PullChannels(IPullChannel channel) {
+			add(channel);
+		}
+
+		public IPullChannel get(String channelId) {
+			return _channels.get(channelId);
+		}
+
+		public void add(IPullChannel channel) {
+			IPullChannel current = _channels.get(channel.getId());
+			if (current == null) {
+				_channels.put(channel.getId(), channel);
+			} else if (current != channel) {
+				throw new IllegalStateException("duplicate id: " + channel.getId());
+			}
+		}
+		
+		public void remove(IPullChannel channel) {
+			if (_channels.get(channel.getId()) == channel) {
+				_channels.remove(channel);
+			}
+		}
+	}
 }

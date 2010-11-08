@@ -44,7 +44,7 @@ public class ContextTest extends AbstractJUnit4SpringContextTests {
 		_svc.confirmNow(new Notification().setUserId(DummyUtils.USER_ID)
 				.setKey(DummyUtils.KEY)
 				.setParams(new Params().set(Param.pString("word"), "Test")));
-		
+	
 	}
 	
 }

@@ -126,7 +126,7 @@ public class PollingPushDispatcherTest {
 				expect(context.get(IPushChannel.class).getId()).andReturn(
 						CHANNEL_ID);
 				expect(
-						context.get(IPushChannel.class).isConfigured(
+						context.get(IPushChannel.class).isConfigured(eq(USERID), 
 								anyObject(PushChannelPreferences.class)))
 						.andReturn(true);
 				expect(context.get(IPushChannel.class).getNotificationTypes())

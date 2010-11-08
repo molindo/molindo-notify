@@ -16,36 +16,13 @@
 
 package at.molindo.notify.channel.feed;
 
-import static at.molindo.notify.channel.feed.AbstractPullChannel.AMOUNT;
-import static at.molindo.notify.channel.feed.AbstractPullChannel.MAX_AMOUNT;
-import at.molindo.notify.INotificationService;
-import at.molindo.notify.INotificationService.NotifyException;
-import at.molindo.notify.model.ChannelPreferences;
-import at.molindo.notify.model.IRequestConfigurable;
+import at.molindo.notify.model.ConfigurableChannelPreferences;
 import at.molindo.notify.model.Params;
 
-public final class FeedChannelPreferences extends ChannelPreferences implements
-		IRequestConfigurable {
+public final class FeedChannelPreferences extends ConfigurableChannelPreferences {
 
 	FeedChannelPreferences(Params defaults) {
 		super(defaults);
 	}
 
-	@Override
-	public void setParam(String name, String value) throws NotifyException {
-		try {
-			if (AMOUNT.getName().equals(name)) {
-				int amount = Integer.parseInt(value);
-				if (amount > 0 && amount <= MAX_AMOUNT) {
-					getParams().set(AbstractFeedChannel.AMOUNT, amount);
-				} else {
-					throw new INotificationService.NotifyException(
-							"illegal amount: " + amount);
-				}
-			}
-		} catch (NumberFormatException e) {
-			throw new INotificationService.NotifyException(
-					"can't convert value to Number: " + value, e);
-		}
-	}
 }

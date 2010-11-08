@@ -45,7 +45,7 @@ public class DummyChannel extends AbstractPullChannel implements IPushChannel, I
 	}
 
 	@Override
-	public boolean isConfigured(ChannelPreferences prefs) {
+	public boolean isConfigured(String userId, ChannelPreferences prefs) {
 		return true;
 	}
 

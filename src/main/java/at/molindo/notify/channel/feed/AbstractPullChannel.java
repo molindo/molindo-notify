@@ -32,6 +32,7 @@ import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.notify.util.NotifyUtils;
+import at.molindo.utils.data.StringUtils;
 
 import com.google.common.collect.Lists;
 
@@ -41,8 +42,8 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	private INotificationDAO _notificationDAO;
 	private IPreferencesDAO _preferencesDAO;
 
-	public static final Param<Integer> AMOUNT = Param
-			.p("amount", Integer.class);
+	public static final Param<String> SECRET = Param.pString("secret");
+	public static final Param<Integer> AMOUNT = Param.pInteger("amount");
 
 	public static final int MAX_AMOUNT = 100;
 	public static final int DEFAULT_AMOUNT = 25;
@@ -50,7 +51,19 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	private Integer _defaultAmount = DEFAULT_AMOUNT;
 
 	@Override
-	public boolean isConfigured(ChannelPreferences prefs) {
+	public boolean isAuthorized(String userId, ChannelPreferences cPrefs) {
+		Preferences p = _preferencesDAO.getPreferences(userId);
+		if (p == null) {
+			return false;
+		}
+		String prefSecret = p.getParams().get(SECRET);
+		String reqSecret = cPrefs.getParams().get(SECRET);
+		
+		return StringUtils.equals(prefSecret, reqSecret);
+	}
+
+	@Override
+	public boolean isConfigured(String userId, ChannelPreferences prefs) {
 		return prefs.getParams().containsAll(AbstractFeedChannel.AMOUNT);
 	}
 

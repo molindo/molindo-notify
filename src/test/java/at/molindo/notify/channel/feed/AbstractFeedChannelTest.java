@@ -171,13 +171,13 @@ public class AbstractFeedChannelTest {
 
 		assertTrue(p instanceof IRequestConfigurable);
 		// configured by default
-		assertTrue(c().isConfigured(p));
+		assertTrue(c().isConfigured(USER_ID, p));
 	}
 
 	@Test
 	public void testIsConfigured() {
 		ChannelPreferences p = c().newDefaultPreferences();
-		assertTrue(c().isConfigured(p));
+		assertTrue(c().isConfigured(USER_ID, p));
 	}
 
 	private abstract static class FeedMockTest extends MockTest {

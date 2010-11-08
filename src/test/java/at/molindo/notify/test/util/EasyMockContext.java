@@ -18,15 +18,17 @@ package at.molindo.notify.test.util;
 
 import java.util.Map;
 
-import org.easymock.EasyMock;
+import org.easymock.EasyMockSupport;
 
 import com.google.common.collect.Maps;
 
 public class EasyMockContext {
+	
+	private EasyMockSupport _support = new EasyMockSupport();
 	private Map<Class<?>, Object> _mocks = Maps.newHashMap();
 
 	public <T> T create(Class<T> cls) {
-		T mock = EasyMock.createMock(cls);
+		T mock = _support.createMock(cls);
 		if (_mocks.put(cls, mock) != null) {
 			throw new IllegalArgumentException("duplicate mock class " + cls);
 		}
@@ -42,10 +44,14 @@ public class EasyMockContext {
 	}
 
 	public void replay() {
-		EasyMock.replay(_mocks.values().toArray());
+		_support.replayAll();
 	}
 
 	public void verify() {
-		EasyMock.verify(_mocks.values().toArray());
+		_support.verifyAll();
+	}
+	
+	public void reset() {
+		_support.resetAll();
 	}
 }

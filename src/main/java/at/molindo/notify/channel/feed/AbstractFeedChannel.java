@@ -85,9 +85,9 @@ public abstract class AbstractFeedChannel extends AbstractPullChannel {
 	}
 
 	@Override
-	public boolean isConfigured(ChannelPreferences prefs) {
+	public boolean isConfigured(String userId, ChannelPreferences prefs) {
 		// TODO validation
-		return super.isConfigured(prefs);
+		return super.isConfigured(userId, prefs);
 	}
 
 	public String getAuthorName() {

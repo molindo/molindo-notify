@@ -37,6 +37,6 @@ public interface IChannel {
 	 * @param prefs
 	 * @return true if channel is sufficiently configured
 	 */
-	boolean isConfigured(ChannelPreferences prefs);
+	boolean isConfigured(String userId, ChannelPreferences prefs);
 
 }
