@@ -18,10 +18,12 @@ package at.molindo.notify.dao;
 
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import at.molindo.notify.model.Template;
 
 public interface ITemplateDAO {
 
-	List<Template> findTemplates(String key);
+	@Nonnull List<Template> findTemplates(@Nonnull String key);
 
 }

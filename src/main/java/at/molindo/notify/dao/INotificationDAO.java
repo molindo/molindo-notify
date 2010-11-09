@@ -19,16 +19,19 @@ package at.molindo.notify.dao;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 
 public interface INotificationDAO {
 
-	void save(Notification notification);
+	void save(@Nonnull Notification notification);
 
-	void update(Notification notification);
+	void update(@Nonnull Notification notification);
 
-	void delete(Notification notification);
+	void delete(@Nonnull Notification notification);
 
 	/**
 	 * @return next notification from push queue
@@ -38,7 +41,7 @@ public interface INotificationDAO {
 	/**
 	 * @return recent notifications for userId (pull)
 	 */
-	List<Notification> getRecent(String userId, Set<Type> types, int first,
-			int count);
+	@Nonnull List<Notification> getRecent(@Nonnull String userId, @Nonnull Set<Type> types, @Nonnegative int first,
+			@Nonnegative int count);
 
 }

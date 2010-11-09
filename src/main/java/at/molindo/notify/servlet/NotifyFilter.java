@@ -31,8 +31,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.collect.Maps;
-
 import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.channel.IPullChannel.PullException;
@@ -40,6 +38,8 @@ import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.utils.data.StringUtils;
+
+import com.google.common.collect.Maps;
 
 public class NotifyFilter implements Filter {
 
@@ -201,7 +201,7 @@ public class NotifyFilter implements Filter {
 		
 		public void remove(IPullChannel channel) {
 			if (_channels.get(channel.getId()) == channel) {
-				_channels.remove(channel);
+				_channels.remove(channel.getId());
 			}
 		}
 	}

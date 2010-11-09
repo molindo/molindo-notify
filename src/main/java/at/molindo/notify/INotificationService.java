@@ -16,6 +16,8 @@
 
 package at.molindo.notify;
 
+import javax.annotation.Nonnull;
+
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.model.Notification;
@@ -27,36 +29,36 @@ public interface INotificationService {
 	public static final String PRIVATE_FEED_CHANNEL = "private-feed";
 	public static final String PUBLIC_FEED_CHANNEL = "public-feed";
 
-	Preferences getPreferences(String userId);
+	Preferences getPreferences(@Nonnull String userId);
 
-	Preferences newPreferences(String userId);
+	@Nonnull Preferences newPreferences(@Nonnull String userId);
 
-	void setPreferences(Preferences prefs);
+	void setPreferences(@Nonnull Preferences prefs);
 
-	void removePreferences(String userId);
+	void removePreferences(@Nonnull String userId);
 
-	void notify(Notification notification);
+	void notify(@Nonnull Notification notification);
 
-	void notifyNow(Notification notification) throws NotifyException;
+	void notifyNow(@Nonnull Notification notification) throws NotifyException;
 
-	void confirm(Notification notification);
+	void confirm(@Nonnull Notification notification);
 
-	void confirmNow(Notification notification) throws NotifyException;
+	void confirmNow(@Nonnull Notification notification) throws NotifyException;
 
-	void addErrorListener(IErrorListener listener);
+	void addErrorListener(@Nonnull IErrorListener listener);
 
-	void removeErrorListener(IErrorListener listener);
+	void removeErrorListener(@Nonnull IErrorListener listener);
 
-	void addNotificationListener(INotificationListner listner);
+	void addNotificationListener(@Nonnull INotificationListner listner);
 
-	void removeNotificationListener(INotificationListner listner);
+	void removeNotificationListener(@Nonnull INotificationListner listner);
 
 	public interface INotificationListner {
-		void notification(Notification notification);
+		void notification(@Nonnull Notification notification);
 	}
 
 	public interface IConfirmationListener {
-		void confirm(Notification notification);
+		void confirm(@Nonnull Notification notification);
 	}
 
 	public interface IErrorListener {
@@ -68,8 +70,8 @@ public interface INotificationService {
 		 * @param channel
 		 * @param e
 		 */
-		void error(Notification notification, IPushChannel channel,
-				PushException e);
+		void error(@Nonnull Notification notification, @Nonnull IPushChannel channel,
+				@Nonnull PushException e);
 	}
 
 	public static class NotifyException extends Exception {

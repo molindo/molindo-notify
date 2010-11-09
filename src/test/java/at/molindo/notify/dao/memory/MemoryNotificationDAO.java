@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.model.Notification;
@@ -33,13 +34,17 @@ import com.google.common.collect.Lists;
 
 public class MemoryNotificationDAO implements INotificationDAO {
 
-	private LinkedList<Notification> _queue = new LinkedList<Notification>();
+	private LinkedList<Notification> _queue = Lists.newLinkedList();
+	
+	private AtomicLong _idCounter = new AtomicLong(1);
 	
 	@Override
 	public void save(Notification notification) {
 		if (notification == null) {
 			throw new NullPointerException("notification");
 		}
+		
+		notification.setId(_idCounter.getAndIncrement());
 		
 		synchronized (_queue) {
 			// TODO clone? 
@@ -49,10 +54,14 @@ public class MemoryNotificationDAO implements INotificationDAO {
 
 	@Override
 	public void update(Notification notification) {
+		if (notification.getId() == null) {
+			throw new IllegalArgumentException("can't update transient object: " + notification);
+		}
+		
 		synchronized (_queue) {
 			ListIterator<Notification> iter = _queue.listIterator();
 			while (iter.hasNext()) {
-				if (iter.next().equals(notification)) {
+				if (iter.next().getId().equals(notification.getId())) {
 					// TODO clone? 
 					iter.set(notification);
 					break;
@@ -63,10 +72,14 @@ public class MemoryNotificationDAO implements INotificationDAO {
 
 	@Override
 	public void delete(Notification notification) {
+		if (notification.getId() == null) {
+			throw new IllegalArgumentException("can't delete transient object: " + notification);
+		}		
+
 		synchronized (_queue) {
 			ListIterator<Notification> iter = _queue.listIterator();
 			while (iter.hasNext()) {
-				if (iter.next().equals(notification)) {
+				if (iter.next().getId().equals(notification.getId())) {
 					iter.remove();
 					break;
 				}
@@ -101,7 +114,7 @@ public class MemoryNotificationDAO implements INotificationDAO {
 			ListIterator<Notification> iter = _queue.listIterator();
 			while (iter.hasNext()) {
 				Notification n = iter.next();
-				if (userId.equals(userId) && types.contains(n.getType())) {
+				if (n.getUserId().equals(userId) && types.contains(n.getType())) {
 					list.add(n);
 				}
 			}

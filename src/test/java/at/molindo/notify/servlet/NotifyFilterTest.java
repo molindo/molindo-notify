@@ -37,6 +37,7 @@ import at.molindo.notify.model.ConfigurableChannelPreferences;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 
 public class NotifyFilterTest {
@@ -55,6 +56,7 @@ public class NotifyFilterTest {
 			MockFilterConfig config;
 			
 			@Override
+			@SuppressWarnings(value = "NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS", justification = "mocks accept null")
 			protected void setup(EasyMockContext context) throws Exception {
 				filter = new NotifyFilter();
 				mockFilterChain = new MockFilterChain();

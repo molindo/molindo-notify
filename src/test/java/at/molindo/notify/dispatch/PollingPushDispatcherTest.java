@@ -51,6 +51,8 @@ import at.molindo.notify.test.util.MockTest;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 public class PollingPushDispatcherTest {
 
 	private static final String CHANNEL_ID = "dummy";
@@ -114,6 +116,7 @@ public class PollingPushDispatcherTest {
 		new PollingPushDispatcherMockTest() {
 
 			@Override
+			@SuppressWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "mocks accept null")
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
 
@@ -189,6 +192,7 @@ public class PollingPushDispatcherTest {
 			PushException ex = new IPushChannel.PushException(true);
 
 			@Override
+			@SuppressWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "mocks accept null")
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
 
@@ -206,7 +210,7 @@ public class PollingPushDispatcherTest {
 					@Override
 					protected void delay() {
 						// verify delay
-						context.get(IErrorListener.class).error(null, null, ex);
+						context.get(IErrorListener.class).error(n(), context.get(IPushChannel.class), ex);
 					}
 
 				};

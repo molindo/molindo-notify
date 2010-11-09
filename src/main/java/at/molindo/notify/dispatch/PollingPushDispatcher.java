@@ -140,6 +140,9 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	public void dispatchNow(Notification notification) throws NotifyException {
 		if (push(new DispatchConf(notification, true)) != PushResult.SUCCESS) {
 			throw new NotifyException("failed to dispatch now: " + notification);
+		} else {
+			// only record success of dispatchNow as failed notifications must not be stored for later use
+			recordPushAttempt(notification, PushResult.SUCCESS);
 		}
 	}
 

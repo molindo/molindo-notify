@@ -25,12 +25,13 @@ public class Notification {
 	public enum Type {
 		PUBLIC, PRIVATE;
 
-		public static ImmutableSet<Type> TYPES_ALL = ImmutableSet.of(values());
+		public static ImmutableSet<Type> TYPES_ALL = ImmutableSet.copyOf(values());
 		public static ImmutableSet<Type> TYPES_PUBLIC = ImmutableSet.of(PUBLIC);
 		public static ImmutableSet<Type> TYPES_PRIVATE = ImmutableSet
 				.of(PRIVATE);
 	}
 
+	private Long _id;
 	private String _userId;
 	private String _key;
 	private Type _type = Type.PRIVATE;
@@ -43,6 +44,14 @@ public class Notification {
 	private Date _pushScheduled = new Date();
 	private Date _pushDate;
 	private int _pushErrors = 0;
+
+	public Long getId() {
+		return _id;
+	}
+
+	public void setId(Long id) {
+		_id = id;
+	}
 
 	public String getUserId() {
 		return _userId;

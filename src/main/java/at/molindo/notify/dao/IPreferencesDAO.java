@@ -16,13 +16,15 @@
 
 package at.molindo.notify.dao;
 
+import javax.annotation.Nonnull;
+
 import at.molindo.notify.model.Preferences;
 
 public interface IPreferencesDAO {
 
-	Preferences getPreferences(String userId);
+	Preferences getPreferences(@Nonnull String userId);
 
-	void savePreferences(Preferences prefs);
+	void savePreferences(@Nonnull Preferences prefs);
 
-	void removePreferences(String userId);
+	void removePreferences(@Nonnull String userId);
 }

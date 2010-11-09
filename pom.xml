@@ -41,9 +41,20 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r07</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>${findbugs.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>annotations</artifactId>
+			<version>${findbugs.version}</version>
 		</dependency>
 
 		<dependency>
@@ -142,6 +153,7 @@
 
 	<properties>
 		<spring.version>3.0.4.RELEASE</spring.version>
+		<findbugs.version>1.3.9</findbugs.version>
 	</properties>
 
 </project>
