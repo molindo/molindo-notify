@@ -18,9 +18,8 @@ package at.molindo.notify.dispatch;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.DisposableBean;
@@ -29,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import at.molindo.notify.INotificationService;
 import at.molindo.notify.INotificationService.IErrorListener;
 import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotificationService.NotifyRuntimeException;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
@@ -41,6 +41,9 @@ import at.molindo.notify.model.PushState;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.util.NotifyUtils;
+import at.molindo.utils.concurrent.FactoryThread;
+import at.molindo.utils.concurrent.FactoryThread.FactoryThreadGroup;
+import at.molindo.utils.concurrent.KeyLock;
 
 public class PollingPushDispatcher implements IPushDispatcher, InitializingBean, DisposableBean {
 
@@ -59,12 +62,14 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	private Set<IPushChannel> _pushChannels = new CopyOnWriteArraySet<IPushChannel>();
 
-	private ThreadPoolExecutor _executor;
 	private final Object _wait = new Object();
+	private final KeyLock<Long, PushResult> _notificationLock = KeyLock.newKeyLock();
 
 	private IErrorListener _errorListener;
 
 	private int _maxErrorCount = DEFAULT_MAX_ERROR;
+
+	private FactoryThreadGroup _threadGroup;
 
 	enum PushResult {
 		SUCCESS, TEMPORARY_ERROR, PERSISTENT_ERROR;
@@ -85,20 +90,14 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 			throw new IllegalStateException("no preferencesDAO configured");
 		}
 
-		_executor = new ThreadPoolExecutor(_poolSize, _poolSize, 3, TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(
-				1)) {
+		_threadGroup = new FactoryThread.FactoryThreadGroup(PollingPushDispatcher.class.getSimpleName(), _poolSize,
+				new FactoryThread.IRunnableFactory() {
 
-			@Override
-			protected void afterExecute(Runnable r, Throwable t) {
-				if (!isShutdown()) {
-					execute(new Polling());
-				}
-			}
-
-		};
-		for (int i = 0; i < _poolSize; i++) {
-			_executor.execute(new Polling());
-		}
+					@Override
+					public Runnable newRunnable() {
+						return new Polling();
+					}
+				}).start();
 
 		_notificationService.addNotificationListener(this);
 	}
@@ -107,24 +106,18 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	public void destroy() {
 		_notificationService.removeNotificationListener(this);
 
-		_executor.shutdown();
-
+		_threadGroup.setInactive();
 		synchronized (_wait) {
 			_wait.notifyAll();
 		}
-
-		if (_executor.isTerminating()) {
+		try {
 			log.info("waiting for termination of running notification tasks");
-			try {
-				if (_executor.awaitTermination(30, TimeUnit.SECONDS)) {
-					log.info("all running notification tasks terminated");
-				} else {
-					log.warn("still running notification taks");
-				}
-			} catch (InterruptedException e) {
-				log.warn("interrupted while waiting for termination of notificaiton tasks");
-			}
+			_threadGroup.join();
+			log.info("all running notification tasks terminated");
+		} catch (InterruptedException e1) {
+			log.warn("interrupted while waiting for termination of notificaiton tasks");
 		}
+
 	}
 
 	@Override
@@ -150,7 +143,26 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		_errorListener = errorListener;
 	}
 
-	PushResult push(DispatchConf dc) {
+	/**
+	 * wraps a {@link KeyLock} around {@link #doPush(DispatchConf)}
+	 * 
+	 * @see #doPush(DispatchConf)
+	 */
+	PushResult push(final DispatchConf dc) {
+		try {
+			return _notificationLock.withLock(dc.notification.getId(), new Callable<PushResult>() {
+
+				@Override
+				public PushResult call() {
+					return doPush(dc);
+				}
+			});
+		} catch (Exception e) {
+			throw new NotifyRuntimeException("unexepcted exception from doPush()", e);
+		}
+	}
+
+	private PushResult doPush(DispatchConf dc) {
 		Preferences prefs = _preferencesDAO.getPreferences(dc.notification.getUserId());
 		if (prefs == null) {
 			log.warn("can't push to unknown user " + dc.notification.getUserId());
@@ -237,7 +249,6 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	class Polling implements Runnable {
 		@Override
 		public void run() {
-			// FIXME don't push notification with multiple threads at once!!
 			Notification notification = _notificationDAO.getNext();
 			if (notification != null) {
 				recordPushAttempt(notification, push(new DispatchConf(notification)));

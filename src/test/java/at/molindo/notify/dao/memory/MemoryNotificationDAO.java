@@ -35,14 +35,18 @@ import com.google.common.collect.Lists;
 
 public class MemoryNotificationDAO implements INotificationDAO {
 
-	private LinkedList<Notification> _queue = Lists.newLinkedList();
+	private final LinkedList<Notification> _queue = Lists.newLinkedList();
 
-	private AtomicLong _idCounter = new AtomicLong(1);
+	private final AtomicLong _idCounter = new AtomicLong(1);
 
 	@Override
 	public void save(Notification notification) {
 		if (notification == null) {
 			throw new NullPointerException("notification");
+		}
+
+		if (notification.getId() != null) {
+			throw new IllegalArgumentException("already persistent: " + notification);
 		}
 
 		notification.setId(_idCounter.getAndIncrement());

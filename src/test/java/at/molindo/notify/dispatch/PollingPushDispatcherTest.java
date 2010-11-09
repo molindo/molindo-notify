@@ -62,6 +62,7 @@ public class PollingPushDispatcherTest {
 	private static Notification n() {
 		Notification n = new Notification();
 
+		n.setId(42L);
 		n.setUserId(USERID);
 		n.setDate(START);
 		n.setPushScheduled(START);
