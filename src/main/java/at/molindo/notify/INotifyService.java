@@ -68,7 +68,12 @@ public interface INotifyService {
 	}
 
 	public interface IConfirmationListener {
-		void confirm(@Nonnull Notification notification);
+
+		/**
+		 * @param notification
+		 * @return a redirect path if notification was handled or null
+		 */
+		String confirm(@Nonnull Notification notification);
 	}
 
 	public interface IErrorListener {

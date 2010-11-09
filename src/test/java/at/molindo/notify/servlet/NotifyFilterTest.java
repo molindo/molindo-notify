@@ -97,8 +97,9 @@ public class NotifyFilterTest {
 				NotifyFilter.addChannel(context.get(IPullChannel.class), config.getServletContext());
 				filter.init(config);
 
-				MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notify/" + CHANNELID + "/"
-						+ USERID);
+				MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notify/"
+						+ NotifyFilter.DEFAULT_PULL_PREFIX + "/" + CHANNELID + "/" + USERID);
+
 				request.setServletPath("/notify");
 				request.setParameter(AbstractPullChannel.SECRET.getName(), SECRET);
 

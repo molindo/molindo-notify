@@ -133,4 +133,18 @@ public class MemoryNotificationDAO implements INotificationDAO {
 		return CollectionUtils.subList(list, first, count);
 	}
 
+	@Override
+	public Notification getByConfirmationKey(String key) {
+		synchronized (_queue) {
+			ListIterator<Notification> iter = _queue.listIterator();
+			while (iter.hasNext()) {
+				Notification n = iter.next();
+				if (n.getConfirmation() != null && n.getConfirmation().getKey().equals(key)) {
+					return n;
+				}
+			}
+		}
+		return null;
+	}
+
 }

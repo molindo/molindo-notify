@@ -28,6 +28,7 @@
 		<property name="instantDispatcher" ref="dispatcher" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
+		<property name="confirmationService" ref="confirmationService" />
 	</bean>
 
 	<bean id="dispatcher" class="at.molindo.notify.dispatch.PollingPushDispatcher">
@@ -41,5 +42,9 @@
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
 		<property name="poolSize" value="1" />
+	</bean>
+	
+	<bean id="confirmationService" class="at.molindo.notify.confirm.ConfirmationService">
+		<property name="notificationDAO" ref="notificationDAO" />
 	</bean>
 </beans>

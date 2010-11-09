@@ -22,6 +22,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
+import at.molindo.notify.confirm.IConfirmationService;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.IPushDispatcher;
@@ -37,11 +38,11 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 
 	private final Set<IErrorListener> _errorListeners = new CopyOnWriteArraySet<IErrorListener>();
 	private final Set<INotificationListner> _notificationListeners = new CopyOnWriteArraySet<INotificationListner>();
-	private final Set<IConfirmationListener> _confirmationListeners = new CopyOnWriteArraySet<IConfirmationListener>();
 
 	private IPushDispatcher _instantDispatcher;
 
-	private INotificationRenderService _messageSource;
+	private INotificationRenderService _notificationRenderService;
+	private IConfirmationService _confirmationService;
 
 	private Preferences _defaultPreferences = new Preferences();
 
@@ -134,22 +135,22 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 
 	@Override
 	public void addConfirmationListener(IConfirmationListener listener) {
-		_confirmationListeners.add(listener);
+		_confirmationService.addConfirmationListener(listener);
 	}
 
 	@Override
 	public void removeConfirmationListener(IConfirmationListener listener) {
-		_confirmationListeners.remove(listener);
+		_confirmationService.removeConfirmationListener(listener);
 	}
 
 	@Override
 	public void addParamsFactory(IParamsFactory factory) {
-		_messageSource.addParamsFactory(factory);
+		_notificationRenderService.addParamsFactory(factory);
 	}
 
 	@Override
 	public void removeParamsFactory(IParamsFactory factory) {
-		_messageSource.removeParamsFactory(factory);
+		_notificationRenderService.removeParamsFactory(factory);
 	}
 
 	public void setInstantDispatcher(IPushDispatcher instantDispatcher) {
@@ -168,8 +169,12 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 		_defaultPreferences = defaultPreferences;
 	}
 
-	public void setMessageSource(INotificationRenderService messageSource) {
-		_messageSource = messageSource;
+	public void setNotificationRenderService(INotificationRenderService notificationRenderService) {
+		_notificationRenderService = notificationRenderService;
+	}
+
+	public void setConfirmationService(IConfirmationService confirmationService) {
+		_confirmationService = confirmationService;
 	}
 
 }

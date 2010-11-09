@@ -45,35 +45,39 @@ public class Confirmation {
 		return _id;
 	}
 
-	public void setId(Integer id) {
+	public Confirmation setId(Integer id) {
 		_id = id;
+		return this;
 	}
 
 	public Notification getNotification() {
 		return _notification;
 	}
 
-	public void setNotification(Notification notification) {
+	public Confirmation setNotification(Notification notification) {
 		_notification = notification;
 		if (_notification != null && _notification.getConfirmation() != this) {
 			_notification.setConfirmation(this);
 		}
+		return this;
 	}
 
 	public Date getTouched() {
 		return _touched;
 	}
 
-	public void setTouched(Date touched) {
+	public Confirmation setTouched(Date touched) {
 		_touched = touched;
+		return this;
 	}
 
 	public String getKey() {
 		return _key;
 	}
 
-	public void setKey(String key) {
+	public Confirmation setKey(String key) {
 		_key = key;
+		return this;
 	}
 
 }

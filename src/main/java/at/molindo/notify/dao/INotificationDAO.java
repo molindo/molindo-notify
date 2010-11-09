@@ -45,4 +45,6 @@ public interface INotificationDAO {
 	List<Notification> getRecent(@Nonnull String userId, @Nonnull Set<Type> types, @Nonnegative int first,
 			@Nonnegative int count);
 
+	Notification getByConfirmationKey(String key);
+
 }

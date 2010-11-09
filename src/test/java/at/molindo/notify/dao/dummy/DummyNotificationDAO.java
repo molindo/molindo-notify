@@ -49,6 +49,11 @@ public class DummyNotificationDAO implements INotificationDAO {
 	}
 
 	@Override
+	public Notification getByConfirmationKey(String key) {
+		return null;
+	}
+
+	@Override
 	public Notification getNext() {
 		synchronized (this) {
 			long now = System.currentTimeMillis();

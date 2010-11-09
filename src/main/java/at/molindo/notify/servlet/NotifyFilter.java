@@ -34,6 +34,9 @@ import javax.servlet.http.HttpServletResponse;
 import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.channel.IPullChannel.PullException;
+import at.molindo.notify.confirm.ConfirmationService;
+import at.molindo.notify.confirm.IConfirmationService;
+import at.molindo.notify.confirm.IConfirmationService.ConfirmationException;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
 import at.molindo.notify.model.Notification.Type;
@@ -46,10 +49,44 @@ public class NotifyFilter implements Filter {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NotifyFilter.class);
 
 	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName() + ".channel";
+	private static final String ATTRIBUTE_CONFIRM_SERVICE = NotifyFilter.class.getName() + ".confirmService";
 
-	private static final Pattern PATTERN = Pattern.compile("^/([^/?]+)/([^/?]+).*$");
+	static final String DEFAULT_PULL_PREFIX = "pull";
+	static final String PARAMTER_PULL_PREFIX = "pullPrefix";
+
+	static final String DEFAULT_CONFIRM_PREFIX = "confirm";
+	static final String PARAMTER_CONFIRM_PREFIX = "confirmPrefix";
+
+	private String _pullPrefix;
+	private Pattern _pullPattern;
+
+	private String _confirmPrefix;
+	private Pattern _confirmPattern;
 
 	private ServletContext _context;
+
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+		_context = filterConfig.getServletContext();
+
+		{
+			String pullPrefix = filterConfig.getInitParameter(PARAMTER_PULL_PREFIX);
+			if (StringUtils.empty(pullPrefix)) {
+				pullPrefix = DEFAULT_PULL_PREFIX;
+			}
+			_pullPrefix = StringUtils.startWith(pullPrefix, "/");
+			_pullPattern = Pattern.compile("^" + Pattern.quote(_pullPrefix) + "/([^/?]+)/([^/?]+).*$");
+		}
+
+		{
+			String confirmPrefix = filterConfig.getInitParameter(PARAMTER_CONFIRM_PREFIX);
+			if (StringUtils.empty(confirmPrefix)) {
+				confirmPrefix = DEFAULT_CONFIRM_PREFIX;
+			}
+			_confirmPrefix = StringUtils.startWith(confirmPrefix, "/");
+			_confirmPattern = Pattern.compile("^" + Pattern.quote(_confirmPrefix) + "/([^/?]+)/([^/?]+).*$");
+		}
+	}
 
 	public static void addChannel(IPullChannel channel, ServletContext context) {
 		if (channel == null) {
@@ -81,27 +118,38 @@ public class NotifyFilter implements Filter {
 		}
 	}
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		_context = filterConfig.getServletContext();
+	public static void setConfirmationService(ConfirmationService confirmationService, ServletContext context) {
+		context.setAttribute(ATTRIBUTE_CONFIRM_SERVICE, confirmationService);
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
+		doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
+	}
 
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpServletResponse resp = (HttpServletResponse) response;
+	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 
-		String path = StringUtils.afterFirst(req.getRequestURI(), req.getServletPath());
+		String path = StringUtils.afterFirst(request.getRequestURI(), request.getServletPath());
 		if (path == null) {
-			resp.sendError(404);
+			response.sendError(404);
 			return;
 		}
 
-		Matcher m = PATTERN.matcher(path);
+		if (path.startsWith(_pullPrefix)) {
+			pull(request, response, path);
+		} else if (path.startsWith(_confirmPrefix)) {
+			confirm(request, response, path);
+		} else {
+			chain.doFilter(request, response);
+		}
+	}
+
+	protected void pull(HttpServletRequest request, HttpServletResponse response, String path) throws IOException {
+		Matcher m = _pullPattern.matcher(path);
 		if (!m.matches()) {
-			resp.sendError(404);
+			response.sendError(404);
 			return;
 		}
 
@@ -109,20 +157,20 @@ public class NotifyFilter implements Filter {
 		String userId = m.group(2);
 
 		if (StringUtils.empty(userId) || StringUtils.empty(channelId)) {
-			resp.sendError(404);
+			response.sendError(404);
 			return;
 		}
 
 		IPullChannel channel = getChannel(channelId);
 		if (channel == null) {
-			resp.sendError(404);
+			response.sendError(404);
 			return;
 		}
 
 		ChannelPreferences prefs = channel.newDefaultPreferences();
 		if (prefs instanceof IRequestConfigurable) {
 			try {
-				Map<?, ?> queryParams = req.getParameterMap();
+				Map<?, ?> queryParams = request.getParameterMap();
 
 				for (Map.Entry<?, ?> e : queryParams.entrySet()) {
 					Object value = e.getValue();
@@ -133,28 +181,55 @@ public class NotifyFilter implements Filter {
 					((IRequestConfigurable) prefs).setParam((String) e.getKey(), (String) value);
 				}
 			} catch (NotifyException e) {
-				resp.sendError(404);
+				response.sendError(404);
 				return;
 			}
 		}
 
 		if (channel.getNotificationTypes().contains(Type.PRIVATE) && !channel.isAuthorized(userId, prefs)) {
-			resp.sendError(403);
+			response.sendError(403);
 		} else if (channel.isConfigured(userId, prefs)) {
 			try {
 				String output = channel.pull(userId, prefs);
 				if (StringUtils.empty(output)) {
-					resp.sendError(404);
+					response.sendError(404);
 				} else {
 					response.getWriter().write(output);
 				}
 			} catch (PullException e) {
 				log.info("failed to pull notifications", e);
-				resp.sendError(500);
+				response.sendError(500);
 			}
 		} else {
-			resp.sendError(404);
+			response.sendError(404);
 		}
+	}
+
+	protected void confirm(HttpServletRequest request, HttpServletResponse response, String path) throws IOException,
+			ServletException {
+		Matcher m = _confirmPattern.matcher(path);
+		if (!m.matches()) {
+			response.sendError(404);
+			return;
+		}
+
+		String key = m.group(1);
+
+		String confirmPath;
+		try {
+			confirmPath = getConfirmationService().confirm(key);
+			if (confirmPath == null) {
+				response.sendError(404);
+			} else {
+				request.getRequestDispatcher(confirmPath).forward(request, response);
+			}
+		} catch (ConfirmationException e) {
+			throw new ServletException("can't confirm key " + key, e);
+		}
+	}
+
+	private IConfirmationService getConfirmationService() {
+		return (IConfirmationService) _context.getAttribute(ATTRIBUTE_CONFIRM_SERVICE);
 	}
 
 	private IPullChannel getChannel(String channelId) {
@@ -176,7 +251,7 @@ public class NotifyFilter implements Filter {
 
 	private static class PullChannels {
 
-		private Map<String, IPullChannel> _channels = Maps.newHashMap();
+		private final Map<String, IPullChannel> _channels = Maps.newHashMap();
 
 		public PullChannels(IPullChannel channel) {
 			add(channel);
@@ -201,4 +276,5 @@ public class NotifyFilter implements Filter {
 			}
 		}
 	}
+
 }
