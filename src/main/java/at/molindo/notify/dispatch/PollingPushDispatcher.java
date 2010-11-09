@@ -33,14 +33,13 @@ import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
+import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.model.PushChannelPreferences.Frequency;
 import at.molindo.notify.model.PushState;
-import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
-import at.molindo.notify.util.NotifyUtils;
 import at.molindo.utils.concurrent.FactoryThread;
 import at.molindo.utils.concurrent.FactoryThread.FactoryThreadGroup;
 import at.molindo.utils.concurrent.KeyLock;
@@ -55,7 +54,6 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	private int _poolSize = DEFAULT_POOL_SIZE;
 
 	private INotifyService _notifyService;
-	private IRenderService _renderService;
 
 	private INotificationDAO _notificationDAO;
 	private IPreferencesDAO _preferencesDAO;
@@ -71,6 +69,8 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	private FactoryThreadGroup _threadGroup;
 
+	private INotificationRenderService _notificationRenderService;
+
 	enum PushResult {
 		SUCCESS, TEMPORARY_ERROR, PERSISTENT_ERROR;
 	}
@@ -80,8 +80,8 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		if (_pushChannels.size() == 0) {
 			throw new IllegalStateException("no push channels configured");
 		}
-		if (_renderService == null) {
-			throw new IllegalStateException("no renderService configured");
+		if (_notificationRenderService == null) {
+			throw new IllegalStateException("no notificationRenderService configured");
 		}
 		if (_notificationDAO == null) {
 			throw new IllegalStateException("no notificationDAO configured");
@@ -176,7 +176,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 			if (isAllowed(dc, channel, cPrefs, Frequency.INSTANT)) {
 				try {
 
-					channel.push(NotifyUtils.render(_renderService, dc.notification, prefs, cPrefs), cPrefs);
+					channel.push(_notificationRenderService.render(dc.notification, prefs, cPrefs), cPrefs);
 					result = PushResult.SUCCESS;
 				} catch (PushException e) {
 					if (e.isTemporaryError()) {
@@ -230,8 +230,8 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		_poolSize = poolSize;
 	}
 
-	public void setRenderService(IRenderService renderService) {
-		_renderService = renderService;
+	public void setNotificationRenderService(INotificationRenderService notificationRenderService) {
+		_notificationRenderService = notificationRenderService;
 	}
 
 	public void setNotificationDAO(INotificationDAO notificationDAO) {

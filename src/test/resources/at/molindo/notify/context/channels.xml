@@ -43,7 +43,7 @@
 		<property name="defaultAmount" value="30" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
-		<property name="renderService" ref="renderService" />
+		<property name="notificationRenderService" ref="notificationRenderService" />
 	</bean>
 
 	<bean id="privateFeedChannel" class="at.molindo.notify.channel.feed.PrivateFeedChannel">
@@ -51,12 +51,12 @@
 		<property name="defaultAmount" value="30" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
-		<property name="renderService" ref="renderService" />
+		<property name="notificationRenderService" ref="notificationRenderService" />
 	</bean>
 
 	<bean id="dummyChannel" class="at.molindo.notify.channel.dummy.DummyChannel">
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
-		<property name="renderService" ref="renderService" />
+		<property name="notificationRenderService" ref="notificationRenderService" />
 	</bean>
 </beans>

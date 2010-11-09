@@ -69,6 +69,12 @@ public class Params implements Cloneable {
 		return true;
 	}
 
+	/**
+	 * set all params from passed object, overwriting current mappings
+	 * 
+	 * @param params
+	 * @return
+	 */
 	public Params setAll(Params params) {
 		if (params != null) {
 			_params.putAll(params._params);
@@ -86,7 +92,7 @@ public class Params implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((_params == null) ? 0 : _params.hashCode());
+		result = prime * result + (_params == null ? 0 : _params.hashCode());
 		return result;
 	}
 

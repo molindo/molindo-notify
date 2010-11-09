@@ -25,6 +25,7 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.IPushDispatcher;
+import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
@@ -34,10 +35,13 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 	private IPreferencesDAO _preferencesDAO;
 	private INotificationDAO _notificationDAO;
 
-	private Set<IErrorListener> _errorListeners = new CopyOnWriteArraySet<IErrorListener>();
-	private Set<INotificationListner> _notificationListeners = new CopyOnWriteArraySet<INotificationListner>();
+	private final Set<IErrorListener> _errorListeners = new CopyOnWriteArraySet<IErrorListener>();
+	private final Set<INotificationListner> _notificationListeners = new CopyOnWriteArraySet<INotificationListner>();
+	private final Set<IConfirmationListener> _confirmationListeners = new CopyOnWriteArraySet<IConfirmationListener>();
 
 	private IPushDispatcher _instantDispatcher;
+
+	private INotificationRenderService _messageSource;
 
 	private Preferences _defaultPreferences = new Preferences();
 
@@ -112,7 +116,9 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 	}
 
 	public void setNotificationListeners(Collection<? extends INotificationListner> listeners) {
-		_notificationListeners.clear();
+		if (_notificationListeners.size() > 0) {
+			throw new IllegalStateException("already listeneres registered: " + _notificationListeners);
+		}
 		_notificationListeners.addAll(listeners);
 	}
 
@@ -124,6 +130,26 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 	@Override
 	public void removeNotificationListener(INotificationListner listner) {
 		_notificationListeners.remove(listner);
+	}
+
+	@Override
+	public void addConfirmationListener(IConfirmationListener listener) {
+		_confirmationListeners.add(listener);
+	}
+
+	@Override
+	public void removeConfirmationListener(IConfirmationListener listener) {
+		_confirmationListeners.remove(listener);
+	}
+
+	@Override
+	public void addParamsFactory(IParamsFactory factory) {
+		_messageSource.addParamsFactory(factory);
+	}
+
+	@Override
+	public void removeParamsFactory(IParamsFactory factory) {
+		_messageSource.removeParamsFactory(factory);
 	}
 
 	public void setInstantDispatcher(IPushDispatcher instantDispatcher) {
@@ -140,6 +166,10 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 
 	public void setDefaultPreferences(Preferences defaultPreferences) {
 		_defaultPreferences = defaultPreferences;
+	}
+
+	public void setMessageSource(INotificationRenderService messageSource) {
+		_messageSource = messageSource;
 	}
 
 }

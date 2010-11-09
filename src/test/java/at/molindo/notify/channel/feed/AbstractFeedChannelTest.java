@@ -19,7 +19,6 @@ package at.molindo.notify.channel.feed;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.same;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -32,16 +31,15 @@ import org.junit.Test;
 
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
+import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
-import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
 
@@ -81,16 +79,18 @@ public class AbstractFeedChannelTest {
 		return p;
 	}
 
-	private static List<Notification> n() {
+	private static List<Notification> nList() {
 		List<Notification> n = Lists.newArrayList();
+		n.add(n());
+		return n;
+	}
 
-		Notification n1 = new Notification();
-		n1.setDate(new Date());
-		n1.setKey(NOTIFICATION_KEY);
-		n1.setType(Type.PRIVATE);
-		n1.setUserId(USER_ID);
-		n.add(n1);
-
+	protected static Notification n() {
+		Notification n = new Notification();
+		n.setDate(new Date());
+		n.setKey(NOTIFICATION_KEY);
+		n.setType(Type.PRIVATE);
+		n.setUserId(USER_ID);
 		return n;
 	}
 
@@ -107,10 +107,11 @@ public class AbstractFeedChannelTest {
 				super.setup(context);
 
 				expect(context.get(IPreferencesDAO.class).getPreferences(USER_ID)).andReturn(p());
-				expect(context.get(INotificationDAO.class).getRecent(USER_ID, Type.TYPES_ALL, 0, 20)).andReturn(n());
+				expect(context.get(INotificationDAO.class).getRecent(USER_ID, Type.TYPES_ALL, 0, 20))
+						.andReturn(nList());
 				expect(
-						context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG),
-								anyObject(Params.class))).andReturn(m());
+						context.get(INotificationRenderService.class).render(eq(n()), eq(p()),
+								anyObject(ChannelPreferences.class))).andReturn(m());
 			}
 
 			@Override
@@ -182,7 +183,7 @@ public class AbstractFeedChannelTest {
 			c = c();
 			c.setNotificationDAO(context.create(INotificationDAO.class));
 			c.setPreferencesDAO(context.create(IPreferencesDAO.class));
-			c.setRenderService(context.create(IRenderService.class));
+			c.setNotificationRenderService(context.create(INotificationRenderService.class));
 		}
 	}
 

@@ -24,6 +24,10 @@
   	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
   ">
 
+	<bean id="notificationRenderService" class="at.molindo.notify.message.NotificationRenderService">
+		<property name="renderService" ref="renderService" />
+	</bean>
+
 	<bean id="renderService" class="at.molindo.notify.render.TemplateRenderService">
 		<property name="renderer">
 			<bean class="at.molindo.notify.render.velocity.VelocityTemplateRenderer" />

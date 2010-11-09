@@ -37,7 +37,7 @@
 			</list>
 		</property>
 		<property name="notifyService" ref="notifyService" />
-		<property name="renderService" ref="renderService" />
+		<property name="notificationRenderService" ref="notificationRenderService" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
 		<property name="poolSize" value="1" />

@@ -22,23 +22,22 @@ import java.util.List;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
+import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
-import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
-import at.molindo.notify.util.NotifyUtils;
 import at.molindo.utils.data.StringUtils;
 
 import com.google.common.collect.Lists;
 
 public abstract class AbstractPullChannel implements IPullChannel {
 
-	private IRenderService _renderService;
+	private INotificationRenderService _notificationRenderService;
 	private INotificationDAO _notificationDAO;
 	private IPreferencesDAO _preferencesDAO;
 
@@ -102,7 +101,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 
 	protected Message render(final Notification notification, Preferences prefs, ChannelPreferences cPrefs)
 			throws RenderException {
-		return NotifyUtils.render(_renderService, notification, prefs, cPrefs);
+		return _notificationRenderService.render(notification, prefs, cPrefs);
 	}
 
 	public Integer getDefaultAmount() {
@@ -121,8 +120,8 @@ public abstract class AbstractPullChannel implements IPullChannel {
 		_preferencesDAO = preferencesDAO;
 	}
 
-	public void setRenderService(IRenderService renderService) {
-		_renderService = renderService;
+	public void setNotificationRenderService(INotificationRenderService notificationRenderService) {
+		_notificationRenderService = notificationRenderService;
 	}
 
 	protected abstract String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs,

@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 
 public interface INotifyService {
@@ -54,6 +55,14 @@ public interface INotifyService {
 
 	void removeNotificationListener(@Nonnull INotificationListner listner);
 
+	void addConfirmationListener(@Nonnull IConfirmationListener listener);
+
+	void removeConfirmationListener(@Nonnull IConfirmationListener listener);
+
+	void addParamsFactory(@Nonnull IParamsFactory factory);
+
+	void removeParamsFactory(@Nonnull IParamsFactory factory);
+
 	public interface INotificationListner {
 		void notification(@Nonnull Notification notification);
 	}
@@ -72,6 +81,20 @@ public interface INotifyService {
 		 * @param e
 		 */
 		void error(@Nonnull Notification notification, @Nonnull IPushChannel channel, @Nonnull PushException e);
+	}
+
+	public interface IParamsFactory {
+
+		/**
+		 * 
+		 * @param notification
+		 * @return
+		 * @throws NotifyException
+		 *             if necessary params aren't available (e.g. if
+		 *             notification is obsolete)
+		 */
+		@Nonnull
+		Params params(@Nonnull Notification notification) throws NotifyException;
 	}
 
 	public static class NotifyException extends Exception {

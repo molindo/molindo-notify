@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.util;
+package at.molindo.notify.message;
 
+import at.molindo.notify.INotifyService.IParamsFactory;
+import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.Message;
+import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.Preferences;
+import at.molindo.notify.render.IRenderService.RenderException;
 
-public class NotifyUtils {
+public interface INotificationRenderService {
 
-	private NotifyUtils() {
-	};
+	Message render(Notification notification, Preferences prefs, ChannelPreferences cPrefs) throws RenderException;
 
-	public static String html2text(String html) {
-		// TODO
-		return html.replaceAll("\\<.*?>", "");
-	}
+	void addParamsFactory(IParamsFactory factory);
 
-	public static String text2html(String text) {
-		// TODO
-		return text.replaceAll("\n", "<br />");
-	}
+	void removeParamsFactory(IParamsFactory factory);
+
 }
