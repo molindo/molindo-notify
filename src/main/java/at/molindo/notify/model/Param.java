@@ -28,35 +28,35 @@ public class Param<T> {
 	public static Param<String> pString(String name) {
 		return p(name, String.class);
 	}
-	
+
 	public static Param<Integer> pInteger(String name) {
 		return p(name, Integer.class);
 	}
-	
+
 	public static Param<Long> pLong(String name) {
 		return p(name, Long.class);
 	}
-	
+
 	public static Param<Double> pDouble(String name) {
 		return p(name, Double.class);
 	}
-	
+
 	public static Param<Float> pFloat(String name) {
 		return p(name, Float.class);
 	}
-	
+
 	public static Param<Boolean> pBoolean(String name) {
 		return p(name, Boolean.class);
 	}
-	
+
 	public static Param<Character> pCharacter(String name) {
 		return p(name, Character.class);
 	}
-	
+
 	public static Param<URL> pURL(String name) {
 		return p(name, URL.class);
 	}
-	
+
 	public static <T> Param<T> p(String name, Class<T> type) {
 		return new Param<T>(name, type);
 	}
@@ -99,10 +99,8 @@ public class Param<T> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result
-				+ ((getType() == null) ? 0 : getType().getName().hashCode());
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		result = prime * result + ((getType() == null) ? 0 : getType().getName().hashCode());
 		return result;
 	}
 
@@ -137,8 +135,7 @@ public class Param<T> {
 
 	@Override
 	public String toString() {
-		return "Param [name=" + _name + ", type=" + _type == null ? null
-				: _type.getSimpleName() + "]";
+		return "Param [name=" + _name + ", type=" + _type == null ? null : _type.getSimpleName() + "]";
 	}
 
 }

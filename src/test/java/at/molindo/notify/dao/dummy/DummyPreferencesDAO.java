@@ -29,15 +29,15 @@ public class DummyPreferencesDAO implements IPreferencesDAO {
 	public Preferences getPreferences(String userId) {
 		if (DummyUtils.USER_ID.equals(userId)) {
 			Preferences p = new Preferences().setUserId(userId).setParams(new Params());
-			
+
 			PushChannelPreferences mailPrefs = new PushChannelPreferences();
 			MailChannel.setRecipient(mailPrefs, "stf+johndoe@molindo.at");
 			MailChannel.setRecipientName(mailPrefs, "John Doe");
 			p.addChannelPrefs(MailChannel.CHANNEL_ID, mailPrefs);
-			
+
 			PushChannelPreferences dummyPrefs = new PushChannelPreferences();
 			p.addChannelPrefs(DummyChannel.CHANNEL_ID, dummyPrefs);
-			
+
 			return p;
 		} else {
 			return null;

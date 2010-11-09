@@ -27,8 +27,7 @@ import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.InitializingBean;
 
-public class SimpleMailClient extends AbstractMailClient implements
-		InitializingBean {
+public class SimpleMailClient extends AbstractMailClient implements InitializingBean {
 
 	// server config
 	private String _server;
@@ -43,8 +42,7 @@ public class SimpleMailClient extends AbstractMailClient implements
 
 	}
 
-	public SimpleMailClient(String server, String from)
-			throws AddressException, MailException {
+	public SimpleMailClient(String server, String from) throws AddressException, MailException {
 		setServer(server);
 		setFrom(from);
 		init();
@@ -71,29 +69,26 @@ public class SimpleMailClient extends AbstractMailClient implements
 	protected Session createSmtpSession() {
 		final Properties props = new Properties();
 		props.setProperty("mail.smtp.host", _server);
-		props.setProperty("mail.smtp.port", Integer
-				.toString(_port != null ? _port : _security.getDefaultPort()));
+		props.setProperty("mail.smtp.port", Integer.toString(_port != null ? _port : _security.getDefaultPort()));
 		props.setProperty("mail.smtp.auth", Boolean.toString(_user != null));
 		if (_security == Security.TLS) {
 			props.setProperty("mail.smtp.starttls.enable", "true");
 		} else if (_security == Security.SSL) {
 			props.put("mail.smtp.ssl", "true");
-			props.put("mail.smtp.socketFactory.class",
-					"javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 		}
 		// props.put("mail.debug", "true");
-		return Session.getInstance(props,
-				new javax.mail.Authenticator() {
+		return Session.getInstance(props, new javax.mail.Authenticator() {
 
-					@Override
-					protected PasswordAuthentication getPasswordAuthentication() {
-						if (_user != null) {
-							return new PasswordAuthentication(_user, _password);
-						} else {
-							return null;
-						}
-					}
-				});
+			@Override
+			protected PasswordAuthentication getPasswordAuthentication() {
+				if (_user != null) {
+					return new PasswordAuthentication(_user, _password);
+				} else {
+					return null;
+				}
+			}
+		});
 	}
 
 	@Override

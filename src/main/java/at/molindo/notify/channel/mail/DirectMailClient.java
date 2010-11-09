@@ -30,8 +30,7 @@ import at.molindo.utils.net.DnsUtils;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
 
-public class DirectMailClient extends AbstractMailClient implements
-		InitializingBean {
+public class DirectMailClient extends AbstractMailClient implements InitializingBean {
 
 	private static final int DEFAULT_CACHE_CONCURRENCY = 4;
 	private static final long DEFAULT_CACHE_EXPIRATION_MIN = 10;
@@ -44,8 +43,7 @@ public class DirectMailClient extends AbstractMailClient implements
 	public DirectMailClient init() throws MailException {
 		super.init();
 		_sessionCache = new MapMaker().concurrencyLevel(_cacheConcurrency)
-				.expiration(_cacheExpirationMin, TimeUnit.MINUTES)
-				.makeComputingMap(new Function<String, Session>() {
+				.expiration(_cacheExpirationMin, TimeUnit.MINUTES).makeComputingMap(new Function<String, Session>() {
 					@Override
 					public Session apply(String domain) {
 						try {
@@ -70,8 +68,7 @@ public class DirectMailClient extends AbstractMailClient implements
 	protected Session createSmtpSession(String domain) throws MailException {
 		try {
 			final Properties props = new Properties();
-			props.setProperty("mail.smtp.host",
-					DnsUtils.lookupMailHosts(domain)[0]);
+			props.setProperty("mail.smtp.host", DnsUtils.lookupMailHosts(domain)[0]);
 			props.setProperty("mail.smtp.port", "25");
 			props.setProperty("mail.smtp.auth", "false");
 			props.setProperty("mail.smtp.starttls.enable", "true");

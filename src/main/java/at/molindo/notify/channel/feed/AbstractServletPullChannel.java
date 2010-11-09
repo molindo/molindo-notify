@@ -23,24 +23,24 @@ import org.springframework.web.context.ServletContextAware;
 
 import at.molindo.notify.servlet.NotifyFilter;
 
-
-public abstract class AbstractServletPullChannel extends AbstractPullChannel implements ServletContextAware, DisposableBean {
+public abstract class AbstractServletPullChannel extends AbstractPullChannel implements ServletContextAware,
+		DisposableBean {
 
 	private ServletContext _servletContext;
-	
+
 	public void setServletContext(ServletContext servletContext) {
 		if (servletContext == _servletContext) {
 			return;
 		}
-		
+
 		if (_servletContext != null) {
 			NotifyFilter.removeChannel(this, _servletContext);
-		} 
-		
-		if (servletContext != null){
+		}
+
+		if (servletContext != null) {
 			NotifyFilter.addChannel(this, servletContext);
 		}
-		
+
 		_servletContext = servletContext;
 	}
 
@@ -49,5 +49,4 @@ public abstract class AbstractServletPullChannel extends AbstractPullChannel imp
 		setServletContext(null);
 	}
 
-	
 }

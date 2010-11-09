@@ -32,9 +32,9 @@ public class Template implements Cloneable {
 	private String _content;
 
 	public Template() {
-		
+
 	}
-	
+
 	public String getKey() {
 		return _key;
 	}
@@ -87,8 +87,7 @@ public class Template implements Cloneable {
 	}
 
 	public Key key() {
-		return getKey() == null || getVersion() == null ? null : new Key(
-				getKey(), getVersion());
+		return getKey() == null || getVersion() == null ? null : new Key(getKey(), getVersion());
 	}
 
 	public Locale getLocale() {
@@ -104,16 +103,11 @@ public class Template implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((getKey() == null) ? 0 : getKey().hashCode());
+		result = prime * result + ((getKey() == null) ? 0 : getKey().hashCode());
 		result = prime * result + getVersion().hashCode();
 		result = prime * result + getType().hashCode();
-		result = prime
-				* result
-				+ ((getLastModified() == null) ? 0 : getLastModified()
-						.hashCode());
-		result = prime * result
-				+ ((getLocale() == null) ? 0 : getLocale().hashCode());
+		result = prime * result + ((getLastModified() == null) ? 0 : getLastModified().hashCode());
+		result = prime * result + ((getLocale() == null) ? 0 : getLocale().hashCode());
 		return result;
 	}
 
@@ -155,8 +149,7 @@ public class Template implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "Template [_key=" + _key + ", _version=" + _version
-				+ ", _lastModified=" + _lastModified + "]";
+		return "Template [_key=" + _key + ", _version=" + _version + ", _lastModified=" + _lastModified + "]";
 	}
 
 	public static final class Key {

@@ -30,8 +30,7 @@ public interface IRenderService {
 		LONG, SHORT;
 	}
 
-	Message render(String key, Version version, Params params)
-			throws RenderException;
+	Message render(String key, Version version, Params params) throws RenderException;
 
 	public class RenderException extends NotifyException {
 

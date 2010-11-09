@@ -23,7 +23,7 @@ import org.easymock.EasyMockSupport;
 import com.google.common.collect.Maps;
 
 public class EasyMockContext {
-	
+
 	private EasyMockSupport _support = new EasyMockSupport();
 	private Map<Class<?>, Object> _mocks = Maps.newHashMap();
 
@@ -50,7 +50,7 @@ public class EasyMockContext {
 	public void verify() {
 		_support.verifyAll();
 	}
-	
+
 	public void reset() {
 		_support.resetAll();
 	}

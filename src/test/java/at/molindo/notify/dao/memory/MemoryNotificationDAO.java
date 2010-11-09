@@ -36,19 +36,19 @@ import com.google.common.collect.Lists;
 public class MemoryNotificationDAO implements INotificationDAO {
 
 	private LinkedList<Notification> _queue = Lists.newLinkedList();
-	
+
 	private AtomicLong _idCounter = new AtomicLong(1);
-	
+
 	@Override
 	public void save(Notification notification) {
 		if (notification == null) {
 			throw new NullPointerException("notification");
 		}
-		
+
 		notification.setId(_idCounter.getAndIncrement());
-		
+
 		synchronized (_queue) {
-			// TODO clone? 
+			// TODO clone?
 			_queue.add(notification);
 		}
 	}
@@ -58,12 +58,12 @@ public class MemoryNotificationDAO implements INotificationDAO {
 		if (notification.getId() == null) {
 			throw new IllegalArgumentException("can't update transient object: " + notification);
 		}
-		
+
 		synchronized (_queue) {
 			ListIterator<Notification> iter = _queue.listIterator();
 			while (iter.hasNext()) {
 				if (iter.next().getId().equals(notification.getId())) {
-					// TODO clone? 
+					// TODO clone?
 					iter.set(notification);
 					break;
 				}
@@ -75,7 +75,7 @@ public class MemoryNotificationDAO implements INotificationDAO {
 	public void delete(Notification notification) {
 		if (notification.getId() == null) {
 			throw new IllegalArgumentException("can't delete transient object: " + notification);
-		}		
+		}
 
 		synchronized (_queue) {
 			ListIterator<Notification> iter = _queue.listIterator();
@@ -103,7 +103,8 @@ public class MemoryNotificationDAO implements INotificationDAO {
 				}
 			});
 			Notification n = _queue.peek();
-			if (n != null && n.getPushState() == PushState.QUEUED && n.getPushScheduled() != null && n.getPushScheduled().before(new Date())) {
+			if (n != null && n.getPushState() == PushState.QUEUED && n.getPushScheduled() != null
+					&& n.getPushScheduled().before(new Date())) {
 				return n;
 			} else {
 				return null;
@@ -112,10 +113,9 @@ public class MemoryNotificationDAO implements INotificationDAO {
 	}
 
 	@Override
-	public List<Notification> getRecent(String userId, Set<Type> types,
-			int first, int count) {
+	public List<Notification> getRecent(String userId, Set<Type> types, int first, int count) {
 		List<Notification> list = Lists.newArrayListWithCapacity(Math.max(_queue.size(), 100));
-		
+
 		synchronized (_queue) {
 			ListIterator<Notification> iter = _queue.listIterator();
 			while (iter.hasNext()) {
@@ -125,7 +125,7 @@ public class MemoryNotificationDAO implements INotificationDAO {
 				}
 			}
 		}
-		
+
 		return CollectionUtils.subList(list, first, count);
 	}
 

@@ -29,14 +29,12 @@ public class NotifyUtils {
 	private NotifyUtils() {
 	};
 
-	public static Message render(IRenderService renderService,
-			Notification notification, Preferences prefs,
+	public static Message render(IRenderService renderService, Notification notification, Preferences prefs,
 			ChannelPreferences cPrefs) throws RenderException {
 
-		Params params = new Params().setAll(prefs.getParams())
-				.setAll(cPrefs.getParams()).setAll(notification.getParams());
-		Message msg = renderService.render(notification.getKey(),
-				cPrefs.getVersion(), params);
+		Params params = new Params().setAll(prefs.getParams()).setAll(cPrefs.getParams())
+				.setAll(notification.getParams());
+		Message msg = renderService.render(notification.getKey(), cPrefs.getVersion(), params);
 		return msg;
 
 	}

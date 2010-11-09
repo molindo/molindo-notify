@@ -22,8 +22,7 @@ import at.molindo.notify.model.PushChannelPreferences;
 
 public interface IMailClient {
 
-	void send(Message message, PushChannelPreferences cPrefs)
-			throws MailException;
+	void send(Message message, PushChannelPreferences cPrefs) throws MailException;
 
 	public static class MailException extends PushException {
 
@@ -37,8 +36,7 @@ public interface IMailClient {
 			super(message, temporaryError);
 		}
 
-		public MailException(String message, Throwable cause,
-				boolean temporaryError) {
+		public MailException(String message, Throwable cause, boolean temporaryError) {
 			super(message, cause, temporaryError);
 		}
 

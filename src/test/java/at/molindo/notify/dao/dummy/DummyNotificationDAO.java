@@ -32,7 +32,7 @@ import com.google.common.collect.Lists;
 public class DummyNotificationDAO implements INotificationDAO {
 
 	private long _last = 0;
-	
+
 	@Override
 	public void save(Notification notification) {
 		// do nothing
@@ -54,10 +54,8 @@ public class DummyNotificationDAO implements INotificationDAO {
 			long now = System.currentTimeMillis();
 			if (now - _last > TimeUnit.SECONDS.toMillis(10)) {
 				_last = now;
-				return new Notification().setUserId(DummyUtils.USER_ID)
-					.setDate(new Date()).setKey(DummyUtils.KEY)
-					.setParams(new Params().set(Param.pString("word"), "Test"))
-					.setType(Type.PRIVATE);
+				return new Notification().setUserId(DummyUtils.USER_ID).setDate(new Date()).setKey(DummyUtils.KEY)
+						.setParams(new Params().set(Param.pString("word"), "Test")).setType(Type.PRIVATE);
 			} else {
 				return null;
 			}
@@ -65,8 +63,7 @@ public class DummyNotificationDAO implements INotificationDAO {
 	}
 
 	@Override
-	public List<Notification> getRecent(String userId, Set<Type> types,
-			int first, int count) {
+	public List<Notification> getRecent(String userId, Set<Type> types, int first, int count) {
 		if (DummyUtils.USER_ID.equals(userId) && types.contains(Type.PRIVATE) && first == 0 && count > 0) {
 			return Lists.newArrayList(getNext());
 		} else {

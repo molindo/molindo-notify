@@ -39,9 +39,8 @@ import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
-
 public class NotifyFilterTest {
-	
+
 	private static final String SECRET = "test-secret";
 	private static final String CHANNELID = "test-channel";
 	private static final String USERID = "test-user";
@@ -50,25 +49,28 @@ public class NotifyFilterTest {
 	@Test
 	public void pull() throws Exception {
 		new MockTest() {
-			
+
 			NotifyFilter filter;
 			FilterChain mockFilterChain;
 			MockFilterConfig config;
-			
+
 			@Override
 			@SuppressWarnings(value = "NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS", justification = "mocks accept null")
 			protected void setup(EasyMockContext context) throws Exception {
 				filter = new NotifyFilter();
 				mockFilterChain = new MockFilterChain();
 				config = new MockFilterConfig();
-				
+
 				context.create(IPullChannel.class);
-				
+
 				expect(context.get(IPullChannel.class).getId()).andReturn(CHANNELID).anyTimes();
 				expect(context.get(IPullChannel.class).getNotificationTypes()).andReturn(Type.TYPES_ALL).anyTimes();
-				expect(context.get(IPullChannel.class).pull(eq(USERID), anyObject(ConfigurableChannelPreferences.class))).andReturn(BODY);
-				expect(context.get(IPullChannel.class).newDefaultPreferences()).andReturn(new ConfigurableChannelPreferences());
-				
+				expect(
+						context.get(IPullChannel.class).pull(eq(USERID),
+								anyObject(ConfigurableChannelPreferences.class))).andReturn(BODY);
+				expect(context.get(IPullChannel.class).newDefaultPreferences()).andReturn(
+						new ConfigurableChannelPreferences());
+
 				eq(USERID);
 				reportMatcher(new IArgumentMatcher() {
 
@@ -85,26 +87,29 @@ public class NotifyFilterTest {
 				});
 				expect(context.get(IPullChannel.class).isAuthorized(null, null)).andReturn(true);
 
-				expect(context.get(IPullChannel.class).isConfigured(eq(USERID), anyObject(ConfigurableChannelPreferences.class))).andReturn(true);
+				expect(
+						context.get(IPullChannel.class).isConfigured(eq(USERID),
+								anyObject(ConfigurableChannelPreferences.class))).andReturn(true);
 			}
-			
+
 			@Override
 			protected void test(EasyMockContext context) throws Exception {
 				NotifyFilter.addChannel(context.get(IPullChannel.class), config.getServletContext());
 				filter.init(config);
-				
-				MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notify/" + CHANNELID + "/" + USERID);
+
+				MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notify/" + CHANNELID + "/"
+						+ USERID);
 				request.setServletPath("/notify");
 				request.setParameter(AbstractPullChannel.SECRET.getName(), SECRET);
-				
+
 				MockHttpServletResponse response = new MockHttpServletResponse();
-				
-				filter.doFilter(request , response, mockFilterChain);
-				
+
+				filter.doFilter(request, response, mockFilterChain);
+
 				assertEquals(200, response.getStatus());
 				assertEquals(BODY, response.getContentAsString());
 			}
-			
+
 		}.run();
 	}
 

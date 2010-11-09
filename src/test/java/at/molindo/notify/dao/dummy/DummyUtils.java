@@ -20,7 +20,8 @@ public class DummyUtils {
 
 	public static final String USER_ID = "JohnDoe";
 	public static final String KEY = "test";
-	
-	private DummyUtils() {}
-	
+
+	private DummyUtils() {
+	}
+
 }

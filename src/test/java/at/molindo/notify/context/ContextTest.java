@@ -28,8 +28,7 @@ import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 
-@ContextConfiguration({ ContextUtils.MAIN, ContextUtils.CHANNELS,
-		ContextUtils.RENDER, ContextUtils.DAOS })
+@ContextConfiguration({ ContextUtils.MAIN, ContextUtils.CHANNELS, ContextUtils.RENDER, ContextUtils.DAOS })
 public class ContextTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired
@@ -38,16 +37,14 @@ public class ContextTest extends AbstractJUnit4SpringContextTests {
 	@Test
 	public void test() throws InterruptedException, NotifyException {
 		// if it runs we're happy
-		
-		_svc.notify(new Notification().setUserId(DummyUtils.USER_ID)
-				.setKey(DummyUtils.KEY)
+
+		_svc.notify(new Notification().setUserId(DummyUtils.USER_ID).setKey(DummyUtils.KEY)
 				.setParams(new Params().set(Param.pString("word"), "Test")));
-		
-		_svc.confirmNow(new Notification().setUserId(DummyUtils.USER_ID)
-				.setKey(DummyUtils.KEY)
+
+		_svc.confirmNow(new Notification().setUserId(DummyUtils.USER_ID).setKey(DummyUtils.KEY)
 				.setParams(new Params().set(Param.pString("word"), "Test Now")));
-	
+
 		Thread.sleep(100);
 	}
-	
+
 }

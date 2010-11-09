@@ -41,20 +41,17 @@ public class TemplateRenderService implements IRenderService, InitializingBean {
 	}
 
 	@Override
-	public Message render(String key, Version version, Params params)
-			throws RenderException {
+	public Message render(String key, Version version, Params params) throws RenderException {
 
 		List<Template> templates = _templateDAO.findTemplates(key);
 
 		Template template = choose(templates, version);
 
 		if (template == null) {
-			throw new RenderException("no template available for '" + key
-					+ "' (" + version + ")");
+			throw new RenderException("no template available for '" + key + "' (" + version + ")");
 		}
 
-		return Message.parse(_renderer.render(template, params),
-				template.getType());
+		return Message.parse(_renderer.render(template, params), template.getType());
 	}
 
 	private Template choose(List<Template> templates, Version version) {

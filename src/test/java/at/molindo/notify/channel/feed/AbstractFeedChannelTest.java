@@ -95,8 +95,7 @@ public class AbstractFeedChannelTest {
 	}
 
 	private static Message m() throws RenderException {
-		return Message.parse("Subject: Test\n\nThis is a test",
-				IRenderService.Type.TEXT);
+		return Message.parse("Subject: Test\n\nThis is a test", IRenderService.Type.TEXT);
 	}
 
 	@Test
@@ -107,15 +106,10 @@ public class AbstractFeedChannelTest {
 			protected void setup(EasyMockContext context) throws Exception {
 				super.setup(context);
 
+				expect(context.get(IPreferencesDAO.class).getPreferences(USER_ID)).andReturn(p());
+				expect(context.get(INotificationDAO.class).getRecent(USER_ID, Type.TYPES_ALL, 0, 20)).andReturn(n());
 				expect(
-						context.get(IPreferencesDAO.class).getPreferences(
-								USER_ID)).andReturn(p());
-				expect(
-						context.get(INotificationDAO.class).getRecent(USER_ID,
-								Type.TYPES_ALL, 0, 20)).andReturn(n());
-				expect(
-						context.get(IRenderService.class).render(
-								eq(NOTIFICATION_KEY), same(Version.LONG),
+						context.get(IRenderService.class).render(eq(NOTIFICATION_KEY), same(Version.LONG),
 								anyObject(Params.class))).andReturn(m());
 			}
 
@@ -145,22 +139,22 @@ public class AbstractFeedChannelTest {
 			protected void test(EasyMockContext context) throws Exception {
 				WireFeed f = c.toFeed(Arrays.asList(m()), null, p(), c.newDefaultPreferences());
 				assertNotNull(f);
-				
+
 				assertTrue(f instanceof Feed);
 				Feed feed = (Feed) f;
-				
+
 				assertEquals(1, feed.getEntries().size());
 				assertTrue(feed.getEntries().get(0) instanceof Entry);
-				Entry entry = (Entry)feed.getEntries().get(0);
-				
+				Entry entry = (Entry) feed.getEntries().get(0);
+
 				assertEquals(1, entry.getContents().size());
 				assertTrue(entry.getContents().get(0) instanceof Content);
-				Content content = (Content)entry.getContents().get(0);
-				
+				Content content = (Content) entry.getContents().get(0);
+
 				assertEquals(m().getSubject(), entry.getTitle());
 				assertEquals("text/html", content.getType());
 				assertEquals(m().getHtml(), content.getValue());
-				
+
 			}
 		}.run();
 	}

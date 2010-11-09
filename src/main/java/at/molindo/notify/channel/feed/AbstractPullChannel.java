@@ -58,7 +58,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 		}
 		String prefSecret = p.getParams().get(SECRET);
 		String reqSecret = cPrefs.getParams().get(SECRET);
-		
+
 		return StringUtils.equals(prefSecret, reqSecret);
 	}
 
@@ -68,15 +68,13 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	}
 
 	@Override
-	public final String pull(String userId, ChannelPreferences cPrefs)
-			throws PullException {
+	public final String pull(String userId, ChannelPreferences cPrefs) throws PullException {
 
 		Preferences prefs = _preferencesDAO.getPreferences(userId);
 
 		int amount = cPrefs.getParams().get(AMOUNT);
 
-		List<Notification> notifications = _notificationDAO.getRecent(userId,
-				getNotificationTypes(), 0, amount);
+		List<Notification> notifications = _notificationDAO.getRecent(userId, getNotificationTypes(), 0, amount);
 		if (notifications.size() == 0) {
 			throw new PullException("no notifications found");
 		}
@@ -90,23 +88,23 @@ public abstract class AbstractPullChannel implements IPullChannel {
 				throw new PullException("failed to render notification: " + notification, e);
 			}
 		}
-		
+
 		return pull(messages, lastModified, cPrefs, prefs);
 
 	}
 
 	@Override
 	public ChannelPreferences newDefaultPreferences() {
-		ChannelPreferences prefs = new FeedChannelPreferences(new Params().set(
-				AMOUNT, _defaultAmount));
+		ChannelPreferences prefs = new FeedChannelPreferences(new Params().set(AMOUNT, _defaultAmount));
 		prefs.setVersion(Version.LONG);
 		return prefs;
 	}
-	
-	protected Message render(final Notification notification, Preferences prefs, ChannelPreferences cPrefs) throws RenderException {
+
+	protected Message render(final Notification notification, Preferences prefs, ChannelPreferences cPrefs)
+			throws RenderException {
 		return NotifyUtils.render(_renderService, notification, prefs, cPrefs);
 	}
-	
+
 	public Integer getDefaultAmount() {
 		return _defaultAmount;
 	}
@@ -122,11 +120,12 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	public void setPreferencesDAO(IPreferencesDAO preferencesDAO) {
 		_preferencesDAO = preferencesDAO;
 	}
-	
+
 	public void setRenderService(IRenderService renderService) {
 		_renderService = renderService;
 	}
-	
-	protected abstract String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs, Preferences prefs) throws PullException;
+
+	protected abstract String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs,
+			Preferences prefs) throws PullException;
 
 }

@@ -34,8 +34,7 @@ public class RoundRobinMailClient implements IMailClient {
 	private Iterator<IMailClient> _iter = newIterator();
 
 	@Override
-	public void send(Message message, PushChannelPreferences cPrefs)
-			throws MailException {
+	public void send(Message message, PushChannelPreferences cPrefs) throws MailException {
 		getNext().send(message, cPrefs);
 	}
 

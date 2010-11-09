@@ -68,10 +68,8 @@ public class ChannelPreferences implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((getVersion() == null) ? 0 : getVersion().hashCode());
-		result = prime * result
-				+ ((getParams() == null) ? 0 : getParams().hashCode());
+		result = prime * result + ((getVersion() == null) ? 0 : getVersion().hashCode());
+		result = prime * result + ((getParams() == null) ? 0 : getParams().hashCode());
 		return result;
 	}
 

@@ -21,8 +21,7 @@ import at.molindo.notify.INotificationService.IErrorListener;
 import at.molindo.notify.INotificationService.NotifyException;
 import at.molindo.notify.model.Notification;
 
-public interface IPushDispatcher extends
-		INotificationService.INotificationListner {
+public interface IPushDispatcher extends INotificationService.INotificationListner {
 
 	/**
 	 * @throws NotifyException

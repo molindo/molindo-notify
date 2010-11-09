@@ -31,13 +31,10 @@ import com.google.common.collect.ImmutableSet;
 
 public class MailChannel implements IPushChannel, InitializingBean {
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(MailChannel.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MailChannel.class);
 
-	public static final Param<String> RECIPIENT = new Param<String>(
-			"recipient", String.class);
-	public static final Param<String> RECIPIENT_NAME = new Param<String>(
-			"name", String.class);
+	public static final Param<String> RECIPIENT = new Param<String>("recipient", String.class);
+	public static final Param<String> RECIPIENT_NAME = new Param<String>("name", String.class);
 
 	public static final String CHANNEL_ID = INotificationService.MAIL_CHANNEL;
 
@@ -45,30 +42,26 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	private IMailClient _mailClient;
 
-	public static void setRecipient(PushChannelPreferences cPrefs,
-			String recipient) {
+	public static void setRecipient(PushChannelPreferences cPrefs, String recipient) {
 		cPrefs.getParams().set(RECIPIENT, recipient);
 	}
 
-	public static void setRecipientName(PushChannelPreferences cPrefs,
-			String recipientName) {
+	public static void setRecipientName(PushChannelPreferences cPrefs, String recipientName) {
 		cPrefs.getParams().set(RECIPIENT_NAME, recipientName);
 	}
 
 	public MailChannel() {
 	}
-	
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		// bad hostname increases spam probability
-		
+
 		final String localHostName = DnsUtils.getLocalHostName();
 		if (localHostName == null || localHostName.indexOf('.') < 0) {
-			log.warn("hostname of localhost seems not to be correct: "
-					+ localHostName);
+			log.warn("hostname of localhost seems not to be correct: " + localHostName);
 		} else {
-			log.info("hostname of localhost seems to be correct: "
-					+ localHostName);
+			log.info("hostname of localhost seems to be correct: " + localHostName);
 		}
 
 		if (_mailClient == null) {
@@ -88,13 +81,11 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	@Override
 	public PushChannelPreferences newDefaultPreferences() {
-		return _defaultPreferences != null ? _defaultPreferences.clone()
-				: new PushChannelPreferences();
+		return _defaultPreferences != null ? _defaultPreferences.clone() : new PushChannelPreferences();
 	}
 
 	@Override
-	public void push(Message message, PushChannelPreferences cPrefs)
-			throws PushException {
+	public void push(Message message, PushChannelPreferences cPrefs) throws PushException {
 		_mailClient.send(message, cPrefs);
 	}
 
@@ -119,5 +110,4 @@ public class MailChannel implements IPushChannel, InitializingBean {
 		_mailClient = mailClient;
 	}
 
-	
 }

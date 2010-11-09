@@ -37,8 +37,7 @@ public class SimpleMailClientTest {
 	private static final boolean SEND = false;
 
 	@Test
-	public void testSend() throws AddressException, NamingException,
-			RenderException, MailException {
+	public void testSend() throws AddressException, NamingException, RenderException, MailException {
 
 		final boolean[] sent = { false };
 
@@ -48,20 +47,14 @@ public class SimpleMailClientTest {
 				String message = MailUtils.toString(mm);
 				// System.out.println(message);
 
-				assertTrue(message
-						.contains("From: SimpleMailClientTest <test@test.molindo.at>"));
-				assertTrue(message
-						.contains("Sender: SimpleMailClientTest <test@test.molindo.at>"));
-				assertTrue(message
-						.contains("To: sfussenegger <stf+test@molindo.at>"));
+				assertTrue(message.contains("From: SimpleMailClientTest <test@test.molindo.at>"));
+				assertTrue(message.contains("Sender: SimpleMailClientTest <test@test.molindo.at>"));
+				assertTrue(message.contains("To: sfussenegger <stf+test@molindo.at>"));
 				assertTrue(message.contains("Subject: Test"));
-				assertTrue(message
-						.contains("Content-Type: multipart/alternative;"));
+				assertTrue(message.contains("Content-Type: multipart/alternative;"));
 				assertTrue(message.contains("X-Mailer: molindo-notify"));
-				assertTrue(message
-						.contains("Content-Type: text/plain; charset=UTF-8"));
-				assertTrue(message
-						.contains("Content-Type: text/html; charset=UTF-8"));
+				assertTrue(message.contains("Content-Type: text/plain; charset=UTF-8"));
+				assertTrue(message.contains("Content-Type: text/html; charset=UTF-8"));
 
 				if (SEND) {
 					super.send(mm);
@@ -70,11 +63,9 @@ public class SimpleMailClientTest {
 				sent[0] = true;
 			}
 		}.setServer(DnsUtils.lookupMailHosts("molindo.at")[0])
-				.setFrom("test@test.molindo.at",
-						SimpleMailClientTest.class.getSimpleName()).init();
+				.setFrom("test@test.molindo.at", SimpleMailClientTest.class.getSimpleName()).init();
 
-		Message message = Message.parse(
-				"Subject: Test\n\nThis is a <strong>test</strong>", Type.HTML);
+		Message message = Message.parse("Subject: Test\n\nThis is a <strong>test</strong>", Type.HTML);
 
 		PushChannelPreferences cPrefs = new PushChannelPreferences();
 		MailChannel.setRecipient(cPrefs, "stf+test@molindo.at");

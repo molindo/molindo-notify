@@ -29,8 +29,7 @@ import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 
-public class NotificationService implements INotificationService,
-		INotificationService.IErrorListener {
+public class NotificationService implements INotificationService, INotificationService.IErrorListener {
 
 	private IPreferencesDAO _preferencesDAO;
 	private INotificationDAO _notificationDAO;
@@ -96,8 +95,7 @@ public class NotificationService implements INotificationService,
 	}
 
 	@Override
-	public void error(Notification notification, IPushChannel channel,
-			PushException e) {
+	public void error(Notification notification, IPushChannel channel, PushException e) {
 		for (IErrorListener l : _errorListeners) {
 			l.error(notification, channel, e);
 		}
@@ -117,7 +115,7 @@ public class NotificationService implements INotificationService,
 		_notificationListeners.clear();
 		_notificationListeners.addAll(listeners);
 	}
-	
+
 	@Override
 	public void addNotificationListener(INotificationListner listner) {
 		_notificationListeners.add(listner);
@@ -144,5 +142,4 @@ public class NotificationService implements INotificationService,
 		_defaultPreferences = defaultPreferences;
 	}
 
-	
 }

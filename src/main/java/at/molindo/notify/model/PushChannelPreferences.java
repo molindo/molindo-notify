@@ -48,8 +48,7 @@ public class PushChannelPreferences extends ChannelPreferences {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ ((getFrequency() == null) ? 0 : getFrequency().hashCode());
+		result = prime * result + ((getFrequency() == null) ? 0 : getFrequency().hashCode());
 		return result;
 	}
 
@@ -73,8 +72,7 @@ public class PushChannelPreferences extends ChannelPreferences {
 
 	@Override
 	public String toString() {
-		return "PushChannelPreferences [frequency=" + getFrequency()
-				+ ", params()=" + getParams() + "]";
+		return "PushChannelPreferences [frequency=" + getFrequency() + ", params()=" + getParams() + "]";
 	}
 
 }

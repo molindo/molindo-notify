@@ -24,7 +24,7 @@ public interface IPullChannel extends IChannel {
 	String pull(String userId, ChannelPreferences cPrefs) throws PullException;
 
 	boolean isAuthorized(String userId, ChannelPreferences cPrefs);
-	
+
 	public class PullException extends NotifyException {
 
 		private static final long serialVersionUID = 1L;

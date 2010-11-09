@@ -35,15 +35,14 @@ import com.sun.syndication.io.FeedException;
 
 public abstract class AbstractFeedChannel extends AbstractPullChannel {
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(AbstractFeedChannel.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AbstractFeedChannel.class);
 
 	private String _authorName;
 
 	@Override
-	protected String pull(List<Message> messages, Date lastModified,
-			ChannelPreferences cPrefs, Preferences prefs) throws PullException {
-		
+	protected String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs, Preferences prefs)
+			throws PullException {
+
 		try {
 			return FeedUtils.toFeedXml(toFeed(messages, lastModified, prefs, cPrefs));
 		} catch (FeedException e) {
@@ -54,8 +53,8 @@ public abstract class AbstractFeedChannel extends AbstractPullChannel {
 		}
 	}
 
-	public WireFeed toFeed(List<Message> messages, Date lastModified, Preferences prefs,
-			ChannelPreferences cPrefs) throws RenderException {
+	public WireFeed toFeed(List<Message> messages, Date lastModified, Preferences prefs, ChannelPreferences cPrefs)
+			throws RenderException {
 		final Feed f = new Feed("atom_1.0");
 
 		f.setTitle("TODO title");

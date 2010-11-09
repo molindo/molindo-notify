@@ -48,7 +48,7 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 
 	private RuntimeServices _runtime = new RuntimeInstance();
 
-	public VelocityTemplateRenderer () {
+	public VelocityTemplateRenderer() {
 
 	}
 
@@ -56,7 +56,7 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 	public final void afterPropertiesSet() throws Exception {
 		init();
 	}
-	
+
 	public VelocityTemplateRenderer init() throws Exception {
 		_runtime = new RuntimeInstance();
 		_runtime.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, new SLF4JLogChute());
@@ -65,25 +65,20 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 	}
 
 	@Override
-	public String render(Template template, Params params)
-			throws RenderException {
-		
+	public String render(Template template, Params params) throws RenderException {
+
 		try {
 			StringWriter writer = new StringWriter();
 			getVelocityTemplate(template).merge(buildContext(params), writer);
 			return writer.toString();
 		} catch (ResourceNotFoundException e) {
-			throw new RenderException("failed to render template " + template,
-					e);
+			throw new RenderException("failed to render template " + template, e);
 		} catch (ParseErrorException e) {
-			throw new RenderException("failed to render template " + template,
-					e);
+			throw new RenderException("failed to render template " + template, e);
 		} catch (MethodInvocationException e) {
-			throw new RenderException("failed to render template " + template,
-					e);
+			throw new RenderException("failed to render template " + template, e);
 		} catch (IOException e) {
-			throw new RenderException("failed to render template " + template,
-					e);
+			throw new RenderException("failed to render template " + template, e);
 		}
 	}
 
@@ -91,8 +86,7 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 		return new VelocityContext(params.newMap());
 	}
 
-	private org.apache.velocity.Template getVelocityTemplate(Template template)
-			throws RenderException {
+	private org.apache.velocity.Template getVelocityTemplate(Template template) throws RenderException {
 		Template.Key key = template.key();
 
 		org.apache.velocity.Template vt = _templateCache.get(key);
@@ -103,12 +97,10 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 		return vt;
 	}
 
-	private org.apache.velocity.Template toVelocityTemplate(Template template)
-			throws RenderException {
+	private org.apache.velocity.Template toVelocityTemplate(Template template) throws RenderException {
 		try {
 			StringReader reader = new StringReader(template.getContent());
-			SimpleNode node = _runtime.parse(reader, template.getKey() + "."
-					+ template.getVersion());
+			SimpleNode node = _runtime.parse(reader, template.getKey() + "." + template.getVersion());
 			org.apache.velocity.Template vt = new org.apache.velocity.Template();
 			vt.setRuntimeServices(_runtime);
 			vt.setData(node);

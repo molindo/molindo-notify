@@ -53,27 +53,24 @@ public class DummyChannel extends AbstractPullChannel implements IPushChannel, I
 	public PushChannelPreferences newDefaultPreferences() {
 		return new PushChannelPreferences();
 	}
-	
+
 	@Override
 	public void push(Message message, PushChannelPreferences cPrefs) throws PushException {
 		System.out.println(message);
 	}
 
 	@Override
-	protected String pull(List<Message> messages, Date lastModified,
-			ChannelPreferences cPrefs, Preferences prefs) throws PullException {
-		
+	protected String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs, Preferences prefs)
+			throws PullException {
+
 		StringBuilder buf = new StringBuilder();
-		
+
 		for (Message message : messages) {
-			buf
-				.append(message.getSubject()).append("\n")
-				.append(message.getText()).append("\n\n");
+			buf.append(message.getSubject()).append("\n").append(message.getText()).append("\n\n");
 		}
 		buf.append("last modififed: ").append(lastModified).append("\n");
-		
+
 		return buf.toString();
 	}
 
-	
 }

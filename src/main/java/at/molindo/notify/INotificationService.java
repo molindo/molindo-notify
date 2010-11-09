@@ -31,7 +31,8 @@ public interface INotificationService {
 
 	Preferences getPreferences(@Nonnull String userId);
 
-	@Nonnull Preferences newPreferences(@Nonnull String userId);
+	@Nonnull
+	Preferences newPreferences(@Nonnull String userId);
 
 	void setPreferences(@Nonnull Preferences prefs);
 
@@ -70,8 +71,7 @@ public interface INotificationService {
 		 * @param channel
 		 * @param e
 		 */
-		void error(@Nonnull Notification notification, @Nonnull IPushChannel channel,
-				@Nonnull PushException e);
+		void error(@Nonnull Notification notification, @Nonnull IPushChannel channel, @Nonnull PushException e);
 	}
 
 	public static class NotifyException extends Exception {

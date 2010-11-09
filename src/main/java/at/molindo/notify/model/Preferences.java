@@ -26,8 +26,7 @@ public class Preferences implements Cloneable {
 
 	private Params _params;
 
-	private Map<String, PushChannelPreferences> _channelPrefs = Maps
-			.newHashMap();
+	private Map<String, PushChannelPreferences> _channelPrefs = Maps.newHashMap();
 
 	public String getUserId() {
 		return _userId;
@@ -52,7 +51,7 @@ public class Preferences implements Cloneable {
 		_channelPrefs.put(channelId, cPrefs);
 		return this;
 	}
-	
+
 	public Params getParams() {
 		return _params;
 	}
@@ -69,8 +68,7 @@ public class Preferences implements Cloneable {
 			Preferences p = (Preferences) super.clone();
 			p._params = _params.clone();
 			p._channelPrefs = Maps.newHashMap();
-			for (Map.Entry<String, PushChannelPreferences> e : _channelPrefs
-					.entrySet()) {
+			for (Map.Entry<String, PushChannelPreferences> e : _channelPrefs.entrySet()) {
 				p._channelPrefs.put(e.getKey(), e.getValue().clone());
 			}
 
@@ -84,10 +82,8 @@ public class Preferences implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((getChannelPrefs() == null) ? 0 : getChannelPrefs().size());
-		result = prime * result
-				+ ((getUserId() == null) ? 0 : getUserId().hashCode());
+		result = prime * result + ((getChannelPrefs() == null) ? 0 : getChannelPrefs().size());
+		result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
 		return result;
 	}
 

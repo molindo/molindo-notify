@@ -33,17 +33,14 @@ public class Message {
 
 	private static final String FIELD_SUBJECT = "Subject";
 
-	private static final ImmutableSet<String> REQUIRED_FIELDS = ImmutableSet
-			.of(FIELD_SUBJECT);
-	private static final ImmutableSet<String> SUPPORTED_FIELDS = ImmutableSet
-			.of(FIELD_SUBJECT);
+	private static final ImmutableSet<String> REQUIRED_FIELDS = ImmutableSet.of(FIELD_SUBJECT);
+	private static final ImmutableSet<String> SUPPORTED_FIELDS = ImmutableSet.of(FIELD_SUBJECT);
 
 	private Type _type = Type.HTML;
 	private String _subject;
 	private String _message;
 
-	public static Message parse(String str, IRenderService.Type type)
-			throws RenderException {
+	public static Message parse(String str, IRenderService.Type type) throws RenderException {
 
 		Set<String> required = Sets.newHashSet(REQUIRED_FIELDS);
 		Map<String, String> fieldValues = Maps.newHashMap();
@@ -70,8 +67,7 @@ public class Message {
 
 					fieldValues.put(fieldName, fieldValue);
 				}
-			} else if (body.length() > 0
-					|| !StringUtils.empty(StringUtils.trim(line))) {
+			} else if (body.length() > 0 || !StringUtils.empty(StringUtils.trim(line))) {
 				body.append(line).append("\n");
 			}
 		}
@@ -150,10 +146,8 @@ public class Message {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((getMessage() == null) ? 0 : getMessage().hashCode());
-		result = prime * result
-				+ ((getSubject() == null) ? 0 : getSubject().hashCode());
+		result = prime * result + ((getMessage() == null) ? 0 : getMessage().hashCode());
+		result = prime * result + ((getSubject() == null) ? 0 : getSubject().hashCode());
 		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
 		return result;
 	}
@@ -192,10 +186,7 @@ public class Message {
 
 	@Override
 	public String toString() {
-		return "Message [type=" + getType() + ", subject=" + getSubject()
-				+ ", message=" + getMessage() + "]";
+		return "Message [type=" + getType() + ", subject=" + getSubject() + ", message=" + getMessage() + "]";
 	}
 
-	
-	
 }

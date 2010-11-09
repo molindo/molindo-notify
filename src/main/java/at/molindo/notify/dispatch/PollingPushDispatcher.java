@@ -42,11 +42,9 @@ import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.util.NotifyUtils;
 
-public class PollingPushDispatcher implements IPushDispatcher,
-		InitializingBean, DisposableBean {
+public class PollingPushDispatcher implements IPushDispatcher, InitializingBean, DisposableBean {
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(PollingPushDispatcher.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PollingPushDispatcher.class);
 
 	private static final int DEFAULT_POOL_SIZE = 1;
 	private static final int DEFAULT_MAX_ERROR = 3;
@@ -86,29 +84,29 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		if (_preferencesDAO == null) {
 			throw new IllegalStateException("no preferencesDAO configured");
 		}
-		
-		_executor = new ThreadPoolExecutor(_poolSize, _poolSize, 3,
-				TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(1)) {
 
-					@Override
-					protected void afterExecute(Runnable r, Throwable t) {
-						if (!isShutdown()) {
-							execute(new Polling());
-						}
-					}
-			
+		_executor = new ThreadPoolExecutor(_poolSize, _poolSize, 3, TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(
+				1)) {
+
+			@Override
+			protected void afterExecute(Runnable r, Throwable t) {
+				if (!isShutdown()) {
+					execute(new Polling());
+				}
+			}
+
 		};
 		for (int i = 0; i < _poolSize; i++) {
 			_executor.execute(new Polling());
 		}
-		
+
 		_notificationService.addNotificationListener(this);
 	}
 
 	@Override
 	public void destroy() {
 		_notificationService.removeNotificationListener(this);
-		
+
 		_executor.shutdown();
 
 		synchronized (_wait) {
@@ -141,7 +139,8 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		if (push(new DispatchConf(notification, true)) != PushResult.SUCCESS) {
 			throw new NotifyException("failed to dispatch now: " + notification);
 		} else {
-			// only record success of dispatchNow as failed notifications must not be stored for later use
+			// only record success of dispatchNow as failed notifications must
+			// not be stored for later use
 			recordPushAttempt(notification, PushResult.SUCCESS);
 		}
 	}
@@ -152,24 +151,20 @@ public class PollingPushDispatcher implements IPushDispatcher,
 	}
 
 	PushResult push(DispatchConf dc) {
-		Preferences prefs = _preferencesDAO.getPreferences(dc.notification
-				.getUserId());
+		Preferences prefs = _preferencesDAO.getPreferences(dc.notification.getUserId());
 		if (prefs == null) {
-			log.warn("can't push to unknown user "
-					+ dc.notification.getUserId());
+			log.warn("can't push to unknown user " + dc.notification.getUserId());
 			return PushResult.PERSISTENT_ERROR;
 		}
 
 		PushResult result = PushResult.PERSISTENT_ERROR;
 		for (IPushChannel channel : _pushChannels) {
-			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(
-					channel.getId());
+			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
 
 			if (isAllowed(dc, channel, cPrefs, Frequency.INSTANT)) {
 				try {
 
-					channel.push(NotifyUtils.render(_renderService,
-							dc.notification, prefs, cPrefs), cPrefs);
+					channel.push(NotifyUtils.render(_renderService, dc.notification, prefs, cPrefs), cPrefs);
 					result = PushResult.SUCCESS;
 				} catch (PushException e) {
 					if (e.isTemporaryError()) {
@@ -179,13 +174,11 @@ public class PollingPushDispatcher implements IPushDispatcher,
 						_errorListener.error(dc.notification, channel, e);
 					} else {
 						log.warn(
-								"failed to deliver notification "
-										+ dc.notification + " on channel "
-										+ channel.getId(), e);
+								"failed to deliver notification " + dc.notification + " on channel " + channel.getId(),
+								e);
 					}
 				} catch (RenderException e) {
-					log.error("failed to render notification "
-							+ dc.notification, e);
+					log.error("failed to render notification " + dc.notification, e);
 				}
 			}
 		}
@@ -193,8 +186,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 		return result;
 	}
 
-	boolean isAllowed(DispatchConf dc, IPushChannel channel,
-			PushChannelPreferences prefs, Frequency frequency) {
+	boolean isAllowed(DispatchConf dc, IPushChannel channel, PushChannelPreferences prefs, Frequency frequency) {
 
 		if (prefs == null) {
 			// no preferences for this channel
@@ -248,8 +240,7 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			// FIXME don't push notification with multiple threads at once!!
 			Notification notification = _notificationDAO.getNext();
 			if (notification != null) {
-				recordPushAttempt(notification, push(new DispatchConf(
-						notification)));
+				recordPushAttempt(notification, push(new DispatchConf(notification)));
 			} else {
 				// add a polling delay
 				delay();
@@ -299,14 +290,12 @@ public class PollingPushDispatcher implements IPushDispatcher,
 			notification.setPushDate(null);
 			int errorCount = notification.recordPushError();
 
-			if (errorCount > _maxErrorCount
-					|| result == PushResult.PERSISTENT_ERROR) {
+			if (errorCount > _maxErrorCount || result == PushResult.PERSISTENT_ERROR) {
 				notification.setPushState(PushState.UNDELIVERABLE);
 				notification.setPushScheduled(null);
 			} else {
 				notification.setPushState(PushState.QUEUED);
-				notification.setPushScheduled(new Date(System
-						.currentTimeMillis() + waitAfter(errorCount)));
+				notification.setPushScheduled(new Date(System.currentTimeMillis() + waitAfter(errorCount)));
 			}
 
 		}

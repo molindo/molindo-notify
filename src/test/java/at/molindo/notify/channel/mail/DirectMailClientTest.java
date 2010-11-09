@@ -36,8 +36,7 @@ public class DirectMailClientTest {
 	private static final boolean SEND = false;
 
 	@Test
-	public void testSend() throws AddressException, NamingException,
-			RenderException, MailException {
+	public void testSend() throws AddressException, NamingException, RenderException, MailException {
 
 		final boolean[] sent = { false };
 
@@ -53,11 +52,9 @@ public class DirectMailClientTest {
 
 				sent[0] = true;
 			}
-		}.setFrom("test@test.molindo.at",
-				DirectMailClientTest.class.getSimpleName()).init();
+		}.setFrom("test@test.molindo.at", DirectMailClientTest.class.getSimpleName()).init();
 
-		Message message = Message.parse(
-				"Subject: Test\n\nThis is a <strong>test</strong>", Type.HTML);
+		Message message = Message.parse("Subject: Test\n\nThis is a <strong>test</strong>", Type.HTML);
 
 		PushChannelPreferences cPrefs = new PushChannelPreferences();
 		MailChannel.setRecipient(cPrefs, "stf+test@molindo.at");

@@ -36,8 +36,7 @@ import com.google.common.collect.Lists;
 
 public class FileTemplateDAO implements ITemplateDAO {
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(FileTemplateDAO.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FileTemplateDAO.class);
 
 	/**
 	 * 
@@ -91,18 +90,11 @@ public class FileTemplateDAO implements ITemplateDAO {
 			Matcher m = PATTERN.matcher(template.getName());
 			if (m.matches()) {
 				try {
-					templates.add(new Template()
-							.setKey(key)
-							.setVersion(
-									Version.valueOf(m.group(1).toUpperCase()))
-							.setLocale(
-									m.group(2) == null ? null : new Locale(m
-											.group(2)))
+					templates.add(new Template().setKey(key).setVersion(Version.valueOf(m.group(1).toUpperCase()))
+							.setLocale(m.group(2) == null ? null : new Locale(m.group(2)))
 							.setType(Type.valueOf(m.group(3).toUpperCase()))
 							.setLastModified(new Date(template.lastModified()))
-							.setContent(
-									StreamUtils.string(FileUtils.in(template,
-											Compression.NONE))));
+							.setContent(StreamUtils.string(FileUtils.in(template, Compression.NONE))));
 				} catch (IOException e) {
 					log.warn("failed to read template from " + template, e);
 				}
@@ -118,8 +110,7 @@ public class FileTemplateDAO implements ITemplateDAO {
 
 	public void setBaseDir(File baseDir) {
 		if (baseDir != null && !baseDir.isDirectory()) {
-			throw new IllegalArgumentException("baseDir not a directory: "
-					+ baseDir);
+			throw new IllegalArgumentException("baseDir not a directory: " + baseDir);
 		}
 		_baseDir = baseDir;
 	}

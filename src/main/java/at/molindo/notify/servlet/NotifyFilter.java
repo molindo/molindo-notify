@@ -43,14 +43,12 @@ import com.google.common.collect.Maps;
 
 public class NotifyFilter implements Filter {
 
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory
-			.getLogger(NotifyFilter.class);
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NotifyFilter.class);
 
-	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName()
-			+ ".channel";
-	
+	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName() + ".channel";
+
 	private static final Pattern PATTERN = Pattern.compile("^/([^/?]+)/([^/?]+).*$");
-	
+
 	private ServletContext _context;
 
 	public static void addChannel(IPullChannel channel, ServletContext context) {
@@ -60,7 +58,7 @@ public class NotifyFilter implements Filter {
 		if (context == null) {
 			throw new NullPointerException("context");
 		}
-		
+
 		PullChannels channels = (PullChannels) context.getAttribute(ATTRIBUTE_CHANNEL);
 		if (channels == null) {
 			context.setAttribute(ATTRIBUTE_CHANNEL, new PullChannels(channel));
@@ -68,7 +66,7 @@ public class NotifyFilter implements Filter {
 			channels.add(channel);
 		}
 	}
-	
+
 	public static void removeChannel(IPullChannel channel, ServletContext context) {
 		if (channel == null) {
 			throw new NullPointerException("channel");
@@ -76,21 +74,21 @@ public class NotifyFilter implements Filter {
 		if (context == null) {
 			throw new NullPointerException("context");
 		}
-		
+
 		PullChannels channels = (PullChannels) context.getAttribute(ATTRIBUTE_CHANNEL);
 		if (channels != null) {
 			channels.remove(channel);
 		}
 	}
-	
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		_context = filterConfig.getServletContext();
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+			ServletException {
 
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse resp = (HttpServletResponse) response;
@@ -106,7 +104,7 @@ public class NotifyFilter implements Filter {
 			resp.sendError(404);
 			return;
 		}
-		
+
 		String channelId = m.group(1);
 		String userId = m.group(2);
 
@@ -115,13 +113,12 @@ public class NotifyFilter implements Filter {
 			return;
 		}
 
-		
 		IPullChannel channel = getChannel(channelId);
 		if (channel == null) {
 			resp.sendError(404);
 			return;
 		}
-		
+
 		ChannelPreferences prefs = channel.newDefaultPreferences();
 		if (prefs instanceof IRequestConfigurable) {
 			try {
@@ -133,8 +130,7 @@ public class NotifyFilter implements Filter {
 						String[] vals = (String[]) value;
 						value = vals.length > 0 ? vals[0] : null;
 					}
-					((IRequestConfigurable) prefs).setParam(
-							(String) e.getKey(), (String) value);
+					((IRequestConfigurable) prefs).setParam((String) e.getKey(), (String) value);
 				}
 			} catch (NotifyException e) {
 				resp.sendError(404);
@@ -167,7 +163,7 @@ public class NotifyFilter implements Filter {
 		if (channels == null) {
 			return null;
 		}
-		
+
 		return channels.get(channelId);
 	}
 
@@ -179,9 +175,9 @@ public class NotifyFilter implements Filter {
 	}
 
 	private static class PullChannels {
-		
+
 		private Map<String, IPullChannel> _channels = Maps.newHashMap();
-		
+
 		public PullChannels(IPullChannel channel) {
 			add(channel);
 		}
@@ -198,7 +194,7 @@ public class NotifyFilter implements Filter {
 				throw new IllegalStateException("duplicate id: " + channel.getId());
 			}
 		}
-		
+
 		public void remove(IPullChannel channel) {
 			if (_channels.get(channel.getId()) == channel) {
 				_channels.remove(channel.getId());

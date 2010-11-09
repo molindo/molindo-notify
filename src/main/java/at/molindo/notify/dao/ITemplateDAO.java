@@ -24,6 +24,7 @@ import at.molindo.notify.model.Template;
 
 public interface ITemplateDAO {
 
-	@Nonnull List<Template> findTemplates(@Nonnull String key);
+	@Nonnull
+	List<Template> findTemplates(@Nonnull String key);
 
 }

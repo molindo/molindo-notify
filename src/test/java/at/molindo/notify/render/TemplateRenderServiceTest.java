@@ -55,8 +55,7 @@ public class TemplateRenderServiceTest {
 	}
 
 	public static Message result() {
-		return new Message("Test", "this is a test",
-				IRenderService.Type.HTML);
+		return new Message("Test", "this is a test", IRenderService.Type.HTML);
 	}
 
 	@Test
@@ -68,25 +67,21 @@ public class TemplateRenderServiceTest {
 			private Params _params;
 
 			@Override
-			protected void setup(EasyMockContext context)
-					throws RenderException {
+			protected void setup(EasyMockContext context) throws RenderException {
 				_svc = svc(context);
 				_t = t();
 
 				_params = new Params();
 				_params.set(Param.p("word", String.class), "test");
 
-				expect(
-						context.get(ITemplateDAO.class).findTemplates(
-								_t.getKey())).andReturn(Arrays.asList(t()));
-				expect(context.get(ITemplateRenderer.class).render(_t, _params))
-						.andReturn("Subject: Test\n\nthis is a test");
+				expect(context.get(ITemplateDAO.class).findTemplates(_t.getKey())).andReturn(Arrays.asList(t()));
+				expect(context.get(ITemplateRenderer.class).render(_t, _params)).andReturn(
+						"Subject: Test\n\nthis is a test");
 			}
 
 			@Override
 			protected void test(EasyMockContext context) throws RenderException {
-				Message result = _svc.render(_t.getKey(), _t.getVersion(),
-						_params);
+				Message result = _svc.render(_t.getKey(), _t.getVersion(), _params);
 				assertEquals(result(), result);
 			}
 

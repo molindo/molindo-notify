@@ -27,8 +27,7 @@ public class Notification {
 
 		public static ImmutableSet<Type> TYPES_ALL = ImmutableSet.copyOf(values());
 		public static ImmutableSet<Type> TYPES_PUBLIC = ImmutableSet.of(PUBLIC);
-		public static ImmutableSet<Type> TYPES_PRIVATE = ImmutableSet
-				.of(PRIVATE);
+		public static ImmutableSet<Type> TYPES_PRIVATE = ImmutableSet.of(PRIVATE);
 	}
 
 	private Long _id;
@@ -160,14 +159,10 @@ public class Notification {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((getDate() == null) ? 0 : getDate().hashCode());
-		result = prime * result
-				+ ((getKey() == null) ? 0 : getKey().hashCode());
-		result = prime * result
-				+ ((getType() == null) ? 0 : getType().hashCode());
-		result = prime * result
-				+ ((getUserId() == null) ? 0 : getUserId().hashCode());
+		result = prime * result + ((getDate() == null) ? 0 : getDate().hashCode());
+		result = prime * result + ((getKey() == null) ? 0 : getKey().hashCode());
+		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+		result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
 		return result;
 	}
 
@@ -219,8 +214,7 @@ public class Notification {
 
 	@Override
 	public String toString() {
-		return "Notification [userId=" + _userId + ", key=" + _key + ", type="
-				+ _type + ", date=" + _date + "]";
+		return "Notification [userId=" + _userId + ", key=" + _key + ", type=" + _type + ", date=" + _date + "]";
 	}
 
 }

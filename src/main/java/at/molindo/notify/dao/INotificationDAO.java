@@ -41,7 +41,8 @@ public interface INotificationDAO {
 	/**
 	 * @return recent notifications for userId (pull)
 	 */
-	@Nonnull List<Notification> getRecent(@Nonnull String userId, @Nonnull Set<Type> types, @Nonnegative int first,
+	@Nonnull
+	List<Notification> getRecent(@Nonnull String userId, @Nonnull Set<Type> types, @Nonnegative int first,
 			@Nonnegative int count);
 
 }

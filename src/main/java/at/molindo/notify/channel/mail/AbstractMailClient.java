@@ -37,8 +37,7 @@ import at.molindo.notify.model.Message;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.utils.io.CharsetUtils;
 
-public abstract class AbstractMailClient implements IMailClient,
-		InitializingBean {
+public abstract class AbstractMailClient implements IMailClient, InitializingBean {
 
 	public enum Security {
 		NONE(25), SSL(465), TLS(587);
@@ -75,17 +74,15 @@ public abstract class AbstractMailClient implements IMailClient,
 		if (_from == null) {
 			throw new MailException("from address is not configured", true);
 		}
-		
+
 		return this;
 	}
 
 	@Override
-	public synchronized void send(Message message, PushChannelPreferences cPrefs)
-			throws MailException {
+	public synchronized void send(Message message, PushChannelPreferences cPrefs) throws MailException {
 
 		String recipient = cPrefs.getParams().get(MailChannel.RECIPIENT);
-		String recipientName = cPrefs.getParams().get(
-				MailChannel.RECIPIENT_NAME);
+		String recipientName = cPrefs.getParams().get(MailChannel.RECIPIENT_NAME);
 		String subject = message.getSubject();
 
 		try {
@@ -97,8 +94,7 @@ public abstract class AbstractMailClient implements IMailClient,
 					if (idx >= 0) {
 						domain = domain.substring(idx + 1);
 					}
-					setHeader("Message-ID", "<" + UUID.randomUUID() + "@"
-							+ domain + ">");
+					setHeader("Message-ID", "<" + UUID.randomUUID() + "@" + domain + ">");
 				}
 			};
 			mm.setFrom(_from);
@@ -111,26 +107,23 @@ public abstract class AbstractMailClient implements IMailClient,
 			mm.setHeader("X-Mailer", "molindo-notify");
 			mm.setSentDate(new Date());
 
-			mm.setRecipient(RecipientType.TO, new InternetAddress(recipient,
-					recipientName, CharsetUtils.UTF_8.displayName()));
+			mm.setRecipient(RecipientType.TO,
+					new InternetAddress(recipient, recipientName, CharsetUtils.UTF_8.displayName()));
 			mm.setSubject(subject, CharsetUtils.UTF_8.displayName());
 
 			switch (_format) {
 			case HTML:
-				mm.setText(message.getHtml(), CharsetUtils.UTF_8.displayName(),
-						"html");
+				mm.setText(message.getHtml(), CharsetUtils.UTF_8.displayName(), "html");
 				break;
 			case TEXT:
 				mm.setText(message.getText(), CharsetUtils.UTF_8.displayName());
 				break;
 			case MULTI:
 				MimeBodyPart html = new MimeBodyPart();
-				html.setText(message.getHtml(),
-						CharsetUtils.UTF_8.displayName(), "html");
+				html.setText(message.getHtml(), CharsetUtils.UTF_8.displayName(), "html");
 
 				MimeBodyPart text = new MimeBodyPart();
-				text.setText(message.getText(),
-						CharsetUtils.UTF_8.displayName());
+				text.setText(message.getText(), CharsetUtils.UTF_8.displayName());
 
 				/*
 				 * The formats are ordered by how faithful they are to the
@@ -151,8 +144,7 @@ public abstract class AbstractMailClient implements IMailClient,
 			send(mm);
 
 		} catch (final MessagingException e) {
-			throw new MailException("could not send mail to " + recipient, e,
-					isTemporary(e));
+			throw new MailException("could not send mail to " + recipient, e, isTemporary(e));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("utf8 unknown?", e);
 		}
@@ -166,8 +158,7 @@ public abstract class AbstractMailClient implements IMailClient,
 		return true;
 	}
 
-	protected abstract Session getSmtpSession(String recipient)
-			throws MailException;
+	protected abstract Session getSmtpSession(String recipient) throws MailException;
 
 	public InternetAddress getFrom() {
 		return _from;
@@ -182,11 +173,9 @@ public abstract class AbstractMailClient implements IMailClient,
 		return setFrom(new InternetAddress(address));
 	}
 
-	public AbstractMailClient setFrom(String address, String personal)
-			throws AddressException {
+	public AbstractMailClient setFrom(String address, String personal) throws AddressException {
 		try {
-			return setFrom(new InternetAddress(address, personal,
-					CharsetUtils.UTF_8.displayName()));
+			return setFrom(new InternetAddress(address, personal, CharsetUtils.UTF_8.displayName()));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("utf8 not supported?", e);
 		}
@@ -201,16 +190,13 @@ public abstract class AbstractMailClient implements IMailClient,
 		return this;
 	}
 
-	public AbstractMailClient setReplyTo(String address)
-			throws AddressException {
+	public AbstractMailClient setReplyTo(String address) throws AddressException {
 		return setReplyTo(new InternetAddress(address));
 	}
 
-	public AbstractMailClient setReplyTo(String address, String personal)
-			throws AddressException {
+	public AbstractMailClient setReplyTo(String address, String personal) throws AddressException {
 		try {
-			return setReplyTo(new InternetAddress(address, personal,
-					CharsetUtils.UTF_8.displayName()));
+			return setReplyTo(new InternetAddress(address, personal, CharsetUtils.UTF_8.displayName()));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("utf8 not supported?", e);
 		}
