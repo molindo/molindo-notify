@@ -208,9 +208,10 @@ public class PollingPushDispatcherTest {
 				Polling polling = dispatcher.new Polling() {
 
 					@Override
+					@SuppressWarnings(value = "NP_NONNULL_PARAM_VIOLATION", justification = "mocks accept null")
 					protected void delay() {
 						// verify delay
-						context.get(IErrorListener.class).error(n(), context.get(IPushChannel.class), ex);
+						context.get(IErrorListener.class).error(null, null, ex);
 					}
 
 				};

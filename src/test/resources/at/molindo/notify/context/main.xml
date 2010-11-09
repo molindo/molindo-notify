@@ -40,5 +40,6 @@
 		<property name="renderService" ref="renderService" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
+		<property name="poolSize" value="1" />
 	</bean>
 </beans>

@@ -37,6 +37,8 @@ public class ContextTest extends AbstractJUnit4SpringContextTests {
 
 	@Test
 	public void test() throws InterruptedException, NotifyException {
+		// if it runs we're happy
+		
 		_svc.notify(new Notification().setUserId(DummyUtils.USER_ID)
 				.setKey(DummyUtils.KEY)
 				.setParams(new Params().set(Param.pString("word"), "Test")));
@@ -45,7 +47,7 @@ public class ContextTest extends AbstractJUnit4SpringContextTests {
 				.setKey(DummyUtils.KEY)
 				.setParams(new Params().set(Param.pString("word"), "Test Now")));
 	
-		Thread.sleep(10000);
+		Thread.sleep(100);
 	}
 	
 }

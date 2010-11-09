@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
+import at.molindo.notify.model.PushState;
 import at.molindo.utils.collections.CollectionUtils;
 
 import com.google.common.collect.Lists;
@@ -93,11 +94,16 @@ public class MemoryNotificationDAO implements INotificationDAO {
 			Collections.sort(_queue, new Comparator<Notification>() {
 				@Override
 				public int compare(Notification o1, Notification o2) {
+					// QUEUED to front
+					int val = o1.getPushState().compareTo(o2.getPushState());
+					if (val != 0) {
+						return val;
+					}
 					return o1.getPushScheduled().compareTo(o2.getPushScheduled());
 				}
 			});
 			Notification n = _queue.peek();
-			if (n != null && n.getPushScheduled() != null && n.getPushScheduled().before(new Date())) {
+			if (n != null && n.getPushState() == PushState.QUEUED && n.getPushScheduled() != null && n.getPushScheduled().before(new Date())) {
 				return n;
 			} else {
 				return null;
