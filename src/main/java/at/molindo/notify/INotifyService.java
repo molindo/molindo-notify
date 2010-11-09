@@ -23,7 +23,7 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 
-public interface INotificationService {
+public interface INotifyService {
 
 	public static final String MAIL_CHANNEL = "mail";
 	public static final String PRIVATE_FEED_CHANNEL = "private-feed";

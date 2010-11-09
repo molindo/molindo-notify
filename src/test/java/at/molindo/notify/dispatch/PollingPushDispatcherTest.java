@@ -28,7 +28,7 @@ import java.util.Map;
 import org.easymock.IArgumentMatcher;
 import org.junit.Test;
 
-import at.molindo.notify.INotificationService.IErrorListener;
+import at.molindo.notify.INotifyService.IErrorListener;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;

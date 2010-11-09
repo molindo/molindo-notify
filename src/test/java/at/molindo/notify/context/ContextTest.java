@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import at.molindo.notify.INotificationService;
-import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotifyService;
+import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.dao.dummy.DummyUtils;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
@@ -32,7 +32,7 @@ import at.molindo.notify.model.Params;
 public class ContextTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired
-	private INotificationService _svc;
+	private INotifyService _svc;
 
 	@Test
 	public void test() throws InterruptedException, NotifyException {

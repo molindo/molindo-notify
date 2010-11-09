@@ -16,7 +16,7 @@
 
 package at.molindo.notify.channel;
 
-import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.model.ChannelPreferences;
 
 public interface IPullChannel extends IChannel {

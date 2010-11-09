@@ -16,7 +16,7 @@
 
 package at.molindo.notify.render;
 
-import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Params;
 

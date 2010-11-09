@@ -16,12 +16,12 @@
 
 package at.molindo.notify.dispatch;
 
-import at.molindo.notify.INotificationService;
-import at.molindo.notify.INotificationService.IErrorListener;
-import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotifyService;
+import at.molindo.notify.INotifyService.IErrorListener;
+import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.model.Notification;
 
-public interface IPushDispatcher extends INotificationService.INotificationListner {
+public interface IPushDispatcher extends INotifyService.INotificationListner {
 
 	/**
 	 * @throws NotifyException

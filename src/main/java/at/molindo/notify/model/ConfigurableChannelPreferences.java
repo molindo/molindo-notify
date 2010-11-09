@@ -19,8 +19,8 @@ package at.molindo.notify.model;
 import static at.molindo.notify.channel.feed.AbstractPullChannel.AMOUNT;
 import static at.molindo.notify.channel.feed.AbstractPullChannel.MAX_AMOUNT;
 import static at.molindo.notify.channel.feed.AbstractPullChannel.SECRET;
-import at.molindo.notify.INotificationService;
-import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotifyService;
+import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.channel.feed.AbstractFeedChannel;
 
 public class ConfigurableChannelPreferences extends ChannelPreferences implements IRequestConfigurable {
@@ -41,10 +41,10 @@ public class ConfigurableChannelPreferences extends ChannelPreferences implement
 				if (amount > 0 && amount <= MAX_AMOUNT) {
 					getParams().set(AbstractFeedChannel.AMOUNT, amount);
 				} else {
-					throw new INotificationService.NotifyException("illegal amount: " + amount);
+					throw new INotifyService.NotifyException("illegal amount: " + amount);
 				}
 			} catch (NumberFormatException e) {
-				throw new INotificationService.NotifyException("can't convert value to Number: " + value, e);
+				throw new INotifyService.NotifyException("can't convert value to Number: " + value, e);
 			}
 		} else if (SECRET.getName().equals(name)) {
 			getParams().set(AbstractFeedChannel.SECRET, value);

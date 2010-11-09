@@ -29,7 +29,7 @@ import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 
-public class NotificationService implements INotificationService, INotificationService.IErrorListener {
+public class NotifyService implements INotifyService, INotifyService.IErrorListener {
 
 	private IPreferencesDAO _preferencesDAO;
 	private INotificationDAO _notificationDAO;

@@ -16,7 +16,7 @@
 
 package at.molindo.notify.channel.feed;
 
-import at.molindo.notify.INotificationService;
+import at.molindo.notify.INotifyService;
 import at.molindo.notify.model.Notification.Type;
 
 import com.google.common.collect.ImmutableSet;
@@ -25,7 +25,7 @@ public class PublicFeedChannel extends AbstractFeedChannel {
 
 	@Override
 	public String getId() {
-		return INotificationService.PUBLIC_FEED_CHANNEL;
+		return INotifyService.PUBLIC_FEED_CHANNEL;
 	}
 
 	@Override

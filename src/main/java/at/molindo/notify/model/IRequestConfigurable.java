@@ -16,7 +16,7 @@
 
 package at.molindo.notify.model;
 
-import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotifyService.NotifyException;
 
 public interface IRequestConfigurable {
 

@@ -25,10 +25,10 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import at.molindo.notify.INotificationService;
-import at.molindo.notify.INotificationService.IErrorListener;
-import at.molindo.notify.INotificationService.NotifyException;
-import at.molindo.notify.INotificationService.NotifyRuntimeException;
+import at.molindo.notify.INotifyService;
+import at.molindo.notify.INotifyService.IErrorListener;
+import at.molindo.notify.INotifyService.NotifyException;
+import at.molindo.notify.INotifyService.NotifyRuntimeException;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
@@ -54,7 +54,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	private int _poolSize = DEFAULT_POOL_SIZE;
 
-	private INotificationService _notificationService;
+	private INotifyService _notificationService;
 	private IRenderService _renderService;
 
 	private INotificationDAO _notificationDAO;
@@ -336,7 +336,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		_maxErrorCount = maxErrorCount;
 	}
 
-	public void setNotificationService(INotificationService notificationService) {
+	public void setNotificationService(INotifyService notificationService) {
 		_notificationService = notificationService;
 	}
 }

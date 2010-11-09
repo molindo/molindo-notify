@@ -31,7 +31,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import at.molindo.notify.INotificationService.NotifyException;
+import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.channel.IPullChannel.PullException;
 import at.molindo.notify.model.ChannelPreferences;

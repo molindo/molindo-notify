@@ -18,7 +18,7 @@ package at.molindo.notify.channel.mail;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import at.molindo.notify.INotificationService;
+import at.molindo.notify.INotifyService;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Message;
@@ -36,7 +36,7 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	public static final Param<String> RECIPIENT = new Param<String>("recipient", String.class);
 	public static final Param<String> RECIPIENT_NAME = new Param<String>("name", String.class);
 
-	public static final String CHANNEL_ID = INotificationService.MAIL_CHANNEL;
+	public static final String CHANNEL_ID = INotifyService.MAIL_CHANNEL;
 
 	private PushChannelPreferences _defaultPreferences;
 
@@ -71,7 +71,7 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	@Override
 	public String getId() {
-		return INotificationService.MAIL_CHANNEL;
+		return INotifyService.MAIL_CHANNEL;
 	}
 
 	@Override
