@@ -24,7 +24,7 @@
   	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
   ">
 
-	<bean id="notificationService" class="at.molindo.notify.NotificationService">
+	<bean id="notifyService" class="at.molindo.notify.NotifyService">
 		<property name="instantDispatcher" ref="dispatcher" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
@@ -36,7 +36,7 @@
 				<ref bean="dummyChannel" />
 			</list>
 		</property>
-		<property name="notificationService" ref="notificationService" />
+		<property name="notifyService" ref="notifyService" />
 		<property name="renderService" ref="renderService" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />

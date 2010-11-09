@@ -54,7 +54,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	private int _poolSize = DEFAULT_POOL_SIZE;
 
-	private INotifyService _notificationService;
+	private INotifyService _notifyService;
 	private IRenderService _renderService;
 
 	private INotificationDAO _notificationDAO;
@@ -99,12 +99,12 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 					}
 				}).start();
 
-		_notificationService.addNotificationListener(this);
+		_notifyService.addNotificationListener(this);
 	}
 
 	@Override
 	public void destroy() {
-		_notificationService.removeNotificationListener(this);
+		_notifyService.removeNotificationListener(this);
 
 		_threadGroup.setInactive();
 		synchronized (_wait) {
@@ -336,7 +336,8 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		_maxErrorCount = maxErrorCount;
 	}
 
-	public void setNotificationService(INotifyService notificationService) {
-		_notificationService = notificationService;
+	public void setNotifyService(INotifyService notifyService) {
+		_notifyService = notifyService;
 	}
+
 }
