@@ -16,58 +16,206 @@
 
 package at.molindo.notify.model;
 
+import java.io.NotSerializableException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.annotation.Nonnull;
+
+import at.molindo.utils.data.HexUtils;
+import at.molindo.utils.data.SerializationUtils;
 import at.molindo.utils.data.StringUtils;
 
-public class Param<T> {
+public abstract class Param<T> {
 
 	private String _name;
 	private Class<T> _type;
 
 	public static Param<String> pString(String name) {
-		return p(name, String.class);
+		return new Param<String>(name, String.class) {
+
+			@Override
+			protected String string(String object) {
+				return object;
+			}
+
+			@Override
+			protected String object(String string) {
+				return string;
+			}
+
+			@Override
+			protected Type type() {
+				return Type.STRING;
+			}
+
+		};
 	}
 
 	public static Param<Integer> pInteger(String name) {
-		return p(name, Integer.class);
+		return new Param<Integer>(name, Integer.class) {
+
+			@Override
+			protected Integer object(String string) {
+				return Integer.parseInt(string);
+			}
+
+			@Override
+			protected Type type() {
+				return Type.INTEGER;
+			}
+		};
 	}
 
 	public static Param<Long> pLong(String name) {
-		return p(name, Long.class);
+		return new Param<Long>(name, Long.class) {
+
+			@Override
+			protected Long object(String string) {
+				return Long.parseLong(string);
+			}
+
+			@Override
+			protected Type type() {
+				return Type.LONG;
+			}
+		};
 	}
 
 	public static Param<Double> pDouble(String name) {
-		return p(name, Double.class);
+		return new Param<Double>(name, Double.class) {
+
+			@Override
+			protected Double object(String string) {
+				return Double.parseDouble(string);
+			}
+
+			@Override
+			protected Type type() {
+				return Type.DOUBLE;
+			}
+		};
 	}
 
 	public static Param<Float> pFloat(String name) {
-		return p(name, Float.class);
+		return new Param<Float>(name, Float.class) {
+
+			@Override
+			protected Float object(String string) {
+				return Float.parseFloat(string);
+			}
+
+			@Override
+			protected Type type() {
+				return Type.FLOAT;
+			}
+		};
 	}
 
 	public static Param<Boolean> pBoolean(String name) {
-		return p(name, Boolean.class);
+		return new Param<Boolean>(name, Boolean.class) {
+
+			@Override
+			protected Boolean object(String string) {
+				return Boolean.parseBoolean(string);
+			}
+
+			@Override
+			protected Type type() {
+				return Type.BOOLEAN;
+			}
+		};
 	}
 
 	public static Param<Character> pCharacter(String name) {
-		return p(name, Character.class);
+		return new Param<Character>(name, Character.class) {
+
+			@Override
+			protected Character object(String string) {
+				return string.charAt(0);
+			}
+
+			@Override
+			protected Type type() {
+				return Type.CHARACTER;
+			}
+		};
 	}
 
 	public static Param<URL> pURL(String name) {
-		return p(name, URL.class);
+		return new Param<URL>(name, URL.class) {
+
+			@Override
+			protected URL object(String string) {
+				try {
+					return new URL(string);
+				} catch (MalformedURLException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			protected Type type() {
+				return Type.URL;
+			}
+		};
 	}
 
-	private static <T> Param<T> p(String name, Class<T> type) {
-		return new Param<T>(name, type);
+	public static Param<Object> pSerializable(String name) {
+		return new Param<Object>(name, Object.class) {
+
+			@Override
+			protected Object object(String string) {
+				try {
+					return SerializationUtils.deserialize(HexUtils.bytes(string));
+				} catch (ClassNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			protected String string(Object object) {
+				try {
+					return HexUtils.string(SerializationUtils.serialize(object));
+				} catch (NotSerializableException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+			@Override
+			protected Type type() {
+				return Type.SERIALIZABLE;
+			}
+		};
 	}
 
-	protected Param() {
+	public static Param<Object> pObject(String name) {
+		return new Param<Object>(name, Object.class) {
 
+			@Override
+			protected String string(Object object) {
+				throw new RuntimeException("can't convert from unknown type to string " + object);
+			}
+
+			@Override
+			protected Object object(String string) {
+				throw new RuntimeException("can't convert to unknown type from " + string);
+			}
+
+			@Override
+			protected Type type() {
+				return Type.OBJECT;
+			}
+		};
 	}
 
-	protected Param(String name, Class<T> type) {
+	private Param() {
+	}
+
+	private Param(String name, Class<T> cls) {
+		this();
 		setName(name);
-		setType(type);
+		setType(cls);
 	}
 
 	public String getName() {
@@ -138,4 +286,111 @@ public class Param<T> {
 		return "Param [name=" + _name + ", type=" + _type == null ? null : _type.getSimpleName() + "]";
 	}
 
+	public ParamValue value(T value) {
+		return new ParamValue(this, value);
+	}
+
+	public final String toString(Object o) {
+		if (o == null) {
+			return null;
+		}
+		return string(getType().cast(o));
+	}
+
+	public final T toObject(String string) {
+		if (string == null) {
+			return null;
+		}
+		return object(string);
+	}
+
+	protected String string(@Nonnull T object) {
+		return object.toString();
+	}
+
+	protected abstract T object(@Nonnull String string);
+
+	protected abstract Type type();
+
+	public enum Type {
+		STRING {
+
+			@Override
+			Param<String> p(String name) {
+				return pString(name);
+			}
+
+		},
+		INTEGER {
+
+			@Override
+			Param<Integer> p(String name) {
+				return pInteger(name);
+			}
+
+		},
+		LONG {
+
+			@Override
+			Param<Long> p(String name) {
+				return pLong(name);
+			}
+
+		},
+		DOUBLE {
+
+			@Override
+			Param<Double> p(String name) {
+				return pDouble(name);
+			}
+
+		},
+		FLOAT {
+
+			@Override
+			Param<Float> p(String name) {
+				return pFloat(name);
+			}
+
+		},
+		BOOLEAN {
+
+			@Override
+			Param<Boolean> p(String name) {
+				return pBoolean(name);
+			}
+
+		},
+		CHARACTER {
+
+			@Override
+			Param<Character> p(String name) {
+				return pCharacter(name);
+			}
+
+		},
+		URL {
+
+			@Override
+			Param<URL> p(String name) {
+				return pURL(name);
+			}
+
+		},
+		SERIALIZABLE {
+
+			@Override
+			Param<Object> p(String name) {
+				return pSerializable(name);
+			}
+		},
+		OBJECT {
+			@Override
+			Param<Object> p(String name) {
+				return pObject(name);
+			}
+		};
+
+		abstract Param<?> p(String name);
+	}
 }

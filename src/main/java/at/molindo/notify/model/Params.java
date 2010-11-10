@@ -16,14 +16,15 @@
 
 package at.molindo.notify.model;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class Params implements Cloneable {
 
-	private Map<String, Object> _params = Maps.newHashMap();
+	private Map<String, ParamValue> _params = Maps.newHashMap();
 
 	private final Params _defaults;
 
@@ -45,19 +46,30 @@ public class Params implements Cloneable {
 			if (_params.remove(param.getName()) != null && _defaults != null) {
 				T def = _defaults.get(param);
 				if (def != null) {
-					_params.put(param.getName(), def);
+					_params.put(param.getName(), param.value(def));
 				}
 			}
 		} else {
-			_params.put(param.getName(), value);
+			_params.put(param.getName(), param.value(value));
 		}
 		return this;
 	}
 
 	public <T> T get(Param<T> param) {
-		Object v = _params.get(param.getName());
-		Class<T> t = param.getType();
-		return t.isInstance(v) ? t.cast(v) : null;
+		ParamValue v = _params.get(param.getName());
+		if (v == null || v.getValue() == null) {
+			return null;
+		}
+
+		if (param.getType().isAssignableFrom(v.getValue().getClass())) {
+			// compatible types
+			return param.getType().cast(v.getValue());
+		} else {
+			// convert to string and back to object
+			Param<?> valueParam = v.getType().p(param.getName());
+			String valueStr = valueParam.toString(v.getValue());
+			return param.toObject(valueStr);
+		}
 	}
 
 	public boolean containsAll(Param<?>... params) {
@@ -84,7 +96,11 @@ public class Params implements Cloneable {
 
 	public Map<String, Object> newMap() {
 		Map<String, Object> map = Maps.newHashMap();
-		map.putAll(_params);
+		for (Map.Entry<String, ParamValue> e : _params.entrySet()) {
+			if (e.getValue() != null && e.getValue().getValue() != null) {
+				map.put(e.getKey(), e.getValue().getValue());
+			}
+		}
 		return map;
 	}
 
@@ -128,12 +144,22 @@ public class Params implements Cloneable {
 		Params p;
 		try {
 			p = (Params) super.clone();
-			p._params = new HashMap<String, Object>(_params);
+			p._params = Maps.newHashMap(_params);
 			return p;
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("can't clone object?", e);
 		}
-
 	}
 
+	public List<ParamValue> getValues() {
+		return Lists.newArrayList(_params.values());
+	}
+
+	public Params setValues(List<ParamValue> values) {
+		_params.clear();
+		for (ParamValue v : values) {
+			_params.put(v.getName(), v);
+		}
+		return this;
+	}
 }

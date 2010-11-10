@@ -71,7 +71,10 @@ public abstract class AbstractPullChannel implements IPullChannel {
 
 		Preferences prefs = _preferencesDAO.getPreferences(userId);
 
-		int amount = cPrefs.getParams().get(AMOUNT);
+		Integer amount = cPrefs.getParams().get(AMOUNT);
+		if (amount == null) {
+			amount = _defaultAmount;
+		}
 
 		List<Notification> notifications = _notificationDAO.getRecent(userId, getNotificationTypes(), 0, amount);
 		if (notifications.size() == 0) {
