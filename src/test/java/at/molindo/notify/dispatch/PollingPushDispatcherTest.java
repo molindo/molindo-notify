@@ -65,10 +65,10 @@ public class PollingPushDispatcherTest {
 		n.setId(42L);
 		n.setUserId(USERID);
 		n.setDate(START);
-		n.setPushScheduled(START);
+		n.setPushDate(START);
 		n.setKey("test");
 		n.setType(Type.PRIVATE);
-		n.setParams(new Params().set(Param.p("test", String.class), "this is a test"));
+		n.setParams(new Params().set(Param.pString("test"), "this is a test"));
 
 		return n;
 	}
@@ -147,7 +147,7 @@ public class PollingPushDispatcherTest {
 							return false;
 						}
 
-						if (!n.getPushScheduled().after(n().getPushScheduled())) {
+						if (!n.getPushDate().after(n().getPushDate())) {
 							return false;
 						}
 

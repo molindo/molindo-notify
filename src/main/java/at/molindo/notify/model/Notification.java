@@ -40,8 +40,7 @@ public class Notification {
 
 	// push
 	private PushState _pushState = PushState.QUEUED;
-	private Date _pushScheduled = new Date();
-	private Date _pushDate;
+	private Date _pushDate = new Date();
 	private int _pushErrors = 0;
 
 	public Long getId() {
@@ -121,15 +120,6 @@ public class Notification {
 		return this;
 	}
 
-	public Date getPushScheduled() {
-		return _pushScheduled;
-	}
-
-	public Notification setPushScheduled(Date pushScheduled) {
-		_pushScheduled = pushScheduled;
-		return this;
-	}
-
 	public Date getPushDate() {
 		return _pushDate;
 	}
@@ -159,10 +149,10 @@ public class Notification {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getDate() == null) ? 0 : getDate().hashCode());
-		result = prime * result + ((getKey() == null) ? 0 : getKey().hashCode());
-		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
-		result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
+		result = prime * result + (getDate() == null ? 0 : getDate().hashCode());
+		result = prime * result + (getKey() == null ? 0 : getKey().hashCode());
+		result = prime * result + (getType() == null ? 0 : getType().hashCode());
+		result = prime * result + (getUserId() == null ? 0 : getUserId().hashCode());
 		return result;
 	}
 

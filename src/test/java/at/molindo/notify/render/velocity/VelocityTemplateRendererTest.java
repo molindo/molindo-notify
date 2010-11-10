@@ -48,7 +48,7 @@ public class VelocityTemplateRendererTest {
 		VelocityTemplateRenderer r = r();
 
 		Params params = new Params();
-		params.set(Param.p("word", String.class), "test");
+		params.set(Param.pString("word"), "test");
 
 		String result = r.render(t, params);
 

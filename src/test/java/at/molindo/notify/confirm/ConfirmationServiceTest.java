@@ -44,10 +44,10 @@ public class ConfirmationServiceTest {
 		n.setId(42L);
 		n.setUserId("JohnDoe");
 		n.setDate(START);
-		n.setPushScheduled(START);
+		n.setPushDate(START);
 		n.setKey("test");
 		n.setType(Type.PRIVATE);
-		n.setParams(new Params().set(Param.p("test", String.class), "this is a test"));
+		n.setParams(new Params().set(Param.pString("test"), "this is a test"));
 
 		n.setConfirmation(new Confirmation().setKey("foo"));
 		return n;

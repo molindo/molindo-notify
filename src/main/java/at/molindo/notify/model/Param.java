@@ -57,7 +57,7 @@ public class Param<T> {
 		return p(name, URL.class);
 	}
 
-	public static <T> Param<T> p(String name, Class<T> type) {
+	private static <T> Param<T> p(String name, Class<T> type) {
 		return new Param<T>(name, type);
 	}
 
@@ -65,7 +65,7 @@ public class Param<T> {
 
 	}
 
-	public Param(String name, Class<T> type) {
+	protected Param(String name, Class<T> type) {
 		setName(name);
 		setType(type);
 	}
@@ -99,8 +99,8 @@ public class Param<T> {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-		result = prime * result + ((getType() == null) ? 0 : getType().getName().hashCode());
+		result = prime * result + (getName() == null ? 0 : getName().hashCode());
+		result = prime * result + (getType() == null ? 0 : getType().getName().hashCode());
 		return result;
 	}
 

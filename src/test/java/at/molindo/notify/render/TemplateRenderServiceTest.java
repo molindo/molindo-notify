@@ -72,7 +72,7 @@ public class TemplateRenderServiceTest {
 				_t = t();
 
 				_params = new Params();
-				_params.set(Param.p("word", String.class), "test");
+				_params.set(Param.pString("word"), "test");
 
 				expect(context.get(ITemplateDAO.class).findTemplates(_t.getKey())).andReturn(Arrays.asList(t()));
 				expect(context.get(ITemplateRenderer.class).render(_t, _params)).andReturn(

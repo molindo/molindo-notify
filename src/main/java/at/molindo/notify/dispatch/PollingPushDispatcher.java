@@ -298,21 +298,19 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 			notification.setPushState(PushState.PUSHED);
 			notification.setPushDate(new Date());
 		} else {
-			notification.setPushDate(null);
 			int errorCount = notification.recordPushError();
 
 			if (errorCount > _maxErrorCount || result == PushResult.PERSISTENT_ERROR) {
 				notification.setPushState(PushState.UNDELIVERABLE);
-				notification.setPushScheduled(null);
+				notification.setPushDate(new Date());
 			} else {
 				notification.setPushState(PushState.QUEUED);
-				notification.setPushScheduled(new Date(System.currentTimeMillis() + waitAfter(errorCount)));
+				notification.setPushDate(new Date(System.currentTimeMillis() + waitAfter(errorCount)));
 			}
 
 		}
 
 		_notificationDAO.update(notification);
-
 	}
 
 	private long waitAfter(final int errorCount) {

@@ -23,8 +23,6 @@ public class Confirmation {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer _id;
-
 	private Notification _notification;
 
 	private String _key;
@@ -39,15 +37,6 @@ public class Confirmation {
 	public Confirmation(Notification notification) {
 		this();
 		setNotification(notification);
-	}
-
-	public Integer getId() {
-		return _id;
-	}
-
-	public Confirmation setId(Integer id) {
-		_id = id;
-		return this;
 	}
 
 	public Notification getNotification() {

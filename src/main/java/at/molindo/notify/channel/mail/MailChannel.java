@@ -33,8 +33,8 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(MailChannel.class);
 
-	public static final Param<String> RECIPIENT = new Param<String>("recipient", String.class);
-	public static final Param<String> RECIPIENT_NAME = new Param<String>("name", String.class);
+	public static final Param<String> RECIPIENT = Param.pString("recipient");
+	public static final Param<String> RECIPIENT_NAME = Param.pString("name");
 
 	public static final String CHANNEL_ID = INotifyService.MAIL_CHANNEL;
 

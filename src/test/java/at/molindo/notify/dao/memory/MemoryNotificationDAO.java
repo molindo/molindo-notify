@@ -103,12 +103,12 @@ public class MemoryNotificationDAO implements INotificationDAO {
 					if (val != 0) {
 						return val;
 					}
-					return o1.getPushScheduled().compareTo(o2.getPushScheduled());
+					return o1.getPushDate().compareTo(o2.getPushDate());
 				}
 			});
 			Notification n = _queue.peek();
-			if (n != null && n.getPushState() == PushState.QUEUED && n.getPushScheduled() != null
-					&& n.getPushScheduled().before(new Date())) {
+			if (n != null && n.getPushState() == PushState.QUEUED && n.getPushDate() != null
+					&& n.getPushDate().before(new Date())) {
 				return n;
 			} else {
 				return null;
