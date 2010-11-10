@@ -35,9 +35,13 @@ public class ConfigurableChannelPreferences extends ChannelPreferences implement
 
 	@Override
 	public void setParam(String name, String value) throws NotifyException {
+		if (value == null) {
+			return;
+		}
+
 		if (AMOUNT.getName().equals(name)) {
 			try {
-				int amount = Integer.parseInt(value);
+				int amount = AMOUNT.toObject(value);
 				if (amount > 0 && amount <= MAX_AMOUNT) {
 					getParams().set(AbstractFeedChannel.AMOUNT, amount);
 				} else {

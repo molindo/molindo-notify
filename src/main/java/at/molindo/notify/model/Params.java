@@ -41,6 +41,10 @@ public class Params implements Cloneable {
 		}
 	}
 
+	public <T> Params set(Param<T> param, String value) {
+		return set(param, param.toObject(value));
+	}
+
 	public <T> Params set(Param<T> param, T value) {
 		if (value == null) {
 			if (_params.remove(param.getName()) != null && _defaults != null) {

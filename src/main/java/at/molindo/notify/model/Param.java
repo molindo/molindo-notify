@@ -297,6 +297,7 @@ public abstract class Param<T> {
 		return string(getType().cast(o));
 	}
 
+	@Nonnull
 	public final T toObject(String string) {
 		if (string == null) {
 			return null;
