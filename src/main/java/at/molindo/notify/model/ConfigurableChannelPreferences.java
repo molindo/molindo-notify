@@ -25,14 +25,6 @@ import at.molindo.notify.channel.feed.AbstractFeedChannel;
 
 public class ConfigurableChannelPreferences extends ChannelPreferences implements IRequestConfigurable {
 
-	public ConfigurableChannelPreferences() {
-		super();
-	}
-
-	public ConfigurableChannelPreferences(Params defaults) {
-		super(defaults);
-	}
-
 	@Override
 	public void setParam(String name, String value) throws NotifyException {
 		if (value == null) {

@@ -23,14 +23,6 @@ public class ChannelPreferences implements Cloneable {
 	private Version _version = Version.LONG;
 	private Params _params = new Params();
 
-	public ChannelPreferences() {
-		this(null);
-	}
-
-	public ChannelPreferences(Params defaults) {
-		_params = new Params(defaults);
-	}
-
 	public Version getVersion() {
 		return _version;
 	}

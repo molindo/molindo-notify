@@ -26,33 +26,13 @@ public class Params implements Cloneable {
 
 	private Map<String, ParamValue> _params = Maps.newHashMap();
 
-	private final Params _defaults;
-
-	public Params() {
-		this(null);
-	}
-
-	public Params(Params defaults) {
-		if (defaults != null) {
-			_defaults = defaults.clone();
-			_params.putAll(_defaults._params);
-		} else {
-			_defaults = null;
-		}
-	}
-
 	public <T> Params setString(Param<T> param, String value) {
 		return set(param, param.toObject(value));
 	}
 
 	public <T> Params set(Param<T> param, T value) {
 		if (value == null) {
-			if (_params.remove(param.getName()) != null && _defaults != null) {
-				T def = _defaults.get(param);
-				if (def != null) {
-					_params.put(param.getName(), param.value(def));
-				}
-			}
+			_params.remove(param.getName());
 		} else {
 			_params.put(param.getName(), param.value(value));
 		}

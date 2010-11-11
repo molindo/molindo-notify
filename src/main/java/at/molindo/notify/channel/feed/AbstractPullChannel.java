@@ -24,10 +24,10 @@ import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.ConfigurableChannelPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
@@ -63,7 +63,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 
 	@Override
 	public boolean isConfigured(String userId, ChannelPreferences prefs) {
-		return prefs.getParams().containsAll(AbstractFeedChannel.AMOUNT);
+		return true;
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 
 	@Override
 	public ChannelPreferences newDefaultPreferences() {
-		ChannelPreferences prefs = new FeedChannelPreferences(new Params().set(AMOUNT, _defaultAmount));
+		ChannelPreferences prefs = new ConfigurableChannelPreferences();
 		prefs.setVersion(Version.LONG);
 		return prefs;
 	}

@@ -22,16 +22,21 @@ public class PushChannelPreferences extends ChannelPreferences {
 		INSTANT, DAILY, WEEKLY, MONTHLY;
 	}
 
+	private Long _id;
 	private Frequency _frequency = Frequency.INSTANT;
 
-	public PushChannelPreferences() {
+	public Long getId() {
+		return _id;
 	}
 
-	public PushChannelPreferences(Params defaults) {
-		super(defaults);
+	public void setId(Long id) {
+		_id = id;
 	}
 
 	public void setFrequency(Frequency frequency) {
+		if (frequency == null) {
+			throw new NullPointerException("frequency");
+		}
 		_frequency = frequency;
 	}
 
@@ -48,7 +53,7 @@ public class PushChannelPreferences extends ChannelPreferences {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((getFrequency() == null) ? 0 : getFrequency().hashCode());
+		result = prime * result + (getFrequency() == null ? 0 : getFrequency().hashCode());
 		return result;
 	}
 
