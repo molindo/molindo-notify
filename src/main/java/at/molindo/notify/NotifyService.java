@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.confirm.IConfirmationService;
@@ -31,7 +32,7 @@ import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
 
-public class NotifyService implements INotifyService, INotifyService.IErrorListener {
+public class NotifyService implements INotifyService, INotifyMailService, INotifyService.IErrorListener {
 
 	private IPreferencesDAO _preferencesDAO;
 	private INotificationDAO _notificationDAO;
@@ -97,6 +98,13 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 	public void confirmNow(Notification notification) throws NotifyException {
 		notification.setConfirmation(new Confirmation());
 		notifyNow(notification);
+	}
+
+	@Override
+	public void mailNow(String recipient, Notification notification) throws NotifyException {
+		// TODO
+		throw new NotImplementedException();
+		// _instantDispatcher.dispatchNow(notification);
 	}
 
 	@Override
