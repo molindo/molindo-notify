@@ -42,7 +42,7 @@ public class ParamTest {
 
 	@Test
 	public void testPNull() throws MalformedURLException {
-		for (Param.Type t : Param.Type.values()) {
+		for (ParamType t : ParamType.values()) {
 			assertNull(t.p("test").toObject(null));
 			assertNull(t.p("test").toString(null));
 		}

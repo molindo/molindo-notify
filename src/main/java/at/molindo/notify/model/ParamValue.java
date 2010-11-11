@@ -16,10 +16,12 @@
 
 package at.molindo.notify.model;
 
+
 public class ParamValue {
-	private Param.Type _type;
+	private ParamType _type;
 	private String _name;
 	private Object _value;
+	private String _stringValue;
 
 	public ParamValue() {
 	}
@@ -30,11 +32,11 @@ public class ParamValue {
 		setValue(value);
 	}
 
-	public Param.Type getType() {
+	public ParamType getType() {
 		return _type;
 	}
 
-	public void setType(Param.Type type) {
+	public void setType(ParamType type) {
 		if (type == null) {
 			throw new NullPointerException("type");
 		}
@@ -53,6 +55,10 @@ public class ParamValue {
 	}
 
 	public Object getValue() {
+		if (_value == null && _stringValue != null) {
+			_value = param().toObject(_stringValue);
+		}
+
 		return _value;
 	}
 
@@ -63,8 +69,22 @@ public class ParamValue {
 		_value = value;
 	}
 
+	public String getStringValue() {
+		return param().toString(getValue());
+	}
+
+	public void setStringValue(String stringValue) {
+		_value = null;
+		_stringValue = stringValue;
+	}
+
 	protected Param<?> param() {
-		return _type.p(_name);
+		ParamType t = getType();
+		String n = getName();
+		if (t == null || n == null) {
+			throw new IllegalStateException("type (was " + t + ") and name (was " + n + ") must be set");
+		}
+		return t.p(n);
 	}
 
 	@Override

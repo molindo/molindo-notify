@@ -45,8 +45,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.STRING;
+			protected ParamType type() {
+				return ParamType.STRING;
 			}
 
 		};
@@ -61,8 +61,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.INTEGER;
+			protected ParamType type() {
+				return ParamType.INTEGER;
 			}
 		};
 	}
@@ -76,8 +76,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.LONG;
+			protected ParamType type() {
+				return ParamType.LONG;
 			}
 		};
 	}
@@ -91,8 +91,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.DOUBLE;
+			protected ParamType type() {
+				return ParamType.DOUBLE;
 			}
 		};
 	}
@@ -106,8 +106,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.FLOAT;
+			protected ParamType type() {
+				return ParamType.FLOAT;
 			}
 		};
 	}
@@ -121,8 +121,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.BOOLEAN;
+			protected ParamType type() {
+				return ParamType.BOOLEAN;
 			}
 		};
 	}
@@ -136,8 +136,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.CHARACTER;
+			protected ParamType type() {
+				return ParamType.CHARACTER;
 			}
 		};
 	}
@@ -155,8 +155,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.URL;
+			protected ParamType type() {
+				return ParamType.URL;
 			}
 		};
 	}
@@ -183,8 +183,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.SERIALIZABLE;
+			protected ParamType type() {
+				return ParamType.SERIALIZABLE;
 			}
 		};
 	}
@@ -203,8 +203,8 @@ public abstract class Param<T> {
 			}
 
 			@Override
-			protected Type type() {
-				return Type.OBJECT;
+			protected ParamType type() {
+				return ParamType.OBJECT;
 			}
 		};
 	}
@@ -311,87 +311,5 @@ public abstract class Param<T> {
 	@Nonnull
 	protected abstract T object(@Nonnull String string);
 
-	protected abstract Type type();
-
-	public enum Type {
-		STRING {
-
-			@Override
-			Param<String> p(String name) {
-				return pString(name);
-			}
-
-		},
-		INTEGER {
-
-			@Override
-			Param<Integer> p(String name) {
-				return pInteger(name);
-			}
-
-		},
-		LONG {
-
-			@Override
-			Param<Long> p(String name) {
-				return pLong(name);
-			}
-
-		},
-		DOUBLE {
-
-			@Override
-			Param<Double> p(String name) {
-				return pDouble(name);
-			}
-
-		},
-		FLOAT {
-
-			@Override
-			Param<Float> p(String name) {
-				return pFloat(name);
-			}
-
-		},
-		BOOLEAN {
-
-			@Override
-			Param<Boolean> p(String name) {
-				return pBoolean(name);
-			}
-
-		},
-		CHARACTER {
-
-			@Override
-			Param<Character> p(String name) {
-				return pCharacter(name);
-			}
-
-		},
-		URL {
-
-			@Override
-			Param<URL> p(String name) {
-				return pURL(name);
-			}
-
-		},
-		SERIALIZABLE {
-
-			@Override
-			Param<Object> p(String name) {
-				return pSerializable(name);
-			}
-		},
-		OBJECT {
-			@Override
-			Param<Object> p(String name) {
-				return pObject(name);
-			}
-		};
-
-		abstract Param<?> p(String name);
-	}
+	protected abstract ParamType type();
 }

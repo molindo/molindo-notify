@@ -29,6 +29,9 @@ public class ParamValueTest {
 
 		assertEquals(p, v.param());
 		assertEquals(v, p.value((Long) v.getValue()));
-	}
 
+		assertEquals("42", v.getStringValue());
+		v.setStringValue("47");
+		assertEquals(47L, v.getValue());
+	}
 }
