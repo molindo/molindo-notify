@@ -24,6 +24,7 @@ import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.utils.net.DnsUtils;
 
@@ -43,11 +44,19 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	private IMailClient _mailClient;
 
 	public static void setRecipient(PushChannelPreferences cPrefs, String recipient) {
-		cPrefs.getParams().set(RECIPIENT, recipient);
+		setRecipient(cPrefs.getParams(), recipient);
 	}
 
 	public static void setRecipientName(PushChannelPreferences cPrefs, String recipientName) {
-		cPrefs.getParams().set(RECIPIENT_NAME, recipientName);
+		setRecipientName(cPrefs.getParams(), recipientName);
+	}
+
+	public static void setRecipient(Params params, String recipient) {
+		params.set(RECIPIENT, recipient);
+	}
+
+	public static void setRecipientName(Params params, String recipientName) {
+		params.set(RECIPIENT_NAME, recipientName);
 	}
 
 	public MailChannel() {
