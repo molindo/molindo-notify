@@ -18,10 +18,12 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
   	http://www.springframework.org/schema/beans
-  	http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+  	http://www.springframework.org/schema/util 
+  	http://www.springframework.org/schema/util/spring-util-3.0.xsd
   ">
 
 	<bean id="notifyService" class="at.molindo.notify.NotifyService">
@@ -31,20 +33,24 @@
 		<property name="confirmationService" ref="confirmationService" />
 	</bean>
 
-	<bean id="dispatcher" class="at.molindo.notify.dispatch.PollingPushDispatcher">
+	<bean id="dispatcher" class="at.molindo.notify.dispatch.PollingPushDispatcher" autowire="byType">
 		<property name="pushChannels">
-			<list>
-				<ref bean="dummyChannel" />
-			</list>
+			<bean class="at.molindo.notify.util.PushChannelsFactory" autowire="byType" />
 		</property>
 		<property name="notifyService" ref="notifyService" />
 		<property name="notificationRenderService" ref="notificationRenderService" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
-		<property name="poolSize" value="1" />
+		<property name="maxErrorCount" value="5" />
+		<property name="poolSize" value="4" />
 	</bean>
-	
+
 	<bean id="confirmationService" class="at.molindo.notify.confirm.ConfirmationService">
 		<property name="notificationDAO" ref="notificationDAO" />
 	</bean>
+
+	<bean id="notificationRenderService" class="at.molindo.notify.message.NotificationRenderService">
+		<property name="renderService" ref="renderService" />
+	</bean>
+
 </beans>

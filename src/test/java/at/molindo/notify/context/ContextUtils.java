@@ -19,10 +19,10 @@ package at.molindo.notify.context;
 public class ContextUtils {
 
 	public static final String ROOT = "/at/molindo/notify/context";
-	public static final String MAIN = ROOT + "/main.xml";
+	public static final String MAIN = ROOT + "/notify.xml";
 	public static final String CHANNELS = ROOT + "/channels.xml";
 	public static final String DAOS = ROOT + "/daos.xml";
-	public static final String RENDER = ROOT + "/render.xml";
+	public static final String RENDER = ROOT + "/notify-render-velocity.xml";
 
 	private ContextUtils() {
 	};
