@@ -28,7 +28,7 @@ public class PropertyPlaceholderEscaper implements FactoryBean<String> {
 
 	public void setValue(String value) {
 		if (value != null) {
-			_value.replace("$\\{", "${");
+			_value = value.replace("$\\{", "${");
 		} else {
 			_value = null;
 		}
