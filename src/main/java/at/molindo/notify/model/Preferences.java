@@ -34,8 +34,9 @@ public class Preferences implements Cloneable {
 		return _id;
 	}
 
-	public void setId(Long id) {
+	public Preferences setId(Long id) {
 		_id = id;
+		return this;
 	}
 
 	public String getUserId() {
