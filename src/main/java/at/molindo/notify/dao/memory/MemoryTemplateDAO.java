@@ -27,7 +27,7 @@ import com.google.common.collect.Lists;
 
 public class MemoryTemplateDAO implements ITemplateDAO {
 
-	private ListMap<String, Template> _templates = ListMap.newListMap();
+	private final ListMap<String, Template> _templates = ListMap.newListMap();
 
 	@Override
 	public List<Template> findTemplates(String key) {
