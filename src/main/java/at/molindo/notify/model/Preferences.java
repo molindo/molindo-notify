@@ -22,11 +22,21 @@ import com.google.common.collect.Maps;
 
 public class Preferences implements Cloneable {
 
+	private Long _id;
+
 	private String _userId;
 
 	private Params _params;
 
 	private Map<String, PushChannelPreferences> _channelPrefs = Maps.newHashMap();
+
+	public Long getId() {
+		return _id;
+	}
+
+	public void setId(Long id) {
+		_id = id;
+	}
 
 	public String getUserId() {
 		return _userId;
@@ -82,8 +92,8 @@ public class Preferences implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getChannelPrefs() == null) ? 0 : getChannelPrefs().size());
-		result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
+		result = prime * result + (getChannelPrefs() == null ? 0 : getChannelPrefs().size());
+		result = prime * result + (getUserId() == null ? 0 : getUserId().hashCode());
 		return result;
 	}
 
