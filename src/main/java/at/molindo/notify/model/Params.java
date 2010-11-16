@@ -16,11 +16,12 @@
 
 package at.molindo.notify.model;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-public class Params implements Cloneable {
+public class Params implements Cloneable, Iterable<ParamValue> {
 
 	private Map<String, ParamValue> _params = Maps.newHashMap();
 
@@ -142,6 +143,15 @@ public class Params implements Cloneable {
 			throw new NullPointerException("params");
 		}
 		_params = params;
+	}
+
+	public int size() {
+		return _params.size();
+	}
+
+	@Override
+	public Iterator<ParamValue> iterator() {
+		return _params.values().iterator();
 	}
 
 }

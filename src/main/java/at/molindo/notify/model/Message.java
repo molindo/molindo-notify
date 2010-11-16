@@ -16,6 +16,7 @@
 
 package at.molindo.notify.model;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -93,7 +94,7 @@ public class Message {
 
 	}
 
-	public Message(String subject, String message, Type type) {
+	public Message(String subject, String message, Type type, Date modified) {
 		setType(type);
 		setSubject(subject);
 		setMessage(message);
@@ -146,9 +147,8 @@ public class Message {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getMessage() == null) ? 0 : getMessage().hashCode());
-		result = prime * result + ((getSubject() == null) ? 0 : getSubject().hashCode());
-		result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+		result = prime * result + (getSubject() == null ? 0 : getSubject().hashCode());
+		result = prime * result + (getType() == null ? 0 : getType().hashCode());
 		return result;
 	}
 
@@ -164,11 +164,7 @@ public class Message {
 			return false;
 		}
 		Message other = (Message) obj;
-		if (getMessage() == null) {
-			if (other.getMessage() != null) {
-				return false;
-			}
-		} else if (!getMessage().equals(other.getMessage())) {
+		if (getType() != other.getType()) {
 			return false;
 		}
 		if (getSubject() == null) {
@@ -178,9 +174,14 @@ public class Message {
 		} else if (!getSubject().equals(other.getSubject())) {
 			return false;
 		}
-		if (getType() != other.getType()) {
+		if (getMessage() == null) {
+			if (other.getMessage() != null) {
+				return false;
+			}
+		} else if (!getMessage().equals(other.getMessage())) {
 			return false;
 		}
+
 		return true;
 	}
 

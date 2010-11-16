@@ -58,7 +58,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 		String prefSecret = p.getParams().get(SECRET);
 		String reqSecret = cPrefs.getParams().get(SECRET);
 
-		return StringUtils.equals(prefSecret, reqSecret);
+		return prefSecret != null && StringUtils.equals(prefSecret, reqSecret);
 	}
 
 	@Override

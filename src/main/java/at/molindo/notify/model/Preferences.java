@@ -17,6 +17,9 @@
 package at.molindo.notify.model;
 
 import java.util.Map;
+import java.util.UUID;
+
+import at.molindo.notify.channel.feed.AbstractPullChannel;
 
 import com.google.common.collect.Maps;
 
@@ -74,6 +77,11 @@ public class Preferences implements Cloneable {
 			throw new NullPointerException("params");
 		}
 		_params = params;
+		return this;
+	}
+
+	public Preferences generateSecret() {
+		_params.set(AbstractPullChannel.SECRET, UUID.randomUUID().toString());
 		return this;
 	}
 

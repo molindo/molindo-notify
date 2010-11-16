@@ -20,6 +20,10 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import javax.servlet.ServletContext;
+
+import org.springframework.web.context.ServletContextAware;
+
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.confirm.IConfirmationService;
@@ -30,9 +34,12 @@ import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
+import at.molindo.notify.servlet.NotifyFilter;
 
-public class NotifyService implements INotifyService, INotifyMailService, INotifyService.IErrorListener {
+public class NotifyService implements INotifyService, INotifyMailService, INotifyService.IErrorListener,
+		ServletContextAware {
 
 	private static final Param<String> NOTIFY_UNKNOWN = Param.pString("unknown");
 	private IPreferencesDAO _preferencesDAO;
@@ -48,6 +55,13 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 
 	private Preferences _defaultPreferences = new Preferences();
 
+	private ServletContext _servletContext;
+
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		_servletContext = servletContext;
+	}
+
 	@Override
 	public Preferences getPreferences(String userId) {
 		return _preferencesDAO.getPreferences(userId);
@@ -57,6 +71,7 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	public Preferences newPreferences(String userId) {
 		Preferences p = _defaultPreferences.clone();
 		p.setUserId(userId);
+		p.generateSecret();
 
 		p.getChannelPrefs().putAll(_instantDispatcher.newDefaultPreferences());
 
@@ -166,6 +181,14 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	@Override
 	public void removeParamsFactory(IParamsFactory factory) {
 		_notificationRenderService.removeParamsFactory(factory);
+	}
+
+	@Override
+	public String toPullPath(String channelId, String userId, Params params) {
+		if (_servletContext == null) {
+			throw new IllegalStateException("servlet context not available");
+		}
+		return NotifyFilter.getFilter(_servletContext).toPullPath(channelId, userId, params);
 	}
 
 	public void setInstantDispatcher(IPushDispatcher instantDispatcher) {

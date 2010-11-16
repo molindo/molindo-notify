@@ -28,6 +28,7 @@ public abstract class AbstractServletPullChannel extends AbstractPullChannel imp
 
 	private ServletContext _servletContext;
 
+	@Override
 	public void setServletContext(ServletContext servletContext) {
 		if (servletContext == _servletContext) {
 			return;
@@ -42,6 +43,13 @@ public abstract class AbstractServletPullChannel extends AbstractPullChannel imp
 		}
 
 		_servletContext = servletContext;
+	}
+
+	public NotifyFilter getFilter() {
+		if (_servletContext == null) {
+			throw new IllegalStateException("servlet context not available");
+		}
+		return NotifyFilter.getFilter(_servletContext);
 	}
 
 	@Override

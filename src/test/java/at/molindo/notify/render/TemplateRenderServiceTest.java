@@ -55,7 +55,7 @@ public class TemplateRenderServiceTest {
 	}
 
 	public static Message result() {
-		return new Message("Test", "this is a test", IRenderService.Type.HTML);
+		return new Message("Test", "this is a test", IRenderService.Type.HTML, START);
 	}
 
 	@Test

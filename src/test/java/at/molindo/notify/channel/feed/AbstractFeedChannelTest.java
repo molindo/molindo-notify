@@ -69,6 +69,7 @@ public class AbstractFeedChannelTest {
 			}
 		};
 		c.setAuthorName("dummy author");
+		c.setFeedTitle("dummy feed");
 		c.setDefaultAmount(20);
 		return c;
 	}

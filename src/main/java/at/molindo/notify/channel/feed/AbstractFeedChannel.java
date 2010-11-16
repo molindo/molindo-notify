@@ -24,6 +24,7 @@ import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService.RenderException;
+import at.molindo.utils.data.Hash;
 
 import com.google.common.collect.Lists;
 import com.sun.syndication.feed.WireFeed;
@@ -38,6 +39,7 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AbstractFeedChannel.class);
 
 	private String _authorName;
+	private String _feedTitle;
 
 	@Override
 	protected String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs, Preferences prefs)
@@ -57,7 +59,8 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 			throws RenderException {
 		final Feed f = new Feed("atom_1.0");
 
-		f.setTitle("TODO title");
+		// TODO allow rendered titles
+		f.setTitle(_feedTitle);
 		f.setUpdated(lastModified == null ? new Date() : lastModified);
 
 		Person author = new Person();
@@ -74,6 +77,8 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 			c.setType("text/html");
 			c.setValue(msg.getHtml());
 
+			e.setId(Hash.md5(msg.getSubject()).toHex());
+			e.setUpdated(new Date()); // TODO updated date? not easy ...
 			e.setTitle(msg.getSubject());
 			e.setContents(Arrays.asList(c));
 			entries.add(e);
@@ -95,6 +100,14 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 
 	public void setAuthorName(String authorName) {
 		_authorName = authorName;
+	}
+
+	public String getFeedTitle() {
+		return _feedTitle;
+	}
+
+	public void setFeedTitle(String feedTitle) {
+		_feedTitle = feedTitle;
 	}
 
 }

@@ -17,6 +17,9 @@
 package at.molindo.notify.servlet;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +43,10 @@ import at.molindo.notify.confirm.IConfirmationService.ConfirmationException;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
 import at.molindo.notify.model.Notification.Type;
+import at.molindo.notify.model.ParamValue;
+import at.molindo.notify.model.Params;
 import at.molindo.utils.data.StringUtils;
+import at.molindo.utils.io.CharsetUtils;
 
 import com.google.common.collect.Maps;
 
@@ -48,6 +54,7 @@ public class NotifyFilter implements Filter {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NotifyFilter.class);
 
+	private static final String ATTRIBUTE_FILTER = NotifyFilter.class.getName() + ".filter";
 	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName() + ".channel";
 	private static final String ATTRIBUTE_CONFIRM_SERVICE = NotifyFilter.class.getName() + ".confirmService";
 
@@ -73,6 +80,7 @@ public class NotifyFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		_context = filterConfig.getServletContext();
+		_context.setAttribute(ATTRIBUTE_FILTER, this);
 
 		{
 			String mountPath = filterConfig.getInitParameter(PARAMTER_MOUNT_PATH);
@@ -135,6 +143,14 @@ public class NotifyFilter implements Filter {
 		context.setAttribute(ATTRIBUTE_CONFIRM_SERVICE, confirmationService);
 	}
 
+	public static NotifyFilter getFilter(ServletContext context) {
+		NotifyFilter filter = (NotifyFilter) context.getAttribute(ATTRIBUTE_FILTER);
+		if (filter == null) {
+			throw new IllegalStateException("no filter configured");
+		}
+		return filter;
+	}
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
@@ -167,8 +183,8 @@ public class NotifyFilter implements Filter {
 			return;
 		}
 
-		String channelId = m.group(1);
-		String userId = m.group(2);
+		String channelId = decode(m.group(1));
+		String userId = decode(m.group(2));
 
 		if (StringUtils.empty(userId) || StringUtils.empty(channelId)) {
 			response.sendError(404);
@@ -227,7 +243,7 @@ public class NotifyFilter implements Filter {
 			return;
 		}
 
-		String key = m.group(1);
+		String key = decode(m.group(1));
 
 		String confirmPath;
 		try {
@@ -239,6 +255,22 @@ public class NotifyFilter implements Filter {
 			}
 		} catch (ConfirmationException e) {
 			throw new ServletException("can't confirm key " + key, e);
+		}
+	}
+
+	private String decode(String string) {
+		try {
+			return URLDecoder.decode(string, CharsetUtils.UTF_8.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("UTF-8 not supported?", e);
+		}
+	}
+
+	private String encode(String string) {
+		try {
+			return URLEncoder.encode(string, CharsetUtils.UTF_8.name());
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("UTF-8 not supported?", e);
 		}
 	}
 
@@ -291,4 +323,32 @@ public class NotifyFilter implements Filter {
 		}
 	}
 
+	public String toPullPath(String channelId, String userId, Params params) {
+		IPullChannel channel = getChannel(channelId);
+		if (channel == null) {
+			return null;
+		}
+
+		ChannelPreferences cPrefs = channel.newDefaultPreferences();
+
+		Params fullParams = new Params().setAll(cPrefs.getParams()).setAll(params);
+
+		StringBuilder buf = new StringBuilder();
+		buf.append(_mountPath).append(_pullPrefix).append(channelId).append("/").append(userId);
+		if (fullParams.size() > 0) {
+			buf.append("?");
+			for (final ParamValue pv : params) {
+				final String encodedName = encode(pv.getName());
+				final String value = pv.getStringValue();
+				final String encodedValue = value != null ? encode(value) : "";
+
+				buf.append(encodedName);
+				buf.append("=");
+				buf.append(encodedValue);
+				buf.append("&");
+			}
+			buf.setLength(buf.length() - 1);
+		}
+		return buf.toString();
+	}
 }

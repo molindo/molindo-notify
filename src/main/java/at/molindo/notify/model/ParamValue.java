@@ -16,14 +16,13 @@
 
 package at.molindo.notify.model;
 
-
 public class ParamValue {
 	private ParamType _type;
 	private String _name;
 	private Object _value;
 	private String _stringValue;
 
-	public ParamValue() {
+	protected ParamValue() {
 	}
 
 	public <T> ParamValue(Param<T> param, T value) {
@@ -36,7 +35,7 @@ public class ParamValue {
 		return _type;
 	}
 
-	public void setType(ParamType type) {
+	protected void setType(ParamType type) {
 		if (type == null) {
 			throw new NullPointerException("type");
 		}
@@ -47,7 +46,7 @@ public class ParamValue {
 		return _name;
 	}
 
-	public void setName(String name) {
+	protected void setName(String name) {
 		if (name == null) {
 			throw new NullPointerException("name");
 		}

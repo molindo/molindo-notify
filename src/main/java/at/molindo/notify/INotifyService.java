@@ -63,6 +63,8 @@ public interface INotifyService {
 
 	void removeParamsFactory(@Nonnull IParamsFactory factory);
 
+	String toPullPath(String channelId, String userId, Params params);
+
 	public interface INotificationListner {
 		void notification(@Nonnull Notification notification);
 	}
