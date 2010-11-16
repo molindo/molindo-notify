@@ -33,7 +33,7 @@ import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Person;
 import com.sun.syndication.io.FeedException;
 
-public abstract class AbstractFeedChannel extends AbstractPullChannel {
+public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(AbstractFeedChannel.class);
 
