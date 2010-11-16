@@ -23,7 +23,6 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.reportMatcher;
 
 import java.util.Date;
-import java.util.Map;
 
 import org.easymock.IArgumentMatcher;
 import org.junit.Test;
@@ -39,7 +38,6 @@ import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.model.PushState;
@@ -48,7 +46,6 @@ import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
@@ -68,20 +65,15 @@ public class PollingPushDispatcherTest {
 		n.setPushDate(START);
 		n.setKey("test");
 		n.setType(Type.PRIVATE);
-		n.setParams(new Params().set(Param.pString("test"), "this is a test"));
+		n.getParams().set(Param.pString("test"), "this is a test");
 
 		return n;
 	}
 
 	private static Preferences p() {
 		Preferences p = new Preferences();
-
 		p.setUserId(USERID);
-
-		Map<String, PushChannelPreferences> map = Maps.newHashMap();
-		map.put(CHANNEL_ID, new PushChannelPreferences());
-		p.setChannelPrefs(map);
-
+		p.getChannelPrefs().put(CHANNEL_ID, new PushChannelPreferences());
 		return p;
 
 	}

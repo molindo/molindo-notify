@@ -19,7 +19,6 @@ package at.molindo.notify.dao.dummy;
 import at.molindo.notify.channel.dummy.DummyChannel;
 import at.molindo.notify.channel.mail.MailChannel;
 import at.molindo.notify.dao.IPreferencesDAO;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences;
 
@@ -28,7 +27,7 @@ public class DummyPreferencesDAO implements IPreferencesDAO {
 	@Override
 	public Preferences getPreferences(String userId) {
 		if (DummyUtils.USER_ID.equals(userId)) {
-			Preferences p = new Preferences().setUserId(userId).setParams(new Params());
+			Preferences p = new Preferences().setUserId(userId);
 
 			PushChannelPreferences mailPrefs = new PushChannelPreferences();
 			MailChannel.setRecipient(mailPrefs, "stf+johndoe@molindo.at");

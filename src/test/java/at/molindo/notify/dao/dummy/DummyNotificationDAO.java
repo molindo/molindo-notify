@@ -25,7 +25,6 @@ import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Params;
 
 import com.google.common.collect.Lists;
 
@@ -60,7 +59,7 @@ public class DummyNotificationDAO implements INotificationDAO {
 			if (now - _last > TimeUnit.SECONDS.toMillis(10)) {
 				_last = now;
 				return new Notification().setUserId(DummyUtils.USER_ID).setDate(new Date()).setKey(DummyUtils.KEY)
-						.setParams(new Params().set(Param.pString("word"), "Test")).setType(Type.PRIVATE);
+						.setParam(Param.pString("word"), "Test").setType(Type.PRIVATE);
 			} else {
 				return null;
 			}

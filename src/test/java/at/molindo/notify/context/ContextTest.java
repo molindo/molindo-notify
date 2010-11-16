@@ -26,7 +26,6 @@ import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.dao.dummy.DummyUtils;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Params;
 
 @ContextConfiguration({ ContextUtils.MAIN, ContextUtils.CHANNELS, ContextUtils.RENDER, ContextUtils.DAOS })
 public class ContextTest extends AbstractJUnit4SpringContextTests {
@@ -39,10 +38,10 @@ public class ContextTest extends AbstractJUnit4SpringContextTests {
 		// if it runs we're happy
 
 		_svc.notify(new Notification().setUserId(DummyUtils.USER_ID).setKey(DummyUtils.KEY)
-				.setParams(new Params().set(Param.pString("word"), "Test")));
+				.setParam(Param.pString("word"), "Test"));
 
 		_svc.confirmNow(new Notification().setUserId(DummyUtils.USER_ID).setKey(DummyUtils.KEY)
-				.setParams(new Params().set(Param.pString("word"), "Test Now")));
+				.setParam(Param.pString("word"), "Test Now"));
 
 		Thread.sleep(100);
 	}

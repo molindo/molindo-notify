@@ -34,7 +34,7 @@ import at.molindo.notify.model.Preferences;
 
 public class NotifyService implements INotifyService, INotifyMailService, INotifyService.IErrorListener {
 
-	private static final Param<String> NOTIFY_UNKNOWN = null;
+	private static final Param<String> NOTIFY_UNKNOWN = Param.pString("unknown");
 	private IPreferencesDAO _preferencesDAO;
 	private INotificationDAO _notificationDAO;
 
@@ -57,6 +57,9 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	public Preferences newPreferences(String userId) {
 		Preferences p = _defaultPreferences.clone();
 		p.setUserId(userId);
+
+		p.getChannelPrefs().putAll(_instantDispatcher.newDefaultPreferences());
+
 		return p;
 	}
 
@@ -106,8 +109,8 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 		notifyUnknownNow(INotifyService.MAIL_CHANNEL, notification);
 	}
 
-	private void notifyUnknownNow(String mailChannel, Notification notification) throws NotifyException {
-		notification.getParams().set(NOTIFY_UNKNOWN, mailChannel);
+	private void notifyUnknownNow(String channelId, Notification notification) throws NotifyException {
+		notification.getParams().set(NOTIFY_UNKNOWN, channelId);
 		notifyNow(notification);
 	}
 

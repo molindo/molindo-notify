@@ -18,26 +18,9 @@ package at.molindo.notify.model;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 
 public class ParamsTest {
-
-	@Test
-	public void testGetSetValues() {
-		Param<String> p = Param.pString("foo");
-		Params params = new Params();
-
-		params.setValues(Arrays.asList(new ParamValue(p, "bar")));
-
-		assertEquals("bar", params.get(p));
-
-		List<ParamValue> values = params.getValues();
-		assertEquals(1, values.size());
-		assertEquals(p.value("bar"), values.get(0));
-	}
 
 	@Test
 	public void testGetSet() {

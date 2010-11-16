@@ -30,7 +30,6 @@ import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
 
@@ -47,7 +46,7 @@ public class ConfirmationServiceTest {
 		n.setPushDate(START);
 		n.setKey("test");
 		n.setType(Type.PRIVATE);
-		n.setParams(new Params().set(Param.pString("test"), "this is a test"));
+		n.getParams().set(Param.pString("test"), "this is a test");
 
 		n.setConfirmation(new Confirmation().setKey("foo"));
 		return n;

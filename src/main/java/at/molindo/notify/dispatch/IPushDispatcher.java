@@ -16,10 +16,13 @@
 
 package at.molindo.notify.dispatch;
 
+import java.util.Map;
+
 import at.molindo.notify.INotifyService;
 import at.molindo.notify.INotifyService.IErrorListener;
 import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.PushChannelPreferences;
 
 public interface IPushDispatcher extends INotifyService.INotificationListner {
 
@@ -31,4 +34,6 @@ public interface IPushDispatcher extends INotifyService.INotificationListner {
 	void dispatchNow(Notification notification) throws NotifyException;
 
 	void setErrorListener(IErrorListener errorListener);
+
+	Map<String, PushChannelPreferences> newDefaultPreferences();
 }

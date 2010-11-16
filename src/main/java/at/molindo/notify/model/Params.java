@@ -16,10 +16,8 @@
 
 package at.molindo.notify.model;
 
-import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class Params implements Cloneable {
@@ -135,15 +133,15 @@ public class Params implements Cloneable {
 		}
 	}
 
-	public List<ParamValue> getValues() {
-		return Lists.newArrayList(_params.values());
+	protected Map<String, ParamValue> getValues() {
+		return _params;
 	}
 
-	public Params setValues(List<ParamValue> values) {
-		_params.clear();
-		for (ParamValue v : values) {
-			_params.put(v.getName(), v);
+	protected void setValues(Map<String, ParamValue> params) {
+		if (params == null) {
+			throw new NullPointerException("params");
 		}
-		return this;
+		_params = params;
 	}
+
 }

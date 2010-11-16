@@ -26,7 +26,7 @@ public class Preferences implements Cloneable {
 
 	private String _userId;
 
-	private Params _params;
+	private Params _params = new Params();
 
 	private Map<String, PushChannelPreferences> _channelPrefs = Maps.newHashMap();
 
@@ -52,9 +52,11 @@ public class Preferences implements Cloneable {
 		return _channelPrefs;
 	}
 
-	public Preferences setChannelPrefs(Map<String, PushChannelPreferences> channelPrefs) {
-		_channelPrefs.clear();
-		_channelPrefs.putAll(channelPrefs);
+	protected Preferences setChannelPrefs(Map<String, PushChannelPreferences> channelPrefs) {
+		if (channelPrefs == null) {
+			throw new NullPointerException("channelPrefs");
+		}
+		_channelPrefs = channelPrefs;
 		return this;
 	}
 
@@ -67,7 +69,10 @@ public class Preferences implements Cloneable {
 		return _params;
 	}
 
-	public Preferences setParams(Params params) {
+	protected Preferences setParams(Params params) {
+		if (params == null) {
+			throw new NullPointerException("params");
+		}
 		_params = params;
 		return this;
 	}

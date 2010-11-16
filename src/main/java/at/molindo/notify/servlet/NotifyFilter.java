@@ -51,11 +51,16 @@ public class NotifyFilter implements Filter {
 	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName() + ".channel";
 	private static final String ATTRIBUTE_CONFIRM_SERVICE = NotifyFilter.class.getName() + ".confirmService";
 
+	static final String DEFAULT_MOUNT_PATH = "notify";
+	static final String PARAMTER_MOUNT_PATH = "mountPath";
+
 	static final String DEFAULT_PULL_PREFIX = "pull";
 	static final String PARAMTER_PULL_PREFIX = "pullPrefix";
 
 	static final String DEFAULT_CONFIRM_PREFIX = "confirm";
 	static final String PARAMTER_CONFIRM_PREFIX = "confirmPrefix";
+
+	private String _mountPath;
 
 	private String _pullPrefix;
 	private Pattern _pullPattern;
@@ -68,6 +73,14 @@ public class NotifyFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		_context = filterConfig.getServletContext();
+
+		{
+			String mountPath = filterConfig.getInitParameter(PARAMTER_MOUNT_PATH);
+			if (StringUtils.empty(mountPath)) {
+				mountPath = DEFAULT_MOUNT_PATH;
+			}
+			_mountPath = StringUtils.startWith(mountPath, "/");
+		}
 
 		{
 			String pullPrefix = filterConfig.getInitParameter(PARAMTER_PULL_PREFIX);
@@ -131,11 +144,12 @@ public class NotifyFilter implements Filter {
 	public void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		String path = StringUtils.afterFirst(request.getRequestURI(), request.getServletPath());
-		if (path == null) {
+		String path = request.getRequestURI();
+		if (StringUtils.empty(path) || !path.startsWith(_mountPath)) {
 			response.sendError(404);
 			return;
 		}
+		path = path.substring(_mountPath.length());
 
 		if (path.startsWith(_pullPrefix)) {
 			pull(request, response, path);

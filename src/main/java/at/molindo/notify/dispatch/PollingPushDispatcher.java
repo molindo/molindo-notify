@@ -17,6 +17,7 @@
 package at.molindo.notify.dispatch;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -43,6 +44,8 @@ import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.utils.concurrent.FactoryThread;
 import at.molindo.utils.concurrent.FactoryThread.FactoryThreadGroup;
 import at.molindo.utils.concurrent.KeyLock;
+
+import com.google.common.collect.Maps;
 
 public class PollingPushDispatcher implements IPushDispatcher, InitializingBean, DisposableBean {
 
@@ -121,6 +124,18 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	}
 
 	@Override
+	public Map<String, PushChannelPreferences> newDefaultPreferences() {
+		Map<String, PushChannelPreferences> map = Maps.newHashMap();
+		for (IPushChannel channel : _pushChannels) {
+			PushChannelPreferences cPrefs = channel.newDefaultPreferences();
+			if (cPrefs != null) {
+				map.put(channel.getId(), cPrefs);
+			}
+		}
+		return map;
+	}
+
+	@Override
 	public void notification(Notification notification) {
 		synchronized (_wait) {
 			_wait.notify();
@@ -172,6 +187,9 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		PushResult result = PushResult.PERSISTENT_ERROR;
 		for (IPushChannel channel : _pushChannels) {
 			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
+			if (cPrefs == null) {
+				cPrefs = channel.newDefaultPreferences();
+			}
 
 			if (isAllowed(dc, channel, cPrefs, Frequency.INSTANT)) {
 				try {
@@ -198,18 +216,18 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		return result;
 	}
 
-	boolean isAllowed(DispatchConf dc, IPushChannel channel, PushChannelPreferences prefs, Frequency frequency) {
+	boolean isAllowed(DispatchConf dc, IPushChannel channel, PushChannelPreferences cPrefs, Frequency frequency) {
 
-		if (prefs == null) {
+		if (cPrefs == null) {
 			// no preferences for this channel
 			return false;
 		}
 
-		if (!dc.instant && !frequency.equals(prefs.getFrequency())) {
+		if (!dc.instant && !frequency.equals(cPrefs.getFrequency())) {
 			return false;
 		}
 
-		if (!channel.isConfigured(dc.notification.getUserId(), prefs)) {
+		if (!channel.isConfigured(dc.notification.getUserId(), cPrefs)) {
 			// prefs not complete, e.g. recipient address missing
 			return false;
 		}
