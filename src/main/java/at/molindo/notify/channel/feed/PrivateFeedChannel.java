@@ -30,7 +30,7 @@ public class PrivateFeedChannel extends AbstractFeedChannel {
 
 	@Override
 	public ImmutableSet<Type> getNotificationTypes() {
-		return Type.TYPES_PUBLIC;
+		return Type.TYPES_PRIVATE;
 	}
 
 }
