@@ -204,6 +204,9 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	}
 
 	public void setDefaultPreferences(Preferences defaultPreferences) {
+		if (defaultPreferences == null) {
+			throw new NullPointerException("defaultPreferences");
+		}
 		_defaultPreferences = defaultPreferences;
 	}
 
