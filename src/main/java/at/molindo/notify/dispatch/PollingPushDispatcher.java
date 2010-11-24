@@ -23,6 +23,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nonnull;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -46,6 +48,7 @@ import at.molindo.utils.concurrent.FactoryThread.FactoryThreadGroup;
 import at.molindo.utils.concurrent.KeyLock;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class PollingPushDispatcher implements IPushDispatcher, InitializingBean, DisposableBean {
 
@@ -64,7 +67,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	private Set<IPushChannel> _pushChannels = new CopyOnWriteArraySet<IPushChannel>();
 
 	private final Object _wait = new Object();
-	private final KeyLock<Long, PushResult> _notificationLock = KeyLock.newKeyLock();
+	private final KeyLock<Long, PushResultMessage> _notificationLock = KeyLock.newKeyLock();
 
 	private IErrorListener _errorListener;
 
@@ -74,7 +77,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	private INotificationRenderService _notificationRenderService;
 
-	enum PushResult {
+	private enum PushResult {
 		SUCCESS, TEMPORARY_ERROR, PERSISTENT_ERROR;
 	}
 
@@ -144,12 +147,14 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	@Override
 	public void dispatchNow(Notification notification) throws NotifyException {
-		if (push(new DispatchConf(notification, true)) != PushResult.SUCCESS) {
+		PushResultMessage rm = push(new DispatchConf(notification, true));
+
+		if (rm.getResult() != PushResult.SUCCESS) {
 			throw new NotifyException("failed to dispatch now: " + notification);
 		} else {
 			// only record success of dispatchNow as failed notifications must
 			// not be stored for later use
-			recordPushAttempt(notification, PushResult.SUCCESS);
+			recordPushAttempt(notification, rm);
 		}
 	}
 
@@ -163,12 +168,12 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	 * 
 	 * @see #doPush(DispatchConf)
 	 */
-	PushResult push(final DispatchConf dc) {
+	PushResultMessage push(final DispatchConf dc) {
 		try {
-			return _notificationLock.withLock(dc.notification.getId(), new Callable<PushResult>() {
+			return _notificationLock.withLock(dc.notification.getId(), new Callable<PushResultMessage>() {
 
 				@Override
-				public PushResult call() {
+				public PushResultMessage call() {
 					return doPush(dc);
 				}
 			});
@@ -177,14 +182,17 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		}
 	}
 
-	private PushResult doPush(DispatchConf dc) {
+	private PushResultMessage doPush(DispatchConf dc) {
 		Preferences prefs = _preferencesDAO.getPreferences(dc.notification.getUserId());
 		if (prefs == null) {
 			log.warn("can't push to unknown user " + dc.notification.getUserId());
-			return PushResult.PERSISTENT_ERROR;
+			return PushResultMessage.persistent("unknown user " + dc.notification.getUserId());
 		}
 
-		PushResult result = PushResult.PERSISTENT_ERROR;
+		Set<String> successChannels = Sets.newHashSet();
+		Map<String, String> temporaryChannels = Maps.newHashMap();
+		Map<String, String> persistentChannels = Maps.newHashMap();
+
 		for (IPushChannel channel : _pushChannels) {
 			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
 			if (cPrefs == null) {
@@ -193,12 +201,13 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 			if (isAllowed(dc, channel, cPrefs, Frequency.INSTANT)) {
 				try {
-
 					channel.push(_notificationRenderService.render(dc.notification, prefs, cPrefs), cPrefs);
-					result = PushResult.SUCCESS;
+					successChannels.add(channel.getId());
 				} catch (PushException e) {
 					if (e.isTemporaryError()) {
-						result = PushResult.TEMPORARY_ERROR;
+						temporaryChannels.put(channel.getId(), e.getMessage());
+					} else {
+						persistentChannels.put(channel.getId(), e.getMessage());
 					}
 					if (_errorListener != null) {
 						_errorListener.error(dc.notification, channel, e);
@@ -213,7 +222,15 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 			}
 		}
 
-		return result;
+		if (successChannels.size() > 0) {
+			return PushResultMessage.success("channels: " + successChannels);
+		} else if (temporaryChannels.size() > 0) {
+			return PushResultMessage.temporary("temporary error, channels: " + temporaryChannels);
+		} else if (persistentChannels.size() > 0) {
+			return PushResultMessage.persistent("persistent error, channels: " + persistentChannels);
+		} else {
+			return PushResultMessage.temporary("no allowed channels available");
+		}
 	}
 
 	boolean isAllowed(DispatchConf dc, IPushChannel channel, PushChannelPreferences cPrefs, Frequency frequency) {
@@ -310,15 +327,16 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	}
 
-	public void recordPushAttempt(Notification notification, PushResult result) {
+	public void recordPushAttempt(Notification notification, @Nonnull PushResultMessage rm) {
 
-		if (result == PushResult.SUCCESS) {
+		if (rm.getResult() == PushResult.SUCCESS) {
 			notification.setPushState(PushState.PUSHED);
 			notification.setPushDate(new Date());
+			notification.setPushErrorMessage(rm.getMessage());
 		} else {
-			int errorCount = notification.recordPushError();
+			int errorCount = notification.recordPushError(rm.getMessage());
 
-			if (errorCount > _maxErrorCount || result == PushResult.PERSISTENT_ERROR) {
+			if (errorCount > _maxErrorCount || rm.getResult() == PushResult.PERSISTENT_ERROR) {
 				notification.setPushState(PushState.UNDELIVERABLE);
 				notification.setPushDate(new Date());
 			} else {
@@ -356,4 +374,44 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		_notifyService = notifyService;
 	}
 
+	private static class PushResultMessage {
+
+		private static PushResultMessage success(String message) {
+			return new PushResultMessage(message, PushResult.SUCCESS);
+		}
+
+		private static PushResultMessage persistent(String message) {
+			return new PushResultMessage(message, PushResult.PERSISTENT_ERROR);
+		}
+
+		private static PushResultMessage temporary(String message) {
+			return new PushResultMessage(message, PushResult.TEMPORARY_ERROR);
+		}
+
+		private final String _message;
+		private final PushResult _result;
+
+		private PushResultMessage(String message, PushResult result) {
+			if (result == null) {
+				throw new NullPointerException("result");
+			}
+
+			_message = message;
+			_result = result;
+		}
+
+		public String getMessage() {
+			return _message;
+		}
+
+		public PushResult getResult() {
+			return _result;
+		}
+
+		@Override
+		public String toString() {
+			return _result + " (" + _message + ")";
+		}
+
+	}
 }

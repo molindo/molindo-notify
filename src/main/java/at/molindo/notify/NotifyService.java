@@ -131,8 +131,12 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 
 	@Override
 	public void error(Notification notification, IPushChannel channel, PushException e) {
-		for (IErrorListener l : _errorListeners) {
-			l.error(notification, channel, e);
+		if (_errorListeners.size() == 0) {
+
+		} else {
+			for (IErrorListener l : _errorListeners) {
+				l.error(notification, channel, e);
+			}
 		}
 	}
 

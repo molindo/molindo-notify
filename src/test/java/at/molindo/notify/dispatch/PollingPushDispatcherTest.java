@@ -112,7 +112,7 @@ public class PollingPushDispatcherTest {
 				expect(context.get(INotificationDAO.class).getNext()).andReturn(n());
 
 				expect(context.get(IPreferencesDAO.class).getPreferences(n().getUserId())).andReturn(p());
-				expect(context.get(IPushChannel.class).getId()).andReturn(CHANNEL_ID);
+				expect(context.get(IPushChannel.class).getId()).andReturn(CHANNEL_ID).anyTimes();
 				expect(
 						context.get(IPushChannel.class).isConfigured(eq(USERID),
 								anyObject(PushChannelPreferences.class))).andReturn(true);

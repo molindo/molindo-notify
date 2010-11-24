@@ -42,6 +42,7 @@ public class Notification {
 	private PushState _pushState = PushState.QUEUED;
 	private Date _pushDate = new Date();
 	private int _pushErrors = 0;
+	private String _pushErrorMessage;
 
 	public Long getId() {
 		return _id;
@@ -149,8 +150,18 @@ public class Notification {
 	/**
 	 * @return new error count
 	 */
-	public int recordPushError() {
+	public int recordPushError(String message) {
+		setPushErrorMessage(message);
 		return ++_pushErrors;
+	}
+
+	public String getPushErrorMessage() {
+		return _pushErrorMessage;
+	}
+
+	public Notification setPushErrorMessage(String pushErrorMessage) {
+		_pushErrorMessage = pushErrorMessage;
+		return this;
 	}
 
 	@Override

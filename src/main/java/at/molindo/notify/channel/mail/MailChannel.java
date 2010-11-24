@@ -95,7 +95,18 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	@Override
 	public void push(Message message, PushChannelPreferences cPrefs) throws PushException {
-		_mailClient.send(message, cPrefs);
+		try {
+			_mailClient.send(message, cPrefs);
+
+			if (log.isDebugEnabled()) {
+				log.debug("successfully pushed mail:\n" + message);
+			}
+		} catch (PushException e) {
+			if (log.isDebugEnabled()) {
+				log.debug("failed to push mail:\n" + message, e);
+			}
+			throw e;
+		}
 	}
 
 	@Override
