@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.springframework.beans.factory.DisposableBean;
@@ -147,7 +148,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	@Override
 	public void dispatchNow(Notification notification) throws NotifyException {
-		PushResultMessage rm = push(new DispatchConf(notification, true));
+		PushResultMessage rm = doPush(new DispatchConf(notification, true));
 
 		if (rm.getResult() != PushResult.SUCCESS) {
 			throw new NotifyException("failed to dispatch now: " + notification);
@@ -167,7 +168,9 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	 * wraps a {@link KeyLock} around {@link #doPush(DispatchConf)}
 	 * 
 	 * @see #doPush(DispatchConf)
+	 * @return null if notification already gets pushed by another thread
 	 */
+	@CheckForNull
 	PushResultMessage push(final DispatchConf dc) {
 		try {
 			return _notificationLock.withLock(dc.notification.getId(), new Callable<PushResultMessage>() {
@@ -182,6 +185,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		}
 	}
 
+	@Nonnull
 	private PushResultMessage doPush(DispatchConf dc) {
 		Preferences prefs = _preferencesDAO.getPreferences(dc.notification.getUserId());
 		if (prefs == null) {
@@ -286,7 +290,10 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		public void run() {
 			Notification notification = _notificationDAO.getNext();
 			if (notification != null) {
-				recordPushAttempt(notification, push(new DispatchConf(notification)));
+				PushResultMessage rm = push(new DispatchConf(notification));
+				if (rm != null) {
+					recordPushAttempt(notification, rm);
+				}
 			} else {
 				// add a polling delay
 				delay();
