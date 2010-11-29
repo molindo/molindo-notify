@@ -35,7 +35,7 @@ public class Notification {
 	private String _key;
 	private Type _type = Type.PRIVATE;
 	private Date _date = new Date();
-	private Params _params = new Params();
+	private IParams _params = new Params();
 	private Confirmation _confirmation;
 
 	// push
@@ -88,11 +88,11 @@ public class Notification {
 		return this;
 	}
 
-	public Params getParams() {
+	public IParams getParams() {
 		return _params;
 	}
 
-	protected Notification setParams(Params params) {
+	protected Notification setParams(IParams params) {
 		if (params == null) {
 			throw new NullPointerException("params");
 		}

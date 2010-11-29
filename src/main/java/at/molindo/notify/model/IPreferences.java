@@ -14,29 +14,15 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.channel;
+package at.molindo.notify.model;
 
-import at.molindo.notify.model.IChannelPreferences;
-import at.molindo.notify.model.Notification;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableSet;
+public interface IPreferences extends Cloneable {
 
-public interface IChannel {
-	String getId();
+	Preferences clone();
 
-	ImmutableSet<Notification.Type> getNotificationTypes();
+	IParams getParams();
 
-	/**
-	 * create default preferences for this channel
-	 * 
-	 * @return
-	 */
-	IChannelPreferences newDefaultPreferences();
-
-	/**
-	 * @param prefs
-	 * @return true if channel is sufficiently configured
-	 */
-	boolean isConfigured(String userId, IChannelPreferences prefs);
-
+	Map<String, IPushChannelPreferences> getChannelPrefs();
 }

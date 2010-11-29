@@ -17,8 +17,8 @@
 package at.molindo.notify.render;
 
 import at.molindo.notify.INotifyService.NotifyException;
+import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.Params;
 
 public interface IRenderService {
 
@@ -30,7 +30,7 @@ public interface IRenderService {
 		LONG, SHORT;
 	}
 
-	Message render(String key, Version version, Params params) throws RenderException;
+	Message render(String key, Version version, IParams params) throws RenderException;
 
 	public class RenderException extends NotifyException {
 

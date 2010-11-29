@@ -21,8 +21,8 @@ import java.util.List;
 import org.springframework.beans.factory.InitializingBean;
 
 import at.molindo.notify.dao.ITemplateDAO;
+import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Template;
 
 public class TemplateRenderService implements IRenderService, InitializingBean {
@@ -41,7 +41,7 @@ public class TemplateRenderService implements IRenderService, InitializingBean {
 	}
 
 	@Override
-	public Message render(String key, Version version, Params params) throws RenderException {
+	public Message render(String key, Version version, IParams params) throws RenderException {
 
 		List<Template> templates = _templateDAO.findTemplates(key);
 

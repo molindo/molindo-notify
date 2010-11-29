@@ -18,15 +18,29 @@ package at.molindo.notify.model;
 
 import at.molindo.notify.render.IRenderService.Version;
 
-public class ChannelPreferences implements Cloneable {
+public class ChannelPreferences implements IChannelPreferences {
 
 	private Version _version = Version.LONG;
 	private Params _params = new Params();
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IChannelPreferences#getVersion()
+	 */
+	@Override
 	public Version getVersion() {
 		return _version;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * at.molindo.notify.model.IChannelPreferences#setVersion(at.molindo.notify
+	 * .render.IRenderService.Version)
+	 */
+	@Override
 	public void setVersion(Version version) {
 		if (version == null) {
 			throw new NullPointerException("version");
@@ -41,10 +55,21 @@ public class ChannelPreferences implements Cloneable {
 		_params = params;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IChannelPreferences#getParams()
+	 */
+	@Override
 	public Params getParams() {
 		return _params;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IChannelPreferences#clone()
+	 */
 	@Override
 	public ChannelPreferences clone() {
 		try {
@@ -76,7 +101,7 @@ public class ChannelPreferences implements Cloneable {
 		if (!(obj instanceof ChannelPreferences)) {
 			return false;
 		}
-		ChannelPreferences other = (ChannelPreferences) obj;
+		IChannelPreferences other = (IChannelPreferences) obj;
 		if (getVersion() == null) {
 			if (other.getVersion() != null) {
 				return false;

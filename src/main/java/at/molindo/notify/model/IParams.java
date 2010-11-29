@@ -14,29 +14,34 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.channel;
+package at.molindo.notify.model;
 
-import at.molindo.notify.model.IChannelPreferences;
-import at.molindo.notify.model.Notification;
+import java.util.Iterator;
+import java.util.Map;
 
-import com.google.common.collect.ImmutableSet;
+public interface IParams extends Cloneable, Iterable<ParamValue> {
 
-public interface IChannel {
-	String getId();
+	<T> IParams setString(Param<T> param, String value);
 
-	ImmutableSet<Notification.Type> getNotificationTypes();
+	<T> IParams set(Param<T> param, T value);
+
+	<T> T get(Param<T> param);
+
+	boolean containsAll(Param<?>... params);
 
 	/**
-	 * create default preferences for this channel
+	 * set all params from passed object, overwriting current mappings
 	 * 
+	 * @param params
 	 * @return
 	 */
-	IChannelPreferences newDefaultPreferences();
+	IParams setAll(IParams params);
 
-	/**
-	 * @param prefs
-	 * @return true if channel is sufficiently configured
-	 */
-	boolean isConfigured(String userId, IChannelPreferences prefs);
+	Map<String, Object> newMap();
+
+	int size();
+
+	@Override
+	Iterator<ParamValue> iterator();
 
 }

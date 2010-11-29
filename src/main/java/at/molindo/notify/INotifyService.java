@@ -20,9 +20,9 @@ import javax.annotation.Nonnull;
 
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
+import at.molindo.notify.model.IParams;
+import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
-import at.molindo.notify.model.Params;
-import at.molindo.notify.model.Preferences;
 
 public interface INotifyService {
 
@@ -30,12 +30,12 @@ public interface INotifyService {
 	public static final String PRIVATE_FEED_CHANNEL = "private-feed";
 	public static final String PUBLIC_FEED_CHANNEL = "public-feed";
 
-	Preferences getPreferences(@Nonnull String userId);
+	IPreferences getPreferences(@Nonnull String userId);
 
 	@Nonnull
-	Preferences newPreferences(@Nonnull String userId);
+	IPreferences newPreferences(@Nonnull String userId);
 
-	void setPreferences(@Nonnull Preferences prefs);
+	void setPreferences(@Nonnull IPreferences prefs);
 
 	void removePreferences(@Nonnull String userId);
 
@@ -63,7 +63,7 @@ public interface INotifyService {
 
 	void removeParamsFactory(@Nonnull IParamsFactory factory);
 
-	String toPullPath(String channelId, String userId, Params params);
+	String toPullPath(String channelId, String userId, IParams params);
 
 	public interface INotificationListner {
 		void notification(@Nonnull Notification notification);
@@ -101,7 +101,7 @@ public interface INotifyService {
 		 *             notification is obsolete)
 		 */
 		@Nonnull
-		Params params(@Nonnull Notification notification) throws NotifyException;
+		IParams params(@Nonnull Notification notification) throws NotifyException;
 	}
 
 	public static class NotifyException extends Exception {

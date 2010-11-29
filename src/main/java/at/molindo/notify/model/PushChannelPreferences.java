@@ -16,7 +16,7 @@
 
 package at.molindo.notify.model;
 
-public class PushChannelPreferences extends ChannelPreferences {
+public class PushChannelPreferences extends ChannelPreferences implements IPushChannelPreferences {
 
 	public enum Frequency {
 		INSTANT, DAILY, WEEKLY, MONTHLY;
@@ -33,6 +33,10 @@ public class PushChannelPreferences extends ChannelPreferences {
 		_id = id;
 	}
 
+	/* (non-Javadoc)
+	 * @see at.molindo.notify.model.IPushChannelPreferences#setFrequency(at.molindo.notify.model.PushChannelPreferences.Frequency)
+	 */
+	@Override
 	public void setFrequency(Frequency frequency) {
 		if (frequency == null) {
 			throw new NullPointerException("frequency");
@@ -40,6 +44,10 @@ public class PushChannelPreferences extends ChannelPreferences {
 		_frequency = frequency;
 	}
 
+	/* (non-Javadoc)
+	 * @see at.molindo.notify.model.IPushChannelPreferences#getFrequency()
+	 */
+	@Override
 	public Frequency getFrequency() {
 		return _frequency;
 	}
@@ -68,7 +76,7 @@ public class PushChannelPreferences extends ChannelPreferences {
 		if (!(obj instanceof PushChannelPreferences)) {
 			return false;
 		}
-		PushChannelPreferences other = (PushChannelPreferences) obj;
+		IPushChannelPreferences other = (IPushChannelPreferences) obj;
 		if (getFrequency() != other.getFrequency()) {
 			return false;
 		}

@@ -34,7 +34,7 @@ import org.apache.velocity.runtime.parser.ParseException;
 import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.springframework.beans.factory.InitializingBean;
 
-import at.molindo.notify.model.Params;
+import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Template;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.ITemplateRenderer;
@@ -65,7 +65,7 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 	}
 
 	@Override
-	public String render(Template template, Params params) throws RenderException {
+	public String render(Template template, IParams params) throws RenderException {
 
 		try {
 			StringWriter writer = new StringWriter();
@@ -82,7 +82,7 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 		}
 	}
 
-	private Context buildContext(Params params) {
+	private Context buildContext(IParams params) {
 		return new VelocityContext(params.newMap());
 	}
 

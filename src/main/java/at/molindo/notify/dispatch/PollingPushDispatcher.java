@@ -38,9 +38,9 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.message.INotificationRenderService;
+import at.molindo.notify.model.IPreferences;
+import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Notification;
-import at.molindo.notify.model.Preferences;
-import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.model.PushChannelPreferences.Frequency;
 import at.molindo.notify.model.PushState;
 import at.molindo.notify.render.IRenderService.RenderException;
@@ -128,10 +128,10 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	}
 
 	@Override
-	public Map<String, PushChannelPreferences> newDefaultPreferences() {
-		Map<String, PushChannelPreferences> map = Maps.newHashMap();
+	public Map<String, IPushChannelPreferences> newDefaultPreferences() {
+		Map<String, IPushChannelPreferences> map = Maps.newHashMap();
 		for (IPushChannel channel : _pushChannels) {
-			PushChannelPreferences cPrefs = channel.newDefaultPreferences();
+			IPushChannelPreferences cPrefs = channel.newDefaultPreferences();
 			if (cPrefs != null) {
 				map.put(channel.getId(), cPrefs);
 			}
@@ -187,7 +187,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	@Nonnull
 	private PushResultMessage doPush(DispatchConf dc) {
-		Preferences prefs = _preferencesDAO.getPreferences(dc.notification.getUserId());
+		IPreferences prefs = _preferencesDAO.getPreferences(dc.notification.getUserId());
 		if (prefs == null) {
 			log.warn("can't push to unknown user " + dc.notification.getUserId());
 			return PushResultMessage.persistent("unknown user " + dc.notification.getUserId());
@@ -198,7 +198,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		Map<String, String> persistentChannels = Maps.newHashMap();
 
 		for (IPushChannel channel : _pushChannels) {
-			PushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
+			IPushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
 			if (cPrefs == null) {
 				cPrefs = channel.newDefaultPreferences();
 			}
@@ -237,7 +237,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		}
 	}
 
-	boolean isAllowed(DispatchConf dc, IPushChannel channel, PushChannelPreferences cPrefs, Frequency frequency) {
+	boolean isAllowed(DispatchConf dc, IPushChannel channel, IPushChannelPreferences cPrefs, Frequency frequency) {
 
 		if (cPrefs == null) {
 			// no preferences for this channel

@@ -23,12 +23,12 @@ import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.message.INotificationRenderService;
-import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.ConfigurableChannelPreferences;
+import at.molindo.notify.model.IChannelPreferences;
+import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.utils.data.StringUtils;
@@ -50,8 +50,8 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	private Integer _defaultAmount = DEFAULT_AMOUNT;
 
 	@Override
-	public boolean isAuthorized(String userId, ChannelPreferences cPrefs) {
-		Preferences p = _preferencesDAO.getPreferences(userId);
+	public boolean isAuthorized(String userId, IChannelPreferences cPrefs) {
+		IPreferences p = _preferencesDAO.getPreferences(userId);
 		if (p == null) {
 			return false;
 		}
@@ -62,14 +62,14 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, ChannelPreferences prefs) {
+	public boolean isConfigured(String userId, IChannelPreferences prefs) {
 		return true;
 	}
 
 	@Override
-	public final String pull(String userId, ChannelPreferences cPrefs) throws PullException {
+	public final String pull(String userId, IChannelPreferences cPrefs) throws PullException {
 
-		Preferences prefs = _preferencesDAO.getPreferences(userId);
+		IPreferences prefs = _preferencesDAO.getPreferences(userId);
 
 		Integer amount = cPrefs.getParams().get(AMOUNT);
 		if (amount == null) {
@@ -96,13 +96,13 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	}
 
 	@Override
-	public ChannelPreferences newDefaultPreferences() {
-		ChannelPreferences prefs = new ConfigurableChannelPreferences();
+	public IChannelPreferences newDefaultPreferences() {
+		IChannelPreferences prefs = new ConfigurableChannelPreferences();
 		prefs.setVersion(Version.LONG);
 		return prefs;
 	}
 
-	protected Message render(final Notification notification, Preferences prefs, ChannelPreferences cPrefs)
+	protected Message render(final Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
 			throws RenderException {
 		return _notificationRenderService.render(notification, prefs, cPrefs);
 	}
@@ -127,7 +127,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 		_notificationRenderService = notificationRenderService;
 	}
 
-	protected abstract String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs,
-			Preferences prefs) throws PullException;
+	protected abstract String pull(List<Message> messages, Date lastModified, IChannelPreferences cPrefs,
+			IPreferences prefs) throws PullException;
 
 }

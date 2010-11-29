@@ -20,7 +20,8 @@ import org.springframework.beans.factory.InitializingBean;
 
 import at.molindo.notify.INotifyService;
 import at.molindo.notify.channel.IPushChannel;
-import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.IChannelPreferences;
+import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
@@ -94,7 +95,7 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	}
 
 	@Override
-	public void push(Message message, PushChannelPreferences cPrefs) throws PushException {
+	public void push(Message message, IPushChannelPreferences cPrefs) throws PushException {
 		try {
 			_mailClient.send(message, cPrefs);
 
@@ -110,11 +111,11 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, ChannelPreferences prefs) {
+	public boolean isConfigured(String userId, IChannelPreferences prefs) {
 		return prefs.getParams().containsAll(RECIPIENT);
 	}
 
-	public PushChannelPreferences getDefaultPreferences() {
+	public IPushChannelPreferences getDefaultPreferences() {
 		return _defaultPreferences;
 	}
 

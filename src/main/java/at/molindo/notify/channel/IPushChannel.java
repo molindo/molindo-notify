@@ -17,13 +17,13 @@
 package at.molindo.notify.channel;
 
 import at.molindo.notify.INotifyService.NotifyException;
+import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.PushChannelPreferences;
 
 public interface IPushChannel extends IChannel {
 
 	@Override
-	PushChannelPreferences newDefaultPreferences();
+	IPushChannelPreferences newDefaultPreferences();
 
 	/**
 	 * deliver notification
@@ -33,7 +33,7 @@ public interface IPushChannel extends IChannel {
 	 * @throws PushException
 	 *             if delivery failed
 	 */
-	void push(Message message, PushChannelPreferences cPrefs) throws PushException;
+	void push(Message message, IPushChannelPreferences cPrefs) throws PushException;
 
 	public class PushException extends NotifyException {
 

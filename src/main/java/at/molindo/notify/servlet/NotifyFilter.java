@@ -40,7 +40,8 @@ import at.molindo.notify.channel.IPullChannel.PullException;
 import at.molindo.notify.confirm.ConfirmationService;
 import at.molindo.notify.confirm.IConfirmationService;
 import at.molindo.notify.confirm.IConfirmationService.ConfirmationException;
-import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.IChannelPreferences;
+import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IRequestConfigurable;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.ParamValue;
@@ -197,7 +198,7 @@ public class NotifyFilter implements Filter {
 			return;
 		}
 
-		ChannelPreferences prefs = channel.newDefaultPreferences();
+		IChannelPreferences prefs = channel.newDefaultPreferences();
 		if (prefs instanceof IRequestConfigurable) {
 			try {
 				Map<?, ?> queryParams = request.getParameterMap();
@@ -323,15 +324,15 @@ public class NotifyFilter implements Filter {
 		}
 	}
 
-	public String toPullPath(String channelId, String userId, Params params) {
+	public String toPullPath(String channelId, String userId, IParams params) {
 		IPullChannel channel = getChannel(channelId);
 		if (channel == null) {
 			return null;
 		}
 
-		ChannelPreferences cPrefs = channel.newDefaultPreferences();
+		IChannelPreferences cPrefs = channel.newDefaultPreferences();
 
-		Params fullParams = new Params().setAll(cPrefs.getParams()).setAll(params);
+		IParams fullParams = new Params().setAll(cPrefs.getParams()).setAll(params);
 
 		StringBuilder buf = new StringBuilder();
 		buf.append(_mountPath).append(_pullPrefix).append(channelId).append("/").append(userId);

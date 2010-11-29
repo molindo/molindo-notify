@@ -23,7 +23,7 @@ import at.molindo.notify.channel.feed.AbstractPullChannel;
 
 import com.google.common.collect.Maps;
 
-public class Preferences implements Cloneable {
+public class Preferences implements IPreferences {
 
 	private Long _id;
 
@@ -31,7 +31,7 @@ public class Preferences implements Cloneable {
 
 	private Params _params = new Params();
 
-	private Map<String, PushChannelPreferences> _channelPrefs = Maps.newHashMap();
+	private Map<String, IPushChannelPreferences> _channelPrefs = Maps.newHashMap();
 
 	public Long getId() {
 		return _id;
@@ -51,11 +51,11 @@ public class Preferences implements Cloneable {
 		return this;
 	}
 
-	public Map<String, PushChannelPreferences> getChannelPrefs() {
+	public Map<String, IPushChannelPreferences> getChannelPrefs() {
 		return _channelPrefs;
 	}
 
-	protected Preferences setChannelPrefs(Map<String, PushChannelPreferences> channelPrefs) {
+	protected Preferences setChannelPrefs(Map<String, IPushChannelPreferences> channelPrefs) {
 		if (channelPrefs == null) {
 			throw new NullPointerException("channelPrefs");
 		}
@@ -92,7 +92,7 @@ public class Preferences implements Cloneable {
 			Preferences p = (Preferences) super.clone();
 			p._params = _params.clone();
 			p._channelPrefs = Maps.newHashMap();
-			for (Map.Entry<String, PushChannelPreferences> e : _channelPrefs.entrySet()) {
+			for (Map.Entry<String, IPushChannelPreferences> e : _channelPrefs.entrySet()) {
 				p._channelPrefs.put(e.getKey(), e.getValue().clone());
 			}
 

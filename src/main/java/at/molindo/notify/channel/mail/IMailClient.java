@@ -17,12 +17,12 @@
 package at.molindo.notify.channel.mail;
 
 import at.molindo.notify.channel.IPushChannel.PushException;
+import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.PushChannelPreferences;
 
 public interface IMailClient {
 
-	void send(Message message, PushChannelPreferences cPrefs) throws MailException;
+	void send(Message message, IPushChannelPreferences cPrefs) throws MailException;
 
 	public static class MailException extends PushException {
 

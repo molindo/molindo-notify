@@ -33,6 +33,7 @@ import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
@@ -163,7 +164,7 @@ public class AbstractFeedChannelTest {
 
 	@Test
 	public void testNewDefaultPreferences() {
-		ChannelPreferences p = c().newDefaultPreferences();
+		IChannelPreferences p = c().newDefaultPreferences();
 
 		assertTrue(p instanceof IRequestConfigurable);
 		// configured by default
@@ -172,7 +173,7 @@ public class AbstractFeedChannelTest {
 
 	@Test
 	public void testIsConfigured() {
-		ChannelPreferences p = c().newDefaultPreferences();
+		IChannelPreferences p = c().newDefaultPreferences();
 		assertTrue(c().isConfigured(USER_ID, p));
 	}
 

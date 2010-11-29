@@ -32,9 +32,10 @@ import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.IPushDispatcher;
 import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.Confirmation;
+import at.molindo.notify.model.IParams;
+import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
-import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.servlet.NotifyFilter;
 
@@ -63,7 +64,7 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	}
 
 	@Override
-	public Preferences getPreferences(String userId) {
+	public IPreferences getPreferences(String userId) {
 		return _preferencesDAO.getPreferences(userId);
 	}
 
@@ -79,7 +80,7 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	}
 
 	@Override
-	public void setPreferences(Preferences prefs) {
+	public void setPreferences(IPreferences prefs) {
 		_preferencesDAO.savePreferences(prefs);
 	}
 
@@ -188,7 +189,7 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	}
 
 	@Override
-	public String toPullPath(String channelId, String userId, Params params) {
+	public String toPullPath(String channelId, String userId, IParams params) {
 		if (_servletContext == null) {
 			throw new IllegalStateException("servlet context not available");
 		}

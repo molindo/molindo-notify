@@ -33,8 +33,8 @@ import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.utils.io.CharsetUtils;
 
 public abstract class AbstractMailClient implements IMailClient, InitializingBean {
@@ -42,7 +42,7 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 	public enum Security {
 		NONE(25), SSL(465), TLS(587);
 
-		private int _defaultPort;
+		private final int _defaultPort;
 
 		private Security(int defaultPort) {
 			_defaultPort = defaultPort;
@@ -79,7 +79,7 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 	}
 
 	@Override
-	public synchronized void send(Message message, PushChannelPreferences cPrefs) throws MailException {
+	public synchronized void send(Message message, IPushChannelPreferences cPrefs) throws MailException {
 
 		String recipient = cPrefs.getParams().get(MailChannel.RECIPIENT);
 		String recipientName = cPrefs.getParams().get(MailChannel.RECIPIENT_NAME);

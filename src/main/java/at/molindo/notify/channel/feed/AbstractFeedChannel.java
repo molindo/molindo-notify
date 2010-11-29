@@ -20,9 +20,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.IChannelPreferences;
+import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.utils.data.Hash;
 
@@ -42,7 +42,7 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 	private String _feedTitle;
 
 	@Override
-	protected String pull(List<Message> messages, Date lastModified, ChannelPreferences cPrefs, Preferences prefs)
+	protected String pull(List<Message> messages, Date lastModified, IChannelPreferences cPrefs, IPreferences prefs)
 			throws PullException {
 
 		try {
@@ -55,7 +55,7 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 		}
 	}
 
-	public WireFeed toFeed(List<Message> messages, Date lastModified, Preferences prefs, ChannelPreferences cPrefs)
+	public WireFeed toFeed(List<Message> messages, Date lastModified, IPreferences prefs, IChannelPreferences cPrefs)
 			throws RenderException {
 		final Feed f = new Feed("atom_1.0");
 
@@ -89,7 +89,7 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, ChannelPreferences prefs) {
+	public boolean isConfigured(String userId, IChannelPreferences prefs) {
 		// TODO validation
 		return super.isConfigured(userId, prefs);
 	}

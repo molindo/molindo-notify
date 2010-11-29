@@ -21,15 +21,30 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-public class Params implements Cloneable, Iterable<ParamValue> {
+public class Params implements IParams {
 
 	private Map<String, ParamValue> _params = Maps.newHashMap();
 
-	public <T> Params setString(Param<T> param, String value) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * at.molindo.notify.model.IParams#setString(at.molindo.notify.model.Param,
+	 * java.lang.String)
+	 */
+	@Override
+	public <T> IParams setString(Param<T> param, String value) {
 		return set(param, param.toObject(value));
 	}
 
-	public <T> Params set(Param<T> param, T value) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IParams#set(at.molindo.notify.model.Param,
+	 * T)
+	 */
+	@Override
+	public <T> IParams set(Param<T> param, T value) {
 		if (value == null) {
 			_params.remove(param.getName());
 		} else {
@@ -38,6 +53,12 @@ public class Params implements Cloneable, Iterable<ParamValue> {
 		return this;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IParams#get(at.molindo.notify.model.Param)
+	 */
+	@Override
 	public <T> T get(Param<T> param) {
 		ParamValue v = _params.get(param.getName());
 		if (v == null || v.getValue() == null) {
@@ -55,6 +76,14 @@ public class Params implements Cloneable, Iterable<ParamValue> {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * at.molindo.notify.model.IParams#containsAll(at.molindo.notify.model.Param
+	 * )
+	 */
+	@Override
 	public boolean containsAll(Param<?>... params) {
 		for (Param<?> p : params) {
 			if (!_params.containsKey(p.getName())) {
@@ -64,19 +93,28 @@ public class Params implements Cloneable, Iterable<ParamValue> {
 		return true;
 	}
 
-	/**
-	 * set all params from passed object, overwriting current mappings
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param params
-	 * @return
+	 * @see
+	 * at.molindo.notify.model.IParams#setAll(at.molindo.notify.model.Params)
 	 */
-	public Params setAll(Params params) {
+	@Override
+	public IParams setAll(IParams params) {
 		if (params != null) {
-			_params.putAll(params._params);
+			for (ParamValue v : params) {
+				_params.put(v.getName(), v);
+			}
 		}
 		return this;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IParams#newMap()
+	 */
+	@Override
 	public Map<String, Object> newMap() {
 		Map<String, Object> map = Maps.newHashMap();
 		for (Map.Entry<String, ParamValue> e : _params.entrySet()) {
@@ -145,10 +183,21 @@ public class Params implements Cloneable, Iterable<ParamValue> {
 		_params = params;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IParams#size()
+	 */
+	@Override
 	public int size() {
 		return _params.size();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see at.molindo.notify.model.IParams#iterator()
+	 */
 	@Override
 	public Iterator<ParamValue> iterator() {
 		return _params.values().iterator();

@@ -22,11 +22,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import at.molindo.notify.INotifyService.IParamsFactory;
 import at.molindo.notify.INotifyService.NotifyException;
-import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.IChannelPreferences;
+import at.molindo.notify.model.IParams;
+import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Params;
-import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 
@@ -36,10 +37,10 @@ public class NotificationRenderService implements INotificationRenderService {
 	private final List<IParamsFactory> _paramsFactories = new CopyOnWriteArrayList<IParamsFactory>();
 
 	@Override
-	public Message render(Notification notification, Preferences prefs, ChannelPreferences cPrefs)
+	public Message render(Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
 			throws RenderException {
 
-		Params params = new Params();
+		IParams params = new Params();
 		params.setAll(prefs.getParams());
 		params.setAll(cPrefs.getParams());
 		params.setAll(notification.getParams());

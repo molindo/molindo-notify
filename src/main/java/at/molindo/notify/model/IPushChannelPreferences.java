@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.channel;
+package at.molindo.notify.model;
 
-import at.molindo.notify.model.IChannelPreferences;
-import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.PushChannelPreferences.Frequency;
 
-import com.google.common.collect.ImmutableSet;
+public interface IPushChannelPreferences extends IChannelPreferences {
 
-public interface IChannel {
-	String getId();
+	void setFrequency(Frequency frequency);
 
-	ImmutableSet<Notification.Type> getNotificationTypes();
+	Frequency getFrequency();
 
-	/**
-	 * create default preferences for this channel
-	 * 
-	 * @return
-	 */
-	IChannelPreferences newDefaultPreferences();
-
-	/**
-	 * @param prefs
-	 * @return true if channel is sufficiently configured
-	 */
-	boolean isConfigured(String userId, IChannelPreferences prefs);
+	@Override
+	IPushChannelPreferences clone();
 
 }

@@ -17,13 +17,13 @@
 package at.molindo.notify.channel;
 
 import at.molindo.notify.INotifyService.NotifyException;
-import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.IChannelPreferences;
 
 public interface IPullChannel extends IChannel {
 
-	String pull(String userId, ChannelPreferences cPrefs) throws PullException;
+	String pull(String userId, IChannelPreferences cPrefs) throws PullException;
 
-	boolean isAuthorized(String userId, ChannelPreferences cPrefs);
+	boolean isAuthorized(String userId, IChannelPreferences cPrefs);
 
 	public class PullException extends NotifyException {
 

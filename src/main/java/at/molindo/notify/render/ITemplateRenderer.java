@@ -16,10 +16,10 @@
 
 package at.molindo.notify.render;
 
-import at.molindo.notify.model.Params;
+import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Template;
 import at.molindo.notify.render.IRenderService.RenderException;
 
 public interface ITemplateRenderer {
-	String render(Template template, Params params) throws RenderException;
+	String render(Template template, IParams params) throws RenderException;
 }

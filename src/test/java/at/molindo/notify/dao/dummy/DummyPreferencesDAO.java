@@ -19,6 +19,7 @@ package at.molindo.notify.dao.dummy;
 import at.molindo.notify.channel.dummy.DummyChannel;
 import at.molindo.notify.channel.mail.MailChannel;
 import at.molindo.notify.dao.IPreferencesDAO;
+import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences;
 
@@ -44,7 +45,7 @@ public class DummyPreferencesDAO implements IPreferencesDAO {
 	}
 
 	@Override
-	public void savePreferences(Preferences prefs) {
+	public void savePreferences(IPreferences prefs) {
 		// do nothing
 	}
 
