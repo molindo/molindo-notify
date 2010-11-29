@@ -40,15 +40,15 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	public static final String CHANNEL_ID = INotifyService.MAIL_CHANNEL;
 
-	private PushChannelPreferences _defaultPreferences;
+	private IPushChannelPreferences _defaultPreferences;
 
 	private IMailClient _mailClient;
 
-	public static void setRecipient(PushChannelPreferences cPrefs, String recipient) {
+	public static void setRecipient(IPushChannelPreferences cPrefs, String recipient) {
 		setRecipient(cPrefs.getParams(), recipient);
 	}
 
-	public static void setRecipientName(PushChannelPreferences cPrefs, String recipientName) {
+	public static void setRecipientName(IPushChannelPreferences cPrefs, String recipientName) {
 		setRecipientName(cPrefs.getParams(), recipientName);
 	}
 
@@ -90,7 +90,7 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	}
 
 	@Override
-	public PushChannelPreferences newDefaultPreferences() {
+	public IPushChannelPreferences newDefaultPreferences() {
 		return _defaultPreferences != null ? _defaultPreferences.clone() : new PushChannelPreferences();
 	}
 
@@ -119,7 +119,7 @@ public class MailChannel implements IPushChannel, InitializingBean {
 		return _defaultPreferences;
 	}
 
-	public void setDefaultPreferences(PushChannelPreferences defaultPreferences) {
+	public void setDefaultPreferences(IPushChannelPreferences defaultPreferences) {
 		_defaultPreferences = defaultPreferences;
 	}
 
