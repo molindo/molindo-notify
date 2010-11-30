@@ -20,8 +20,6 @@ import at.molindo.notify.model.PushChannelPreferences.Frequency;
 
 public interface IPushChannelPreferences extends IChannelPreferences {
 
-	void setFrequency(Frequency frequency);
-
 	Frequency getFrequency();
 
 	@Override

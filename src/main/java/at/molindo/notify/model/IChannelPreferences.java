@@ -22,8 +22,6 @@ public interface IChannelPreferences extends Cloneable {
 
 	Version getVersion();
 
-	void setVersion(Version version);
-
 	IParams getParams();
 
 	IChannelPreferences clone();

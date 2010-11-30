@@ -33,10 +33,6 @@ public class PushChannelPreferences extends ChannelPreferences implements IPushC
 		_id = id;
 	}
 
-	/* (non-Javadoc)
-	 * @see at.molindo.notify.model.IPushChannelPreferences#setFrequency(at.molindo.notify.model.PushChannelPreferences.Frequency)
-	 */
-	@Override
 	public void setFrequency(Frequency frequency) {
 		if (frequency == null) {
 			throw new NullPointerException("frequency");
@@ -44,9 +40,6 @@ public class PushChannelPreferences extends ChannelPreferences implements IPushC
 		_frequency = frequency;
 	}
 
-	/* (non-Javadoc)
-	 * @see at.molindo.notify.model.IPushChannelPreferences#getFrequency()
-	 */
 	@Override
 	public Frequency getFrequency() {
 		return _frequency;

@@ -97,7 +97,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 
 	@Override
 	public IChannelPreferences newDefaultPreferences() {
-		IChannelPreferences prefs = new ConfigurableChannelPreferences();
+		ConfigurableChannelPreferences prefs = new ConfigurableChannelPreferences();
 		prefs.setVersion(Version.LONG);
 		return prefs;
 	}

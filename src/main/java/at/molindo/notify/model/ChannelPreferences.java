@@ -33,14 +33,6 @@ public class ChannelPreferences implements IChannelPreferences {
 		return _version;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * at.molindo.notify.model.IChannelPreferences#setVersion(at.molindo.notify
-	 * .render.IRenderService.Version)
-	 */
-	@Override
 	public void setVersion(Version version) {
 		if (version == null) {
 			throw new NullPointerException("version");
