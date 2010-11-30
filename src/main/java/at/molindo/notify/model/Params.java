@@ -25,24 +25,10 @@ public class Params implements IParams {
 
 	private Map<String, ParamValue> _params = Maps.newHashMap();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * at.molindo.notify.model.IParams#setString(at.molindo.notify.model.Param,
-	 * java.lang.String)
-	 */
-	@Override
 	public <T> IParams setString(Param<T> param, String value) {
 		return set(param, param.toObject(value));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see at.molindo.notify.model.IParams#set(at.molindo.notify.model.Param,
-	 * T)
-	 */
 	@Override
 	public <T> IParams set(Param<T> param, T value) {
 		if (value == null) {
@@ -53,11 +39,6 @@ public class Params implements IParams {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see at.molindo.notify.model.IParams#get(at.molindo.notify.model.Param)
-	 */
 	@Override
 	public <T> T get(Param<T> param) {
 		ParamValue v = _params.get(param.getName());
@@ -76,13 +57,11 @@ public class Params implements IParams {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * at.molindo.notify.model.IParams#containsAll(at.molindo.notify.model.Param
-	 * )
-	 */
+	@Override
+	public boolean isSet(Param<?> param) {
+		return _params.get(param.getName()) != null;
+	}
+
 	@Override
 	public boolean containsAll(Param<?>... params) {
 		for (Param<?> p : params) {
@@ -93,36 +72,15 @@ public class Params implements IParams {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * at.molindo.notify.model.IParams#setAll(at.molindo.notify.model.Params)
-	 */
 	@Override
 	public IParams setAll(IParams params) {
-		if (params != null) {
-			for (ParamValue v : params) {
-				_params.put(v.getName(), v);
-			}
-		}
+		IParams.Util.setAll(this, params);
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see at.molindo.notify.model.IParams#newMap()
-	 */
 	@Override
 	public Map<String, Object> newMap() {
-		Map<String, Object> map = Maps.newHashMap();
-		for (Map.Entry<String, ParamValue> e : _params.entrySet()) {
-			if (e.getValue() != null && e.getValue().getValue() != null) {
-				map.put(e.getKey(), e.getValue().getValue());
-			}
-		}
-		return map;
+		return IParams.Util.newMap(this);
 	}
 
 	@Override
@@ -183,21 +141,6 @@ public class Params implements IParams {
 		_params = params;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see at.molindo.notify.model.IParams#size()
-	 */
-	@Override
-	public int size() {
-		return _params.size();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see at.molindo.notify.model.IParams#iterator()
-	 */
 	@Override
 	public Iterator<ParamValue> iterator() {
 		return _params.values().iterator();

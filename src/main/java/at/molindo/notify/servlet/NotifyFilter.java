@@ -336,20 +336,18 @@ public class NotifyFilter implements Filter {
 
 		StringBuilder buf = new StringBuilder();
 		buf.append(_mountPath).append(_pullPrefix).append(channelId).append("/").append(userId);
-		if (fullParams.size() > 0) {
-			buf.append("?");
-			for (final ParamValue pv : params) {
-				final String encodedName = encode(pv.getName());
-				final String value = pv.getStringValue();
-				final String encodedValue = value != null ? encode(value) : "";
+		buf.append("?");
+		for (final ParamValue pv : fullParams) {
+			final String encodedName = encode(pv.getName());
+			final String value = pv.getStringValue();
+			final String encodedValue = value != null ? encode(value) : "";
 
-				buf.append(encodedName);
-				buf.append("=");
-				buf.append(encodedValue);
-				buf.append("&");
-			}
-			buf.setLength(buf.length() - 1);
+			buf.append(encodedName);
+			buf.append("=");
+			buf.append(encodedValue);
+			buf.append("&");
 		}
+		buf.setLength(buf.length() - 1);
 		return buf.toString();
 	}
 }

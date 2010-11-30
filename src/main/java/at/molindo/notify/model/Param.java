@@ -17,6 +17,7 @@
 package at.molindo.notify.model;
 
 import java.io.NotSerializableException;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -209,6 +210,31 @@ public abstract class Param<T> {
 		};
 	}
 
+	static Param<?> p(Class<?> cls, String name) {
+		// TODO use reflection in static initializer to build lookup table?
+		if (String.class.isAssignableFrom(cls)) {
+			return pString(name);
+		} else if (Integer.class.isAssignableFrom(cls) || int.class.equals(cls)) {
+			return pInteger(name);
+		} else if (Long.class.isAssignableFrom(cls) || long.class.equals(cls)) {
+			return pLong(name);
+		} else if (Double.class.isAssignableFrom(cls) || double.class.equals(cls)) {
+			return pDouble(name);
+		} else if (Float.class.isAssignableFrom(cls) || float.class.equals(cls)) {
+			return pFloat(name);
+		} else if (Boolean.class.isAssignableFrom(cls) || boolean.class.equals(cls)) {
+			return pBoolean(name);
+		} else if (Character.class.isAssignableFrom(cls) || char.class.equals(cls)) {
+			return pCharacter(name);
+		} else if (URL.class.isAssignableFrom(cls)) {
+			return pURL(name);
+		} else if (Serializable.class.isAssignableFrom(cls)) {
+			return pSerializable(name);
+		} else {
+			return pObject(name);
+		}
+	}
+
 	private Param() {
 	}
 
@@ -312,4 +338,24 @@ public abstract class Param<T> {
 	protected abstract T object(@Nonnull String string);
 
 	protected abstract ParamType type();
+
+	/**
+	 * utility method to set Param<?> on IParams
+	 * 
+	 * @param target
+	 * @param object
+	 */
+	void set(IParams target, Object object) {
+		target.set(this, _type.cast(object));
+	}
+
+	/**
+	 * utility method to create Param<?> on IParams
+	 * 
+	 * @param target
+	 * @param object
+	 */
+	ParamValue paramValue(Object object) {
+		return new ParamValue(this, _type.cast(object));
+	}
 }

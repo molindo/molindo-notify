@@ -20,7 +20,7 @@ import java.util.Map;
 
 public interface IPreferences extends Cloneable {
 
-	Preferences clone();
+	IPreferences clone();
 
 	IParams getParams();
 

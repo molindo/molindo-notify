@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
+import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
@@ -35,8 +36,20 @@ public interface INotifyService {
 	@Nonnull
 	IPreferences newPreferences(@Nonnull String userId);
 
+	/**
+	 * depends on the implementation of {@link IPreferencesDAO}
+	 * 
+	 * @throws NotifyRuntimeException
+	 *             if not implemented
+	 */
 	void setPreferences(@Nonnull IPreferences prefs);
 
+	/**
+	 * depends on the implementation of {@link IPreferencesDAO}
+	 * 
+	 * @throws NotifyRuntimeException
+	 *             if not implemented
+	 */
 	void removePreferences(@Nonnull String userId);
 
 	void notify(@Nonnull Notification notification);

@@ -19,13 +19,15 @@ package at.molindo.notify.model;
 import java.util.Iterator;
 import java.util.Map;
 
-public interface IParams extends Cloneable, Iterable<ParamValue> {
+import com.google.common.collect.Maps;
 
-	<T> IParams setString(Param<T> param, String value);
+public interface IParams extends Cloneable, Iterable<ParamValue> {
 
 	<T> IParams set(Param<T> param, T value);
 
 	<T> T get(Param<T> param);
+
+	boolean isSet(Param<?> param);
 
 	boolean containsAll(Param<?>... params);
 
@@ -39,9 +41,33 @@ public interface IParams extends Cloneable, Iterable<ParamValue> {
 
 	Map<String, Object> newMap();
 
-	int size();
-
 	@Override
 	Iterator<ParamValue> iterator();
+
+	static class Util {
+		protected static boolean containsAll(IParams target, Param<?>... params) {
+			for (Param<?> param : params) {
+				if (!target.isSet(param)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		protected static void setAll(IParams target, IParams source) {
+			for (ParamValue v : source) {
+				v.set(target);
+			}
+		}
+
+		protected static Map<String, Object> newMap(IParams target) {
+			Map<String, Object> map = Maps.newHashMap();
+			for (ParamValue v : target) {
+				map.put(v.getName(), v.getValue());
+			}
+			return map;
+		}
+
+	}
 
 }

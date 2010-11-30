@@ -18,13 +18,26 @@ package at.molindo.notify.dao;
 
 import javax.annotation.Nonnull;
 
+import at.molindo.notify.INotifyService.NotifyRuntimeException;
 import at.molindo.notify.model.IPreferences;
 
 public interface IPreferencesDAO {
 
 	IPreferences getPreferences(@Nonnull String userId);
 
+	/**
+	 * optional
+	 * 
+	 * @throws NotifyRuntimeException
+	 *             if not implemented
+	 */
 	void savePreferences(@Nonnull IPreferences prefs);
 
+	/**
+	 * optional
+	 * 
+	 * @throws NotifyRuntimeException
+	 *             if not implemented
+	 */
 	void removePreferences(@Nonnull String userId);
 }

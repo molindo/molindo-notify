@@ -16,6 +16,8 @@
 
 package at.molindo.notify.model;
 
+import javax.annotation.Nonnull;
+
 public class ParamValue {
 	private ParamType _type;
 	private String _name;
@@ -53,15 +55,20 @@ public class ParamValue {
 		_name = name;
 	}
 
+	@Nonnull
 	public Object getValue() {
-		if (_value == null && _stringValue != null) {
-			_value = param().toObject(_stringValue);
+		if (_value == null) {
+			if (_stringValue != null) {
+				_value = param().toObject(_stringValue);
+			} else {
+				throw new NullPointerException("BUG");
+			}
 		}
 
 		return _value;
 	}
 
-	public void setValue(Object value) {
+	public void setValue(@Nonnull Object value) {
 		if (value == null) {
 			throw new NullPointerException("value");
 		}
@@ -84,6 +91,16 @@ public class ParamValue {
 			throw new IllegalStateException("type (was " + t + ") and name (was " + n + ") must be set");
 		}
 		return t.p(n);
+	}
+
+	/**
+	 * utility method to set Param<?> on IParams
+	 * 
+	 * @param target
+	 * @param object
+	 */
+	void set(IParams target) {
+		param().set(target, getValue());
 	}
 
 	@Override
