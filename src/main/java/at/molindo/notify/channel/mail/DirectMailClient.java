@@ -35,9 +35,17 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 	private static final int DEFAULT_CACHE_CONCURRENCY = 4;
 	private static final long DEFAULT_CACHE_EXPIRATION_MIN = 10;
 
+	private static final String CONNECTION_TIMEOUT_MS = "60000";
+	private static final String READ_TIMEOUT_MS = "60000";
+
 	private Map<String, Session> _sessionCache;
 	private int _cacheConcurrency = DEFAULT_CACHE_CONCURRENCY;
 	private long _cacheExpirationMin = DEFAULT_CACHE_EXPIRATION_MIN;
+	private String _localAddress;
+	private String _socksProxyHost;
+	private String _socksProxyPort;
+	private Boolean _proxySet;
+	private String _localHost;
 
 	@Override
 	public DirectMailClient init() throws MailException {
@@ -72,6 +80,24 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 			props.setProperty("mail.smtp.port", "25");
 			props.setProperty("mail.smtp.auth", "false");
 			props.setProperty("mail.smtp.starttls.enable", "true");
+
+			// set proxy
+			if (getProxySet() != null && getProxySet()) {
+				props.setProperty("proxySet", "true");
+				props.setProperty("socksProxyHost", getSocksProxyHost());
+				props.setProperty("socksProxyPort", getSocksProxyPort());
+			}
+
+			if (getLocalHost() != null) {
+				props.setProperty("mail.smtp.localhost", getLocalHost());
+			}
+			if (getLocalAddress() != null) {
+				props.setProperty("mail.smtp.localaddress", getLocalAddress());
+			}
+
+			props.setProperty("mail.smtp.connectiontimeout", CONNECTION_TIMEOUT_MS);
+			props.setProperty("mail.smtp.timeout", READ_TIMEOUT_MS);
+
 			// props.put("mail.debug", "true");
 			return Session.getInstance(props);
 		} catch (NamingException e) {
@@ -93,6 +119,46 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 
 	public void setCacheExpirationMin(long cacheExpirationMin) {
 		_cacheExpirationMin = cacheExpirationMin;
+	}
+
+	public void setLocalAddress(final String localAddress) {
+		_localAddress = localAddress;
+	}
+
+	public void setLocalHost(final String localHost) {
+		_localHost = localHost;
+	}
+
+	private String getLocalAddress() {
+		return _localAddress;
+	}
+
+	private String getLocalHost() {
+		return _localHost;
+	}
+
+	public void setSocksProxyHost(final String socksProxyHost) {
+		_socksProxyHost = socksProxyHost;
+	}
+
+	public void setSocksProxyPort(final String socksProxyPort) {
+		_socksProxyPort = socksProxyPort;
+	}
+
+	public void setProxySet(final Boolean proxySet) {
+		_proxySet = proxySet;
+	}
+
+	private String getSocksProxyHost() {
+		return _socksProxyHost;
+	}
+
+	private String getSocksProxyPort() {
+		return _socksProxyPort;
+	}
+
+	private Boolean getProxySet() {
+		return _proxySet;
 	}
 
 	private static class WrapException extends RuntimeException {
