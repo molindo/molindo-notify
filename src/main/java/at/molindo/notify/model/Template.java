@@ -103,47 +103,60 @@ public class Template implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getKey() == null) ? 0 : getKey().hashCode());
+		result = prime * result + (getKey() == null ? 0 : getKey().hashCode());
 		result = prime * result + getVersion().hashCode();
 		result = prime * result + getType().hashCode();
-		result = prime * result + ((getLastModified() == null) ? 0 : getLastModified().hashCode());
-		result = prime * result + ((getLocale() == null) ? 0 : getLocale().hashCode());
+		result = prime * result + (getLastModified() == null ? 0 : getLastModified().hashCode());
+		result = prime * result + (getLocale() == null ? 0 : getLocale().hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (obj instanceof Template == false)
+		}
+		if (obj instanceof Template == false) {
 			return false;
+		}
 		Template other = (Template) obj;
 		if (getKey() == null) {
-			if (other.getKey() != null)
+			if (other.getKey() != null) {
 				return false;
-		} else if (!getKey().equals(other.getKey()))
+			}
+		} else if (!getKey().equals(other.getKey())) {
 			return false;
-		if (getType() != other.getType())
+		}
+		if (getType() != other.getType()) {
 			return false;
-		if (getVersion() != other.getVersion())
+		}
+		if (getVersion() != other.getVersion()) {
 			return false;
+		}
 		if (getLastModified() == null) {
-			if (other.getLastModified() != null)
+			if (other.getLastModified() != null) {
 				return false;
-		} else if (!getLastModified().equals(other.getLastModified()))
+			}
+		} else if (!getLastModified().equals(other.getLastModified())) {
 			return false;
+		}
 		if (getLocale() == null) {
-			if (other.getLocale() != null)
+			if (other.getLocale() != null) {
 				return false;
-		} else if (!getLocale().equals(other.getLocale()))
+			}
+		} else if (!getLocale().equals(other.getLocale())) {
 			return false;
+		}
 		if (getContent() == null) {
-			if (other.getContent() != null)
+			if (other.getContent() != null) {
 				return false;
-		} else if (!getContent().equals(other.getContent()))
+			}
+		} else if (!getContent().equals(other.getContent())) {
 			return false;
+		}
 		return true;
 	}
 
@@ -179,18 +192,23 @@ public class Template implements Cloneable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (obj instanceof Key == false)
+			}
+			if (obj instanceof Key == false) {
 				return false;
+			}
 			Key other = (Key) obj;
 
-			if (!_key.equals(other._key))
+			if (!_key.equals(other._key)) {
 				return false;
-			if (_version != other._version)
+			}
+			if (_version != other._version) {
 				return false;
+			}
 			return true;
 		}
 	}
@@ -199,10 +217,12 @@ public class Template implements Cloneable {
 	public Template clone() {
 		try {
 			Template t = (Template) super.clone();
-			if (_lastModified != null)
+			if (_lastModified != null) {
 				t._lastModified = new Date(_lastModified.getTime());
-			if (_locale != null)
+			}
+			if (_locale != null) {
 				t._locale = (Locale) _locale.clone();
+			}
 			return t;
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("clone object not supported?", e);

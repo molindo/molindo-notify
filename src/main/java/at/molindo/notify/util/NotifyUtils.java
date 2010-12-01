@@ -16,6 +16,12 @@
 
 package at.molindo.notify.util;
 
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
+import at.molindo.notify.model.Template;
+import at.molindo.notify.render.IRenderService.Version;
 
 public class NotifyUtils {
 
@@ -30,5 +36,15 @@ public class NotifyUtils {
 	public static String text2html(String text) {
 		// TODO
 		return text.replaceAll("\n", "<br />");
+	}
+
+	public static Template choose(@Nonnull List<Template> templates, @Nonnull Version version) {
+		// TODO use fallbacks
+		for (Template t : templates) {
+			if (version.equals(t.getVersion())) {
+				return t;
+			}
+		}
+		return null;
 	}
 }

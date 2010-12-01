@@ -16,7 +16,6 @@
 
 package at.molindo.notify.model;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -94,7 +93,7 @@ public class Message {
 
 	}
 
-	public Message(String subject, String message, Type type, Date modified) {
+	public Message(String subject, String message, Type type) {
 		setType(type);
 		setSubject(subject);
 		setMessage(message);

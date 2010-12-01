@@ -16,14 +16,13 @@
 
 package at.molindo.notify.render;
 
-import java.util.List;
-
 import org.springframework.beans.factory.InitializingBean;
 
 import at.molindo.notify.dao.ITemplateDAO;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Template;
+import at.molindo.notify.util.NotifyUtils;
 
 public class TemplateRenderService implements IRenderService, InitializingBean {
 
@@ -43,25 +42,13 @@ public class TemplateRenderService implements IRenderService, InitializingBean {
 	@Override
 	public Message render(String key, Version version, IParams params) throws RenderException {
 
-		List<Template> templates = _templateDAO.findTemplates(key);
-
-		Template template = choose(templates, version);
+		Template template = NotifyUtils.choose(_templateDAO.findTemplates(key), version);
 
 		if (template == null) {
 			throw new RenderException("no template available for '" + key + "' (" + version + ")");
 		}
 
 		return Message.parse(_renderer.render(template, params), template.getType());
-	}
-
-	private Template choose(List<Template> templates, Version version) {
-		// TODO use fallbacks
-		for (Template t : templates) {
-			if (version.equals(t.getVersion())) {
-				return t;
-			}
-		}
-		return null;
 	}
 
 	ITemplateDAO getTemplateDAO() {
