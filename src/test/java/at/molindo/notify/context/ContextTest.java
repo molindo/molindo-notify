@@ -27,7 +27,7 @@ import at.molindo.notify.dao.dummy.DummyUtils;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
 
-@ContextConfiguration({ ContextUtils.MAIN, ContextUtils.CHANNELS, ContextUtils.RENDER, ContextUtils.DAOS })
+@ContextConfiguration({ ContextUtils.MAIN, ContextUtils.TEST_CONFIG })
 public class ContextTest extends AbstractJUnit4SpringContextTests {
 
 	@Autowired

@@ -26,6 +26,8 @@
   	http://www.springframework.org/schema/util/spring-util-3.0.xsd
   ">
 
+	<import resource="notify-render-velocity.xml" />
+
 	<bean id="notifyService" class="at.molindo.notify.NotifyService">
 		<property name="instantDispatcher" ref="dispatcher" />
 		<property name="notificationDAO" ref="notificationDAO" />

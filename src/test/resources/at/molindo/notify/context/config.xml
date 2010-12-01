@@ -26,6 +26,10 @@
   	http://www.springframework.org/schema/util/spring-util-3.0.xsd
   ">
 
+	<import resource="daos.xml" />
+
+	<alias name="velocityRenderService" alias="renderService"/>
+
 	<bean id="mailChannel" class="at.molindo.notify.channel.mail.MailChannel">
 		<property name="mailClient" ref="mailClient" />
 	</bean>

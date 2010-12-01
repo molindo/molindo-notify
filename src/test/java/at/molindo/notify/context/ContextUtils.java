@@ -20,9 +20,10 @@ public class ContextUtils {
 
 	public static final String ROOT = "/at/molindo/notify/context";
 	public static final String MAIN = ROOT + "/notify.xml";
-	public static final String CHANNELS = ROOT + "/channels.xml";
-	public static final String DAOS = ROOT + "/daos.xml";
-	public static final String RENDER = ROOT + "/notify-render-velocity.xml";
+	public static final String TEST_CONFIG = ROOT + "/config.xml";
+
+	// public static final String TEST_DAOS = ROOT + "/daos.xml";
+	// public static final String RENDER = ROOT + "/notify-render-velocity.xml";
 
 	private ContextUtils() {
 	};

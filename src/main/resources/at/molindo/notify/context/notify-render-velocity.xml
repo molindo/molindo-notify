@@ -26,7 +26,7 @@
   	http://www.springframework.org/schema/util/spring-util-3.0.xsd
   ">
 
-	<bean id="renderService" class="at.molindo.notify.render.TemplateRenderService">
+	<bean id="velocityRenderService" class="at.molindo.notify.render.TemplateRenderService">
 		<property name="renderer">
 			<bean class="at.molindo.notify.render.velocity.VelocityTemplateRenderer" />
 		</property>
