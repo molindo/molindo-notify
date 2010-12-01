@@ -44,6 +44,8 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	private IMailClient _mailClient;
 
+	private boolean _disabled = false;
+
 	public static void setRecipient(IPushChannelPreferences cPrefs, String recipient) {
 		setRecipient(cPrefs.getParams(), recipient);
 	}
@@ -96,6 +98,10 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	@Override
 	public void push(Message message, IPushChannelPreferences cPrefs) throws PushException {
+		if (isDisabled()) {
+			throw new PushException("channel is disabled", true);
+		}
+
 		try {
 			_mailClient.send(message, cPrefs);
 
@@ -129,6 +135,14 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	public void setMailClient(IMailClient mailClient) {
 		_mailClient = mailClient;
+	}
+
+	public boolean isDisabled() {
+		return _disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		_disabled = disabled;
 	}
 
 }
