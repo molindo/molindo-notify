@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.message;
+package at.molindo.notify.dispatch;
 
 import at.molindo.notify.INotifyService.IParamsFactory;
 import at.molindo.notify.model.Dispatch;
@@ -23,9 +23,9 @@ import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.render.IRenderService.RenderException;
 
-public interface INotificationRenderService {
+public interface IDispatchService {
 
-	Dispatch render(Notification notification, IPreferences prefs, IChannelPreferences cPrefs) throws RenderException;
+	Dispatch create(Notification notification, IPreferences prefs, IChannelPreferences cPrefs) throws RenderException;
 
 	void addParamsFactory(IParamsFactory factory);
 

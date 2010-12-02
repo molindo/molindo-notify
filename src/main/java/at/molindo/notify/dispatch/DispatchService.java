@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.message;
+package at.molindo.notify.dispatch;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,13 +31,13 @@ import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 
-public class NotificationRenderService implements INotificationRenderService {
+public class DispatchService implements IDispatchService {
 
 	private IRenderService _renderService;
 	private final List<IParamsFactory> _paramsFactories = new CopyOnWriteArrayList<IParamsFactory>();
 
 	@Override
-	public Dispatch render(Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
+	public Dispatch create(Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
 			throws RenderException {
 
 		Params params = new Params();

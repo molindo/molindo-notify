@@ -37,7 +37,6 @@ import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
-import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.IPushChannelPreferences;
@@ -77,7 +76,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	private FactoryThreadGroup _threadGroup;
 
-	private INotificationRenderService _notificationRenderService;
+	private IDispatchService _dispatchService;
 
 	private enum PushResult {
 		SUCCESS, TEMPORARY_ERROR, PERSISTENT_ERROR;
@@ -88,8 +87,8 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		if (_pushChannels.size() == 0) {
 			throw new IllegalStateException("no push channels configured");
 		}
-		if (_notificationRenderService == null) {
-			throw new IllegalStateException("no notificationRenderService configured");
+		if (_dispatchService == null) {
+			throw new IllegalStateException("no dispatchService configured");
 		}
 		if (_notificationDAO == null) {
 			throw new IllegalStateException("no notificationDAO configured");
@@ -245,7 +244,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 			PushResultMessage.persistent("channel not applicable for type " + notification.getType());
 		}
 
-		Dispatch dispatch = _notificationRenderService.render(notification, prefs, cPrefs);
+		Dispatch dispatch = _dispatchService.create(notification, prefs, cPrefs);
 
 		if (!channel.isConfigured(notification.getUserId(), cPrefs)) {
 			// not configured, don't push by default or prefs not complete, e.g.
@@ -269,8 +268,8 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		_poolSize = poolSize;
 	}
 
-	public void setNotificationRenderService(INotificationRenderService notificationRenderService) {
-		_notificationRenderService = notificationRenderService;
+	public void setDispatchService(IDispatchService dispatchService) {
+		_dispatchService = dispatchService;
 	}
 
 	public void setNotificationDAO(INotificationDAO notificationDAO) {

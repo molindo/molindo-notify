@@ -40,7 +40,7 @@
 			<bean class="at.molindo.notify.util.PushChannelsFactory" autowire="byType" />
 		</property>
 		<property name="notifyService" ref="notifyService" />
-		<property name="notificationRenderService" ref="notificationRenderService" />
+		<property name="dispatchService" ref="dispatchService" />
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
 		<property name="maxErrorCount" value="5" />
@@ -51,7 +51,7 @@
 		<property name="notificationDAO" ref="notificationDAO" />
 	</bean>
 
-	<bean id="notificationRenderService" class="at.molindo.notify.message.NotificationRenderService">
+	<bean id="dispatchService" class="at.molindo.notify.dispatch.DispatchService">
 		<property name="renderService" ref="renderService" />
 	</bean>
 

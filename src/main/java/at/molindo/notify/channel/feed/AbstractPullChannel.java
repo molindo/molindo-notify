@@ -22,7 +22,7 @@ import java.util.List;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
-import at.molindo.notify.message.INotificationRenderService;
+import at.molindo.notify.dispatch.IDispatchService;
 import at.molindo.notify.model.ConfigurableChannelPreferences;
 import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IPreferences;
@@ -37,7 +37,7 @@ import com.google.common.collect.Lists;
 
 public abstract class AbstractPullChannel implements IPullChannel {
 
-	private INotificationRenderService _notificationRenderService;
+	private IDispatchService _dispatchService;
 	private INotificationDAO _notificationDAO;
 	private IPreferencesDAO _preferencesDAO;
 
@@ -104,7 +104,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 
 	protected Message render(final Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
 			throws RenderException {
-		return _notificationRenderService.render(notification, prefs, cPrefs).getMessage();
+		return _dispatchService.create(notification, prefs, cPrefs).getMessage();
 	}
 
 	public Integer getDefaultAmount() {
@@ -123,8 +123,17 @@ public abstract class AbstractPullChannel implements IPullChannel {
 		_preferencesDAO = preferencesDAO;
 	}
 
-	public void setNotificationRenderService(INotificationRenderService notificationRenderService) {
-		_notificationRenderService = notificationRenderService;
+	public void setDispatchService(IDispatchService dispatchService) {
+		_dispatchService = dispatchService;
+	}
+
+	/**
+	 * @param dispatchService
+	 * @deprecated use {@link #setDispatchService(IDispatchService)}
+	 */
+	@Deprecated
+	public void setNotificationRenderService(IDispatchService dispatchService) {
+		setDispatchService(dispatchService);
 	}
 
 	protected abstract String pull(List<Message> messages, Date lastModified, IChannelPreferences cPrefs,

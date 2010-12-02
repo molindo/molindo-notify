@@ -33,7 +33,6 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.PollingPushDispatcher.Polling;
-import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
@@ -98,7 +97,7 @@ public class PollingPushDispatcherTest {
 			dispatcher = new PollingPushDispatcher();
 			dispatcher.setPoolSize(1);
 			dispatcher.setErrorListener(context.create(IErrorListener.class));
-			dispatcher.setNotificationRenderService(context.create(INotificationRenderService.class));
+			dispatcher.setDispatchService(context.create(IDispatchService.class));
 			dispatcher.setNotificationDAO(context.create(INotificationDAO.class));
 			dispatcher.setPreferencesDAO(context.create(IPreferencesDAO.class));
 			dispatcher.setPushChannels(Sets.newHashSet(context.create(IPushChannel.class)));
@@ -125,7 +124,7 @@ public class PollingPushDispatcherTest {
 				expect(context.get(IPushChannel.class).getNotificationTypes()).andReturn(Type.TYPES_ALL);
 
 				expect(
-						context.get(INotificationRenderService.class).render(eq(n()), eq(p()),
+						context.get(IDispatchService.class).create(eq(n()), eq(p()),
 								anyObject(PushChannelPreferences.class))).andReturn(d());
 
 				context.get(IPushChannel.class).push(d());

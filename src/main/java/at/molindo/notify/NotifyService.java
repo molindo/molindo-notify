@@ -29,8 +29,8 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.confirm.IConfirmationService;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
+import at.molindo.notify.dispatch.IDispatchService;
 import at.molindo.notify.dispatch.IPushDispatcher;
-import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPreferences;
@@ -51,7 +51,7 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 
 	private IPushDispatcher _instantDispatcher;
 
-	private INotificationRenderService _notificationRenderService;
+	private IDispatchService _notificationRenderService;
 	private IConfirmationService _confirmationService;
 
 	private Preferences _defaultPreferences = new Preferences();
@@ -215,7 +215,7 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 		_defaultPreferences = defaultPreferences;
 	}
 
-	public void setNotificationRenderService(INotificationRenderService notificationRenderService) {
+	public void setNotificationRenderService(IDispatchService notificationRenderService) {
 		_notificationRenderService = notificationRenderService;
 	}
 

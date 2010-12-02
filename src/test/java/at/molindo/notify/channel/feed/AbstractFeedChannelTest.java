@@ -31,7 +31,7 @@ import org.junit.Test;
 
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
-import at.molindo.notify.message.INotificationRenderService;
+import at.molindo.notify.dispatch.IDispatchService;
 import at.molindo.notify.model.ChannelPreferences;
 import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IChannelPreferences;
@@ -118,7 +118,7 @@ public class AbstractFeedChannelTest {
 				expect(context.get(INotificationDAO.class).getRecent(USER_ID, Type.TYPES_ALL, 0, 20))
 						.andReturn(nList());
 				expect(
-						context.get(INotificationRenderService.class).render(eq(n()), eq(p()),
+						context.get(IDispatchService.class).create(eq(n()), eq(p()),
 								anyObject(ChannelPreferences.class))).andReturn(d());
 			}
 
@@ -191,7 +191,7 @@ public class AbstractFeedChannelTest {
 			c = c();
 			c.setNotificationDAO(context.create(INotificationDAO.class));
 			c.setPreferencesDAO(context.create(IPreferencesDAO.class));
-			c.setNotificationRenderService(context.create(INotificationRenderService.class));
+			c.setDispatchService(context.create(IDispatchService.class));
 		}
 	}
 
