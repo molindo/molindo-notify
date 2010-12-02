@@ -26,7 +26,9 @@ import javax.naming.NamingException;
 import org.junit.Test;
 
 import at.molindo.notify.channel.mail.IMailClient.MailException;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.Message;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Type;
@@ -71,7 +73,7 @@ public class SimpleMailClientTest {
 		MailChannel.setRecipient(cPrefs, "stf+test@molindo.at");
 		MailChannel.setRecipientName(cPrefs, "sfussenegger");
 
-		client.send(message, cPrefs);
+		client.send(new Dispatch(message, new Params(cPrefs.getParams())));
 
 		// poor man's assertion
 		assertTrue(sent[0]);

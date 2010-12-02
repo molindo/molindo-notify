@@ -33,7 +33,7 @@ import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import at.molindo.notify.model.IPushChannelPreferences;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.Message;
 import at.molindo.utils.io.CharsetUtils;
 
@@ -79,10 +79,12 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 	}
 
 	@Override
-	public synchronized void send(Message message, IPushChannelPreferences cPrefs) throws MailException {
+	public synchronized void send(Dispatch dispatch) throws MailException {
 
-		String recipient = cPrefs.getParams().get(MailChannel.RECIPIENT);
-		String recipientName = cPrefs.getParams().get(MailChannel.RECIPIENT_NAME);
+		Message message = dispatch.getMessage();
+
+		String recipient = dispatch.getParams().get(MailChannel.RECIPIENT);
+		String recipientName = dispatch.getParams().get(MailChannel.RECIPIENT_NAME);
 		String subject = message.getSubject();
 
 		try {

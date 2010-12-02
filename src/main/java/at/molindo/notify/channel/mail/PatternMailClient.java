@@ -21,8 +21,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.InitializingBean;
 
-import at.molindo.notify.model.IPushChannelPreferences;
-import at.molindo.notify.model.Message;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.utils.data.StringUtils;
 
 public class PatternMailClient implements IMailClient, InitializingBean {
@@ -43,8 +42,8 @@ public class PatternMailClient implements IMailClient, InitializingBean {
 	}
 
 	@Override
-	public void send(Message message, IPushChannelPreferences cPrefs) throws MailException {
-		getClient(getServer(cPrefs.getParams().get(MailChannel.RECIPIENT))).send(message, cPrefs);
+	public void send(Dispatch dispatch) throws MailException {
+		getClient(getServer(dispatch.getParams().get(MailChannel.RECIPIENT))).send(dispatch);
 	}
 
 	String getServer(String recipient) {

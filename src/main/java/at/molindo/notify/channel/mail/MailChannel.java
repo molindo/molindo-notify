@@ -20,10 +20,10 @@ import org.springframework.beans.factory.InitializingBean;
 
 import at.molindo.notify.INotifyService;
 import at.molindo.notify.channel.IPushChannel;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPushChannelPreferences;
-import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.PushChannelPreferences;
@@ -97,20 +97,20 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	}
 
 	@Override
-	public void push(Message message, IPushChannelPreferences cPrefs) throws PushException {
+	public void push(Dispatch dispatch) throws PushException {
 		if (isDisabled()) {
 			throw new PushException("channel is disabled", true);
 		}
 
 		try {
-			_mailClient.send(message, cPrefs);
+			_mailClient.send(dispatch);
 
 			if (log.isDebugEnabled()) {
-				log.debug("successfully pushed mail:\n" + message);
+				log.debug("successfully pushed mail:\n" + dispatch.getMessage());
 			}
 		} catch (PushException e) {
 			if (log.isDebugEnabled()) {
-				log.debug("failed to push mail:\n" + message, e);
+				log.debug("failed to push mail:\n" + dispatch.getMessage(), e);
 			}
 			throw e;
 		}

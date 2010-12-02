@@ -34,10 +34,12 @@ import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.dispatch.PollingPushDispatcher.Polling;
 import at.molindo.notify.message.INotificationRenderService;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.model.PushState;
@@ -82,6 +84,10 @@ public class PollingPushDispatcherTest {
 		return Message.parse("Subject: Test\n\nThis is a test", IRenderService.Type.TEXT);
 	}
 
+	private static Dispatch d() throws RenderException {
+		return new Dispatch(m(), new Params());
+	}
+
 	private abstract class PollingPushDispatcherMockTest extends MockTest {
 		PollingPushDispatcher dispatcher;
 		PushException ex = new IPushChannel.PushException(true);
@@ -120,9 +126,9 @@ public class PollingPushDispatcherTest {
 
 				expect(
 						context.get(INotificationRenderService.class).render(eq(n()), eq(p()),
-								anyObject(PushChannelPreferences.class))).andReturn(m());
+								anyObject(PushChannelPreferences.class))).andReturn(d());
 
-				context.get(IPushChannel.class).push(eq(m()), anyObject(PushChannelPreferences.class));
+				context.get(IPushChannel.class).push(d());
 				expectLastCall().andThrow(ex);
 
 				reportMatcher(new IArgumentMatcher() {

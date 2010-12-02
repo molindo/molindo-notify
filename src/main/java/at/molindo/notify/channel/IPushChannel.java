@@ -17,8 +17,8 @@
 package at.molindo.notify.channel;
 
 import at.molindo.notify.INotifyService.NotifyException;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IPushChannelPreferences;
-import at.molindo.notify.model.Message;
 
 public interface IPushChannel extends IChannel {
 
@@ -33,7 +33,7 @@ public interface IPushChannel extends IChannel {
 	 * @throws PushException
 	 *             if delivery failed
 	 */
-	void push(Message message, IPushChannelPreferences cPrefs) throws PushException;
+	void push(Dispatch dispatch) throws PushException;
 
 	public class PushException extends NotifyException {
 

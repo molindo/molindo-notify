@@ -38,6 +38,7 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.message.INotificationRenderService;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Notification;
@@ -148,7 +149,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 	@Override
 	public void dispatchNow(Notification notification) throws NotifyException {
-		PushResultMessage rm = doPush(new DispatchConf(notification, true));
+		PushResultMessage rm = doPush(notification, true);
 
 		if (rm.getResult() != PushResult.SUCCESS) {
 			throw new NotifyException("failed to dispatch now: " + notification);
@@ -171,13 +172,13 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	 * @return null if notification already gets pushed by another thread
 	 */
 	@CheckForNull
-	PushResultMessage push(final DispatchConf dc) {
+	PushResultMessage push(final @Nonnull Notification notification, final boolean instant) {
 		try {
-			return _notificationLock.withLock(dc.notification.getId(), new Callable<PushResultMessage>() {
+			return _notificationLock.withLock(notification.getId(), new Callable<PushResultMessage>() {
 
 				@Override
 				public PushResultMessage call() {
-					return doPush(dc);
+					return doPush(notification, instant);
 				}
 			});
 		} catch (Exception e) {
@@ -186,11 +187,11 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 	}
 
 	@Nonnull
-	private PushResultMessage doPush(DispatchConf dc) {
-		IPreferences prefs = _preferencesDAO.getPreferences(dc.notification.getUserId());
+	private PushResultMessage doPush(@Nonnull Notification notification, boolean instant) {
+		IPreferences prefs = _preferencesDAO.getPreferences(notification.getUserId());
 		if (prefs == null) {
-			log.warn("can't push to unknown user " + dc.notification.getUserId());
-			return PushResultMessage.persistent("unknown user " + dc.notification.getUserId());
+			log.warn("can't push to unknown user " + notification.getUserId());
+			return PushResultMessage.persistent("unknown user " + notification.getUserId());
 		}
 
 		Set<String> successChannels = Sets.newHashSet();
@@ -198,31 +199,22 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		Map<String, String> persistentChannels = Maps.newHashMap();
 
 		for (IPushChannel channel : _pushChannels) {
-			IPushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
-			if (cPrefs == null) {
-				cPrefs = channel.newDefaultPreferences();
-			}
-
-			if (isAllowed(dc, channel, cPrefs, Frequency.INSTANT)) {
-				try {
-					channel.push(_notificationRenderService.render(dc.notification, prefs, cPrefs), cPrefs);
-					successChannels.add(channel.getId());
-				} catch (PushException e) {
-					if (e.isTemporaryError()) {
-						temporaryChannels.put(channel.getId(), e.getMessage());
-					} else {
-						persistentChannels.put(channel.getId(), e.getMessage());
-					}
-					if (_errorListener != null) {
-						_errorListener.error(dc.notification, channel, e);
-					} else {
-						log.warn(
-								"failed to deliver notification " + dc.notification + " on channel " + channel.getId(),
-								e);
-					}
-				} catch (RenderException e) {
-					log.error("failed to render notification " + dc.notification, e);
+			try {
+				pushChannel(channel, prefs, notification, instant);
+				successChannels.add(channel.getId());
+			} catch (PushException e) {
+				if (e.isTemporaryError()) {
+					temporaryChannels.put(channel.getId(), e.getMessage());
+				} else {
+					persistentChannels.put(channel.getId(), e.getMessage());
 				}
+				if (_errorListener != null) {
+					_errorListener.error(notification, channel, e);
+				} else {
+					log.warn("failed to deliver notification " + notification + " on channel " + channel.getId(), e);
+				}
+			} catch (RenderException e) {
+				log.error("failed to render notification " + notification, e);
 			}
 		}
 
@@ -237,28 +229,36 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		}
 	}
 
-	boolean isAllowed(DispatchConf dc, IPushChannel channel, IPushChannelPreferences cPrefs, Frequency frequency) {
+	private void pushChannel(IPushChannel channel, IPreferences prefs, Notification notification,
+			boolean ignoreFrequency) throws PushException, RenderException {
 
+		IPushChannelPreferences cPrefs = prefs.getChannelPrefs().get(channel.getId());
 		if (cPrefs == null) {
-			// no preferences for this channel
-			return false;
+			cPrefs = channel.newDefaultPreferences();
+			if (cPrefs == null) {
+				PushResultMessage.persistent("channel not configured for user");
+			}
 		}
 
-		if (!dc.instant && !frequency.equals(cPrefs.getFrequency())) {
-			return false;
-		}
-
-		if (!channel.isConfigured(dc.notification.getUserId(), cPrefs)) {
-			// prefs not complete, e.g. recipient address missing
-			return false;
-		}
-
-		if (!channel.getNotificationTypes().contains(dc.notification.getType())) {
+		if (!channel.getNotificationTypes().contains(notification.getType())) {
 			// channel not applicable for type
-			return false;
+			PushResultMessage.persistent("channel not applicable for type " + notification.getType());
 		}
 
-		return true;
+		Dispatch dispatch = _notificationRenderService.render(notification, prefs, cPrefs);
+
+		if (!channel.isConfigured(notification.getUserId(), cPrefs)) {
+			// not configured, don't push by default or prefs not complete, e.g.
+			// recipient address missing
+			PushResultMessage.persistent("channel not configured for user");
+		}
+
+		if (!ignoreFrequency && !Frequency.INSTANT.equals(cPrefs.getFrequency())) {
+			// temporary as other dispatcher will handle this
+			PushResultMessage.temporary("channel not configured for this frequency");
+		}
+
+		channel.push(dispatch);
 	}
 
 	public int getPoolSize() {
@@ -290,7 +290,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 		public void run() {
 			Notification notification = _notificationDAO.getNext();
 			if (notification != null) {
-				PushResultMessage rm = push(new DispatchConf(notification));
+				PushResultMessage rm = push(notification, false);
 				if (rm != null) {
 					recordPushAttempt(notification, rm);
 				}
@@ -311,25 +311,6 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 					log.debug("polling thread interrupted", e);
 				}
 			}
-		}
-
-	}
-
-	static class DispatchConf {
-
-		final Notification notification;
-		final boolean instant;
-
-		DispatchConf(Notification notification) {
-			this(notification, false);
-		}
-
-		DispatchConf(Notification notification, boolean instant) {
-			if (notification == null) {
-				throw new NullPointerException("notification");
-			}
-			this.notification = notification;
-			this.instant = instant;
 		}
 
 	}

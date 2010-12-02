@@ -33,11 +33,13 @@ import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.message.INotificationRenderService;
 import at.molindo.notify.model.ChannelPreferences;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IRequestConfigurable;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
@@ -100,6 +102,10 @@ public class AbstractFeedChannelTest {
 		return Message.parse("Subject: Test\n\nThis is a test", IRenderService.Type.TEXT);
 	}
 
+	private static Dispatch d() throws RenderException {
+		return new Dispatch(m(), new Params());
+	}
+
 	@Test
 	public void testPull() throws Exception {
 		new FeedMockTest() {
@@ -113,7 +119,7 @@ public class AbstractFeedChannelTest {
 						.andReturn(nList());
 				expect(
 						context.get(INotificationRenderService.class).render(eq(n()), eq(p()),
-								anyObject(ChannelPreferences.class))).andReturn(m());
+								anyObject(ChannelPreferences.class))).andReturn(d());
 			}
 
 			@Override

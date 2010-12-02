@@ -24,7 +24,9 @@ import java.util.Arrays;
 import org.easymock.EasyMock;
 import org.junit.Test;
 
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.Message;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.render.IRenderService.Type;
 import at.molindo.notify.test.util.EasyMockContext;
@@ -51,8 +53,7 @@ public class PatternMailClientTest {
 				_client = client();
 				_client.setAlternativeClient(context.create(IMailClient.class));
 
-				context.get(IMailClient.class).send(EasyMock.anyObject(Message.class),
-						EasyMock.anyObject(PushChannelPreferences.class));
+				context.get(IMailClient.class).send(EasyMock.anyObject(Dispatch.class));
 
 			}
 
@@ -60,7 +61,7 @@ public class PatternMailClientTest {
 			protected void test(EasyMockContext context) throws Exception {
 				PushChannelPreferences cPrefs = new PushChannelPreferences();
 				MailChannel.setRecipient(cPrefs, "mugel@gabriel.cc");
-				_client.send(new Message("subject", "message", Type.TEXT), cPrefs);
+				_client.send(new Dispatch(new Message("subject", "message", Type.TEXT), new Params(cPrefs.getParams())));
 			}
 
 		}.run();

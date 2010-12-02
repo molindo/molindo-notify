@@ -104,7 +104,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 
 	protected Message render(final Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
 			throws RenderException {
-		return _notificationRenderService.render(notification, prefs, cPrefs);
+		return _notificationRenderService.render(notification, prefs, cPrefs).getMessage();
 	}
 
 	public Integer getDefaultAmount() {

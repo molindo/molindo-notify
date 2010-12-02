@@ -19,6 +19,8 @@ package at.molindo.notify.model;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Maps;
 
 public interface IParams extends Cloneable, Iterable<ParamValue> {
@@ -54,9 +56,14 @@ public interface IParams extends Cloneable, Iterable<ParamValue> {
 			return true;
 		}
 
-		protected static void setAll(IParams target, IParams source) {
-			for (ParamValue v : source) {
-				v.set(target);
+		protected static void setAll(@Nonnull IParams target, IParams source) {
+			if (target == null) {
+				throw new NullPointerException("target");
+			}
+			if (source != null) {
+				for (ParamValue v : source) {
+					v.set(target);
+				}
 			}
 		}
 

@@ -345,7 +345,7 @@ public abstract class Param<T> {
 	 * @param target
 	 * @param object
 	 */
-	void set(IParams target, Object object) {
+	void set(@Nonnull IParams target, Object object) {
 		target.set(this, _type.cast(object));
 	}
 

@@ -22,9 +22,9 @@ import java.util.List;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.feed.AbstractPullChannel;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IPreferences;
-import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.PushChannelPreferences;
@@ -56,8 +56,8 @@ public class DummyChannel extends AbstractPullChannel implements IPushChannel, I
 	}
 
 	@Override
-	public void push(Message message, IPushChannelPreferences cPrefs) throws PushException {
-		System.out.println(message);
+	public void push(Dispatch dispatch) throws PushException {
+		System.out.println(dispatch.getMessage());
 	}
 
 	@Override

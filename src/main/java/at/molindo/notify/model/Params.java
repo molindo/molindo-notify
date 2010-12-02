@@ -25,6 +25,16 @@ public class Params implements IParams {
 
 	private Map<String, ParamValue> _params = Maps.newHashMap();
 
+	public Params() {
+
+	}
+
+	public Params(IParams... params) {
+		for (IParams p : params) {
+			setAll(p);
+		}
+	}
+
 	public <T> IParams setString(Param<T> param, String value) {
 		return set(param, param.toObject(value));
 	}

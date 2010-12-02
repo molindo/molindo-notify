@@ -22,14 +22,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import at.molindo.notify.INotifyService.IParamsFactory;
 import at.molindo.notify.INotifyService.NotifyException;
+import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IChannelPreferences;
-import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPreferences;
-import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
+import at.molindo.notify.render.IRenderService.Version;
 
 public class NotificationRenderService implements INotificationRenderService {
 
@@ -37,10 +37,10 @@ public class NotificationRenderService implements INotificationRenderService {
 	private final List<IParamsFactory> _paramsFactories = new CopyOnWriteArrayList<IParamsFactory>();
 
 	@Override
-	public Message render(Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
+	public Dispatch render(Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
 			throws RenderException {
 
-		IParams params = new Params();
+		Params params = new Params();
 		params.setAll(prefs.getParams());
 		params.setAll(cPrefs.getParams());
 		params.setAll(notification.getParams());
@@ -53,7 +53,10 @@ public class NotificationRenderService implements INotificationRenderService {
 			}
 		}
 
-		return _renderService.render(notification.getKey(), cPrefs.getVersion(), params);
+		String key = notification.getKey();
+		Version version = cPrefs.getVersion();
+
+		return new Dispatch(_renderService.render(key, version, params), params);
 	}
 
 	public void setRenderService(IRenderService renderService) {

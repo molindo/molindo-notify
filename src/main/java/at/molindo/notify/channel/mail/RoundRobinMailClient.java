@@ -21,8 +21,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import at.molindo.notify.model.IPushChannelPreferences;
-import at.molindo.notify.model.Message;
+import at.molindo.notify.model.Dispatch;
 
 import com.google.common.collect.Iterators;
 
@@ -34,8 +33,8 @@ public class RoundRobinMailClient implements IMailClient {
 	private Iterator<IMailClient> _iter = newIterator();
 
 	@Override
-	public void send(Message message, IPushChannelPreferences cPrefs) throws MailException {
-		getNext().send(message, cPrefs);
+	public void send(Dispatch dispatch) throws MailException {
+		getNext().send(dispatch);
 	}
 
 	private IMailClient getNext() throws MailException {

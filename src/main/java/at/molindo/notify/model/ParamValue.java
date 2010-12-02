@@ -99,7 +99,7 @@ public class ParamValue {
 	 * @param target
 	 * @param object
 	 */
-	void set(IParams target) {
+	void set(@Nonnull IParams target) {
 		param().set(target, getValue());
 	}
 
