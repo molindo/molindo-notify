@@ -43,7 +43,7 @@ import com.google.common.collect.MapMaker;
 
 public class VelocityTemplateRenderer implements ITemplateRenderer, InitializingBean {
 
-	private Map<Template.Key, org.apache.velocity.Template> _templateCache = new MapMaker()
+	private final Map<Template.Key, org.apache.velocity.Template> _templateCache = new MapMaker()
 			.expiration(1, TimeUnit.HOURS).concurrencyLevel(4).makeMap();
 
 	private RuntimeServices _runtime = new RuntimeInstance();
@@ -60,6 +60,7 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 	public VelocityTemplateRenderer init() throws Exception {
 		_runtime = new RuntimeInstance();
 		_runtime.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, new SLF4JLogChute());
+		_runtime.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, true);
 		_runtime.init();
 		return this;
 	}

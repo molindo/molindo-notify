@@ -25,6 +25,7 @@ import org.junit.Test;
 import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Template;
+import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 
 public class VelocityTemplateRendererTest {
@@ -56,4 +57,13 @@ public class VelocityTemplateRendererTest {
 
 	}
 
+	@Test(expected = RenderException.class)
+	public void testNullReference() throws Exception {
+		Template t = t();
+		VelocityTemplateRenderer r = r();
+
+		String result = r.render(t, new Params());
+
+		assertEquals("this is a test", result);
+	}
 }
