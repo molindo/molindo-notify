@@ -24,6 +24,7 @@ import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.Params;
 
 public interface INotifyService {
 
@@ -102,15 +103,13 @@ public interface INotifyService {
 	public interface IParamsFactory {
 
 		/**
+		 * add or remove params
 		 * 
-		 * @param notification
-		 * @return
 		 * @throws NotifyException
 		 *             if necessary params aren't available (e.g. if
 		 *             notification is obsolete)
 		 */
-		@Nonnull
-		IParams params(@Nonnull Notification notification) throws NotifyException;
+		void params(@Nonnull Params params) throws NotifyException;
 	}
 
 	public static class NotifyException extends Exception {

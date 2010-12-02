@@ -47,7 +47,7 @@ public class DispatchService implements IDispatchService {
 
 		for (IParamsFactory factory : _paramsFactories) {
 			try {
-				params.setAll(factory.params(notification));
+				factory.params(params);
 			} catch (NotifyException e) {
 				throw new RenderException("params unavailable", e);
 			}
