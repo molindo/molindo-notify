@@ -214,6 +214,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 				}
 			} catch (RenderException e) {
 				log.error("failed to render notification " + notification, e);
+				temporaryChannels.put(channel.getId(), e.getMessage());
 			}
 		}
 
