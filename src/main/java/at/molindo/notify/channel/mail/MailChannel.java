@@ -21,11 +21,11 @@ import org.springframework.beans.factory.InitializingBean;
 import at.molindo.notify.INotifyService;
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.model.Dispatch;
-import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.utils.net.DnsUtils;
 
@@ -117,8 +117,8 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, IChannelPreferences prefs) {
-		return prefs.getParams().containsAll(RECIPIENT);
+	public boolean isConfigured(String userId, Params params) {
+		return params.containsAll(RECIPIENT);
 	}
 
 	public IPushChannelPreferences getDefaultPreferences() {

@@ -219,7 +219,7 @@ public class NotifyFilter implements Filter {
 
 		if (channel.getNotificationTypes().contains(Type.PRIVATE) && !channel.isAuthorized(userId, prefs)) {
 			response.sendError(403);
-		} else if (channel.isConfigured(userId, prefs)) {
+		} else if (channel.isConfigured(userId, new Params(prefs.getParams()))) {
 			try {
 				String output = channel.pull(userId, prefs);
 				if (StringUtils.empty(output)) {

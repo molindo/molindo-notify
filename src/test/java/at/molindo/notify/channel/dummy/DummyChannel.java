@@ -27,6 +27,7 @@ import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification.Type;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.model.PushChannelPreferences;
 
 import com.google.common.collect.ImmutableSet;
@@ -46,7 +47,7 @@ public class DummyChannel extends AbstractPullChannel implements IPushChannel, I
 	}
 
 	@Override
-	public boolean isConfigured(String userId, IChannelPreferences prefs) {
+	public boolean isConfigured(String userId, Params params) {
 		return true;
 	}
 

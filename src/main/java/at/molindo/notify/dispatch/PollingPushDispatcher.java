@@ -246,7 +246,7 @@ public class PollingPushDispatcher implements IPushDispatcher, InitializingBean,
 
 		Dispatch dispatch = _dispatchService.create(notification, prefs, cPrefs);
 
-		if (!channel.isConfigured(notification.getUserId(), cPrefs)) {
+		if (!channel.isConfigured(notification.getUserId(), dispatch.getParams())) {
 			// not configured, don't push by default or prefs not complete, e.g.
 			// recipient address missing
 			PushResultMessage.persistent("channel not configured for user");

@@ -23,6 +23,7 @@ import java.util.List;
 import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Message;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.utils.data.Hash;
 
@@ -89,9 +90,9 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, IChannelPreferences prefs) {
+	public boolean isConfigured(String userId, Params params) {
 		// TODO validation
-		return super.isConfigured(userId, prefs);
+		return super.isConfigured(userId, params);
 	}
 
 	public String getAuthorName() {

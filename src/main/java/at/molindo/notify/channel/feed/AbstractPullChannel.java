@@ -29,6 +29,7 @@ import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Param;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.utils.data.StringUtils;
@@ -62,7 +63,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, IChannelPreferences prefs) {
+	public boolean isConfigured(String userId, Params params) {
 		return true;
 	}
 

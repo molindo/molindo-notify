@@ -35,6 +35,7 @@ import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.channel.feed.AbstractPullChannel;
 import at.molindo.notify.model.ConfigurableChannelPreferences;
 import at.molindo.notify.model.Notification.Type;
+import at.molindo.notify.model.Params;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
@@ -87,9 +88,8 @@ public class NotifyFilterTest {
 				});
 				expect(context.get(IPullChannel.class).isAuthorized(null, null)).andReturn(true);
 
-				expect(
-						context.get(IPullChannel.class).isConfigured(eq(USERID),
-								anyObject(ConfigurableChannelPreferences.class))).andReturn(true);
+				expect(context.get(IPullChannel.class).isConfigured(eq(USERID), anyObject(Params.class))).andReturn(
+						true);
 			}
 
 			@Override

@@ -16,8 +16,11 @@
 
 package at.molindo.notify.channel;
 
+import javax.annotation.Nonnull;
+
 import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.Params;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -34,9 +37,8 @@ public interface IChannel {
 	IChannelPreferences newDefaultPreferences();
 
 	/**
-	 * @param prefs
 	 * @return true if channel is sufficiently configured
 	 */
-	boolean isConfigured(String userId, IChannelPreferences prefs);
+	boolean isConfigured(@Nonnull String userId, @Nonnull Params params);
 
 }
