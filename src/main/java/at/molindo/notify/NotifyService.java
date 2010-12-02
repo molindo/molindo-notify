@@ -29,7 +29,6 @@ import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.confirm.IConfirmationService;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.dao.IPreferencesDAO;
-import at.molindo.notify.dispatch.IDispatchService;
 import at.molindo.notify.dispatch.IPushDispatcher;
 import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.IParams;
@@ -51,7 +50,6 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 
 	private IPushDispatcher _instantDispatcher;
 
-	private IDispatchService _notificationRenderService;
 	private IConfirmationService _confirmationService;
 
 	private Preferences _defaultPreferences = new Preferences();
@@ -179,16 +177,6 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	}
 
 	@Override
-	public void addParamsFactory(IParamsFactory factory) {
-		_notificationRenderService.addParamsFactory(factory);
-	}
-
-	@Override
-	public void removeParamsFactory(IParamsFactory factory) {
-		_notificationRenderService.removeParamsFactory(factory);
-	}
-
-	@Override
 	public String toPullPath(String channelId, String userId, IParams params) {
 		if (_servletContext == null) {
 			throw new IllegalStateException("servlet context not available");
@@ -213,10 +201,6 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 			throw new NullPointerException("defaultPreferences");
 		}
 		_defaultPreferences = defaultPreferences;
-	}
-
-	public void setNotificationRenderService(IDispatchService notificationRenderService) {
-		_notificationRenderService = notificationRenderService;
 	}
 
 	public void setConfirmationService(IConfirmationService confirmationService) {

@@ -72,10 +72,6 @@ public interface INotifyService {
 
 	void removeConfirmationListener(@Nonnull IConfirmationListener listener);
 
-	void addParamsFactory(@Nonnull IParamsFactory factory);
-
-	void removeParamsFactory(@Nonnull IParamsFactory factory);
-
 	String toPullPath(String channelId, String userId, IParams params);
 
 	public interface INotificationListner {

@@ -72,4 +72,9 @@ public class DispatchService implements IDispatchService {
 	public void removeParamsFactory(IParamsFactory factory) {
 		_paramsFactories.removeAll(Arrays.asList(factory));
 	}
+
+	public void setParamsFactories(List<IParamsFactory> factories) {
+		_paramsFactories.clear();
+		_paramsFactories.addAll(factories);
+	}
 }

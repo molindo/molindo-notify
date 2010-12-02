@@ -20,13 +20,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import at.molindo.notify.channel.IPushChannel;
+import at.molindo.notify.INotifyService.IParamsFactory;
 
-public class PushChannelsFactory extends AutowiredListFactory<IPushChannel> {
+public class ParamFactoriesFactory extends AutowiredListFactory<IParamsFactory> {
 
-	@Autowired
-	public void setPushChannels(List<IPushChannel> pushChannels) {
-		set(pushChannels);
+	@Autowired(required = false)
+	public void setPushChannels(List<IParamsFactory> paramFactories) {
+		set(paramFactories);
 	}
 
 }

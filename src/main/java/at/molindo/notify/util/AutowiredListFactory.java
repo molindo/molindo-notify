@@ -17,16 +17,32 @@
 package at.molindo.notify.util;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.FactoryBean;
 
-import at.molindo.notify.channel.IPushChannel;
+public abstract class AutowiredListFactory<T> implements FactoryBean<List<T>> {
 
-public class PushChannelsFactory extends AutowiredListFactory<IPushChannel> {
+	private final List<T> _list = new CopyOnWriteArrayList<T>();
 
-	@Autowired
-	public void setPushChannels(List<IPushChannel> pushChannels) {
-		set(pushChannels);
+	protected void set(List<T> collection) {
+		_list.clear();
+		_list.addAll(collection);
+	}
+
+	@Override
+	public final List<T> getObject() throws Exception {
+		return _list;
+	}
+
+	@Override
+	public final Class<?> getObjectType() {
+		return List.class;
+	}
+
+	@Override
+	public final boolean isSingleton() {
+		return true;
 	}
 
 }
