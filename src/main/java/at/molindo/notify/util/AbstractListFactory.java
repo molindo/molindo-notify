@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.springframework.beans.factory.FactoryBean;
 
-public abstract class AutowiredListFactory<T> implements FactoryBean<List<T>> {
+abstract class AbstractListFactory<T> implements FactoryBean<List<T>> {
 
 	private final List<T> _list = new CopyOnWriteArrayList<T>();
 

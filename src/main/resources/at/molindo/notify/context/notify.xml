@@ -37,7 +37,7 @@
 
 	<bean id="dispatcher" class="at.molindo.notify.dispatch.PollingPushDispatcher">
 		<property name="pushChannels">
-			<bean class="at.molindo.notify.util.PushChannelsFactory" />
+			<bean class="at.molindo.notify.util.PushChannelsFactory" autowire="byType" />
 		</property>
 		<property name="notifyService" ref="notifyService" />
 		<property name="dispatchService" ref="dispatchService" />
@@ -54,7 +54,7 @@
 	<bean id="dispatchService" class="at.molindo.notify.dispatch.DispatchService">
 		<property name="renderService" ref="renderService" />
 		<property name="paramsFactories">
-			<bean class="at.molindo.notify.util.ParamFactoriesFactory" />
+			<bean class="at.molindo.notify.util.ParamFactoriesFactory" autowire="byType" />
 		</property>
 	</bean>
 

@@ -18,13 +18,10 @@ package at.molindo.notify.util;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import at.molindo.notify.INotifyService.IParamsFactory;
 
-public class ParamFactoriesFactory extends AutowiredListFactory<IParamsFactory> {
+public class ParamFactoriesFactory extends AbstractListFactory<IParamsFactory> {
 
-	@Autowired(required = false)
 	public void setPushChannels(List<IParamsFactory> paramFactories) {
 		set(paramFactories);
 	}

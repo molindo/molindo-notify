@@ -18,13 +18,10 @@ package at.molindo.notify.util;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import at.molindo.notify.channel.IPushChannel;
 
-public class PushChannelsFactory extends AutowiredListFactory<IPushChannel> {
+public class PushChannelsFactory extends AbstractListFactory<IPushChannel> {
 
-	@Autowired
 	public void setPushChannels(List<IPushChannel> pushChannels) {
 		set(pushChannels);
 	}
