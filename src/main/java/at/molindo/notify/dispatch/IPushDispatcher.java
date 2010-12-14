@@ -18,13 +18,12 @@ package at.molindo.notify.dispatch;
 
 import java.util.Map;
 
-import at.molindo.notify.INotifyService;
 import at.molindo.notify.INotifyService.IErrorListener;
 import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Notification;
 
-public interface IPushDispatcher extends INotifyService.INotificationListner {
+public interface IPushDispatcher {
 
 	/**
 	 * @throws NotifyException
