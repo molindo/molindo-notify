@@ -34,11 +34,21 @@ import com.google.common.collect.ImmutableSet;
 
 public class DummyChannel extends AbstractPullChannel implements IPushChannel, IPullChannel {
 
-	public static final String CHANNEL_ID = DummyChannel.class.getSimpleName();
+	public static final String DEFAULT_CHANNEL_ID = DummyChannel.class.getSimpleName();
+
+	private String _id = DEFAULT_CHANNEL_ID;
+
+	protected DummyChannel setId(String id) {
+		if (id == null) {
+			throw new NullPointerException("id");
+		}
+		_id = id;
+		return this;
+	}
 
 	@Override
 	public String getId() {
-		return CHANNEL_ID;
+		return _id;
 	}
 
 	@Override
