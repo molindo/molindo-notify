@@ -38,7 +38,7 @@ public class DummyChannel extends AbstractPullChannel implements IPushChannel, I
 
 	private String _id = DEFAULT_CHANNEL_ID;
 
-	protected DummyChannel setId(String id) {
+	public DummyChannel setId(String id) {
 		if (id == null) {
 			throw new NullPointerException("id");
 		}
