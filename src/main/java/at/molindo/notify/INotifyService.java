@@ -24,6 +24,7 @@ import at.molindo.notify.dao.IPreferencesDAO;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 
 public interface INotifyService {
@@ -31,6 +32,8 @@ public interface INotifyService {
 	public static final String MAIL_CHANNEL = "mail";
 	public static final String PRIVATE_FEED_CHANNEL = "private-feed";
 	public static final String PUBLIC_FEED_CHANNEL = "public-feed";
+
+	public static final Param<String> NOTIFY_UNKNOWN = Param.pString("unknown");
 
 	IPreferences getPreferences(@Nonnull String userId);
 
@@ -98,6 +101,31 @@ public interface INotifyService {
 		 * @param e
 		 */
 		void error(@Nonnull Notification notification, @Nonnull IPushChannel channel, @Nonnull PushException e);
+	}
+
+	public abstract static class Utils {
+		private Utils() {
+		}
+
+		public static void mailNow(INotifyService notifyService, Notification notification) throws NotifyException {
+			notifyUnknownNow(notifyService, INotifyService.MAIL_CHANNEL, notification);
+		}
+
+		public static void mail(INotifyService notifyService, Notification notification) throws NotifyException {
+			notifyUnknown(notifyService, INotifyService.MAIL_CHANNEL, notification);
+		}
+
+		public static void notifyUnknownNow(INotifyService notifyService, String channelId, Notification notification)
+				throws NotifyException {
+			notification.getParams().set(NOTIFY_UNKNOWN, channelId);
+			notifyService.notifyNow(notification);
+		}
+
+		public static void notifyUnknown(INotifyService notifyService, String channelId, Notification notification)
+				throws NotifyException {
+			notification.getParams().set(NOTIFY_UNKNOWN, channelId);
+			notifyService.notify(notification);
+		}
 	}
 
 	public interface IParamsFactory {

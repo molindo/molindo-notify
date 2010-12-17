@@ -36,7 +36,7 @@ public class DummyPreferencesDAO implements IPreferencesDAO {
 			p.addChannelPrefs(MailChannel.CHANNEL_ID, mailPrefs);
 
 			PushChannelPreferences dummyPrefs = new PushChannelPreferences();
-			p.addChannelPrefs(DummyChannel.CHANNEL_ID, dummyPrefs);
+			p.addChannelPrefs(DummyChannel.DEFAULT_CHANNEL_ID, dummyPrefs);
 
 			return p;
 		} else {

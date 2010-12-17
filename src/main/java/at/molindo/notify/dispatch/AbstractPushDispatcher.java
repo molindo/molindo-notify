@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import at.molindo.notify.INotifyService;
 import at.molindo.notify.INotifyService.IErrorListener;
 import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.INotifyService.NotifyRuntimeException;
@@ -36,10 +37,13 @@ import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.IPushChannelPreferences;
 import at.molindo.notify.model.Notification;
+import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences.Frequency;
 import at.molindo.notify.model.PushState;
 import at.molindo.notify.render.IRenderService.RenderException;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -73,7 +77,15 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 
 	@Nonnull
 	private PushResultMessage push(@Nonnull Notification notification, boolean ignoreFrequency) {
-		IPreferences prefs = _preferencesDAO.getPreferences(notification.getUserId());
+		IPreferences prefs;
+
+		final String unknownChannel = notification.getParams().get(INotifyService.NOTIFY_UNKNOWN);
+		if (unknownChannel != null) {
+			prefs = new Preferences().setUserId(notification.getUserId());
+		} else {
+			prefs = _preferencesDAO.getPreferences(notification.getUserId());
+		}
+
 		if (prefs == null) {
 			log.warn("can't push to unknown user " + notification.getUserId());
 			return PushResultMessage.persistent("unknown user " + notification.getUserId());
@@ -83,7 +95,15 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 		Map<String, String> temporaryChannels = Maps.newHashMap();
 		Map<String, String> persistentChannels = Maps.newHashMap();
 
-		for (IPushChannel channel : _pushChannels) {
+		Iterable<IPushChannel> channels = Iterables.filter(_pushChannels, new Predicate<IPushChannel>() {
+
+			@Override
+			public boolean apply(IPushChannel channel) {
+				return unknownChannel == null || channel.getId().equals(unknownChannel);
+			}
+		});
+
+		for (IPushChannel channel : channels) {
 			try {
 				pushChannel(channel, prefs, notification, ignoreFrequency);
 				successChannels.add(channel.getId());

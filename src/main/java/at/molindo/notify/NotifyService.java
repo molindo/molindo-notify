@@ -34,14 +34,11 @@ import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
-import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Preferences;
 import at.molindo.notify.servlet.NotifyFilter;
 
-public class NotifyService implements INotifyService, INotifyMailService, INotifyService.IErrorListener,
-		ServletContextAware {
+public class NotifyService implements INotifyService, INotifyService.IErrorListener, ServletContextAware {
 
-	private static final Param<String> NOTIFY_UNKNOWN = Param.pString("unknown");
 	private IPreferencesDAO _preferencesDAO;
 	private INotificationDAO _notificationDAO;
 
@@ -115,16 +112,6 @@ public class NotifyService implements INotifyService, INotifyMailService, INotif
 	@Override
 	public void confirmNow(Notification notification) throws NotifyException {
 		notification.setConfirmation(new Confirmation());
-		notifyNow(notification);
-	}
-
-	@Override
-	public void mailNow(Notification notification) throws NotifyException {
-		notifyUnknownNow(INotifyService.MAIL_CHANNEL, notification);
-	}
-
-	private void notifyUnknownNow(String channelId, Notification notification) throws NotifyException {
-		notification.getParams().set(NOTIFY_UNKNOWN, channelId);
 		notifyNow(notification);
 	}
 
