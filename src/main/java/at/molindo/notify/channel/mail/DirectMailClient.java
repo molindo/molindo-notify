@@ -16,19 +16,26 @@
 
 package at.molindo.notify.channel.mail;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.mail.MessagingException;
+import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.naming.NamingException;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import at.molindo.utils.collections.CollectionUtils;
 import at.molindo.utils.net.DnsUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
+import com.sun.mail.smtp.SMTPAddressFailedException;
+import com.sun.mail.smtp.SMTPSendFailedException;
 
 public class DirectMailClient extends AbstractMailClient implements InitializingBean {
 
@@ -37,6 +44,14 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 
 	private static final String CONNECTION_TIMEOUT_MS = "60000";
 	private static final String READ_TIMEOUT_MS = "60000";
+
+	// permanent errors
+	private static final int MAILBOX_UNAVAILABLE = 550;
+	private static final int MAILBOX_NOT_LOCAL = 551;
+	private static final int MAILBOX_NAME_NOT_ALLOWED = 553;
+	private static final int TRANSACTION_FAILED = 554;
+	private static final Set<Integer> PERMANENT_ERROR_CODES = Collections.unmodifiableSet(CollectionUtils.set(
+			MAILBOX_UNAVAILABLE, MAILBOX_NOT_LOCAL, MAILBOX_NAME_NOT_ALLOWED, TRANSACTION_FAILED));
 
 	private Map<String, Session> _sessionCache;
 	private int _cacheConcurrency = DEFAULT_CACHE_CONCURRENCY;
@@ -102,6 +117,27 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 			return Session.getInstance(props);
 		} catch (NamingException e) {
 			throw new MailException("can't lookup mail host", e, true);
+		}
+	}
+
+	@Override
+	protected boolean isTemporary(MessagingException e) {
+		if (e instanceof SendFailedException) {
+			if (e.getNextException() instanceof SMTPSendFailedException) {
+				final SMTPSendFailedException se = (SMTPSendFailedException) e.getNextException();
+				final int rc = se.getReturnCode();
+				return !PERMANENT_ERROR_CODES.contains(rc);
+			} else if (e.getNextException() instanceof SMTPAddressFailedException) {
+				// copied from above, as there is no common base class but same
+				// methods
+				final SMTPAddressFailedException se = (SMTPAddressFailedException) e.getNextException();
+				final int rc = se.getReturnCode();
+				return !PERMANENT_ERROR_CODES.contains(rc);
+			} else {
+				return true;
+			}
+		} else {
+			return true;
 		}
 	}
 

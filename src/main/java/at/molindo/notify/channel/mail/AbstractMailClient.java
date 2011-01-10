@@ -156,7 +156,7 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 		Transport.send(mm);
 	}
 
-	private boolean isTemporary(MessagingException e) {
+	protected boolean isTemporary(MessagingException e) {
 		return true;
 	}
 
