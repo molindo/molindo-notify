@@ -146,7 +146,9 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 			send(mm);
 
 		} catch (final MessagingException e) {
-			throw new MailException("could not send mail to " + recipient, e, isTemporary(e));
+
+			throw new MailException("could not send mail to " + recipient + " (" + toErrorMessage(e) + ")", e,
+					isTemporary(e));
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("utf8 unknown?", e);
 		}
@@ -154,6 +156,10 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 
 	protected void send(MimeMessage mm) throws MessagingException {
 		Transport.send(mm);
+	}
+
+	protected String toErrorMessage(MessagingException e) {
+		return e == null ? null : e.getMessage();
 	}
 
 	protected boolean isTemporary(MessagingException e) {

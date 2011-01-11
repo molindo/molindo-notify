@@ -22,6 +22,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.SendFailedException;
 import javax.mail.Session;
@@ -30,6 +31,7 @@ import javax.naming.NamingException;
 import org.springframework.beans.factory.InitializingBean;
 
 import at.molindo.utils.collections.CollectionUtils;
+import at.molindo.utils.data.ExceptionUtils;
 import at.molindo.utils.net.DnsUtils;
 
 import com.google.common.base.Function;
@@ -117,6 +119,32 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 			return Session.getInstance(props);
 		} catch (NamingException e) {
 			throw new MailException("can't lookup mail host", e, true);
+		}
+	}
+
+	@Override
+	protected String toErrorMessage(MessagingException e) {
+		if (e instanceof SendFailedException) {
+			if (e.getNextException() instanceof SMTPSendFailedException) {
+				final SMTPSendFailedException se = (SMTPSendFailedException) e.getNextException();
+				return se.getCommand() + " failed " + " with " + se.getReturnCode() + " (" + e.getMessage() + ")";
+			} else if (e.getNextException() instanceof SMTPAddressFailedException) {
+				// copied from above, as there is no common base class but same
+				// methods
+				final SMTPAddressFailedException se = (SMTPAddressFailedException) e.getNextException();
+				return se.getCommand() + " failed " + " with " + se.getReturnCode() + " (" + e.getMessage() + ")";
+			} else {
+				final StringBuilder buf = new StringBuilder();
+				Address[] addresses = ((SendFailedException) e).getInvalidAddresses();
+				if (addresses != null) {
+					for (final Address a : addresses) {
+						buf.append(a).append(" ");
+					}
+				}
+				return "invalied address(es): " + buf + "(" + ExceptionUtils.getAllMessages(e) + ")";
+			}
+		} else {
+			return super.toErrorMessage(e);
 		}
 	}
 
