@@ -29,12 +29,12 @@ public class NotifyUtils {
 	};
 
 	public static String html2text(String html) {
-		// TODO
+		// TODO convert html to text
 		return html.replaceAll("\\<.*?>", "");
 	}
 
 	public static String text2html(String text) {
-		// TODO
+		// TODO convert text to html
 		return text.replaceAll("\n", "<br />");
 	}
 

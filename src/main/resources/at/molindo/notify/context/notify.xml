@@ -49,6 +49,9 @@
 
 	<bean id="confirmationService" class="at.molindo.notify.confirm.ConfirmationService">
 		<property name="notificationDAO" ref="notificationDAO" />
+		<property name="confirmationListeners">
+			<bean class="at.molindo.notify.util.ConfirmationListenersFactory" autowire="byType" />
+		</property>
 	</bean>
 
 	<bean id="dispatchService" class="at.molindo.notify.dispatch.DispatchService">

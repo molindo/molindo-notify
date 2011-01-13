@@ -17,6 +17,7 @@
 package at.molindo.notify.confirm;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -58,6 +59,13 @@ public class ConfirmationService implements IConfirmationService, ServletContext
 	@Override
 	public void destroy() throws Exception {
 		setServletContext(null);
+	}
+
+	public void setConfirmationListeners(Collection<? extends IConfirmationListener> listeners) {
+		if (_confirmationListeners.size() > 0) {
+			throw new IllegalStateException("already listeneres registered: " + _confirmationListeners);
+		}
+		_confirmationListeners.addAll(listeners);
 	}
 
 	@Override
