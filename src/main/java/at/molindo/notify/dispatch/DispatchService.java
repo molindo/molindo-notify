@@ -20,6 +20,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.servlet.ServletContext;
+
+import org.springframework.web.context.ServletContextAware;
+
+import at.molindo.notify.INotifyService;
 import at.molindo.notify.INotifyService.IParamsFactory;
 import at.molindo.notify.INotifyService.NotifyException;
 import at.molindo.notify.model.Dispatch;
@@ -30,11 +35,15 @@ import at.molindo.notify.model.Params;
 import at.molindo.notify.render.IRenderService;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.IRenderService.Version;
+import at.molindo.notify.servlet.NotifyFilter;
 
-public class DispatchService implements IDispatchService {
+public class DispatchService implements IDispatchService, ServletContextAware {
+
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DispatchService.class);
 
 	private IRenderService _renderService;
 	private final List<IParamsFactory> _paramsFactories = new CopyOnWriteArrayList<IParamsFactory>();
+	private ServletContext _servletContext;
 
 	@Override
 	public Dispatch create(Notification notification, IPreferences prefs, IChannelPreferences cPrefs)
@@ -50,6 +59,16 @@ public class DispatchService implements IDispatchService {
 				factory.params(params);
 			} catch (NotifyException e) {
 				throw new RenderException("params unavailable", e);
+			}
+		}
+
+		if (_servletContext != null && notification.getConfirmation() != null) {
+			try {
+				params.set(INotifyService.CONFIRMATION_URL,
+						NotifyFilter.getFilter(_servletContext).getConfirmationUrl(notification.getConfirmation()));
+			} catch (IllegalStateException e) {
+				// no filter
+				log.warn("can't set confirmation URL without NotifyFilter");
 			}
 		}
 
@@ -76,5 +95,10 @@ public class DispatchService implements IDispatchService {
 	public void setParamsFactories(List<IParamsFactory> factories) {
 		_paramsFactories.clear();
 		_paramsFactories.addAll(factories);
+	}
+
+	@Override
+	public void setServletContext(ServletContext servletContext) {
+		_servletContext = servletContext;
 	}
 }

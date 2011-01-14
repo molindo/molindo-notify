@@ -40,6 +40,7 @@ import at.molindo.notify.channel.IPullChannel.PullException;
 import at.molindo.notify.confirm.ConfirmationService;
 import at.molindo.notify.confirm.IConfirmationService;
 import at.molindo.notify.confirm.IConfirmationService.ConfirmationException;
+import at.molindo.notify.model.Confirmation;
 import at.molindo.notify.model.IChannelPreferences;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IRequestConfigurable;
@@ -105,8 +106,8 @@ public class NotifyFilter implements Filter {
 			if (StringUtils.empty(confirmPrefix)) {
 				confirmPrefix = DEFAULT_CONFIRM_PREFIX;
 			}
-			_confirmPrefix = StringUtils.startWith(confirmPrefix, "/");
-			_confirmPattern = Pattern.compile("^" + Pattern.quote(_confirmPrefix) + "/([^/?]+)/([^/?]+).*$");
+			_confirmPrefix = StringUtils.endWith(StringUtils.startWith(confirmPrefix, "/"), "/");
+			_confirmPattern = Pattern.compile("^" + Pattern.quote(_confirmPrefix) + "([^/?]+)/?$");
 		}
 	}
 
@@ -252,7 +253,7 @@ public class NotifyFilter implements Filter {
 			if (confirmPath == null) {
 				response.sendError(404);
 			} else {
-				request.getRequestDispatcher(confirmPath).forward(request, response);
+				response.sendRedirect(confirmPath);
 			}
 		} catch (ConfirmationException e) {
 			throw new ServletException("can't confirm key " + key, e);
@@ -349,5 +350,10 @@ public class NotifyFilter implements Filter {
 		}
 		buf.setLength(buf.length() - 1);
 		return buf.toString();
+	}
+
+	public String getConfirmationUrl(Confirmation confirmation) {
+		// TODO
+		return _confirmPrefix + confirmation.getKey();
 	}
 }

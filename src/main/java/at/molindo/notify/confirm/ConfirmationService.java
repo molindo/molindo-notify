@@ -88,6 +88,9 @@ public class ConfirmationService implements IConfirmationService, ServletContext
 		for (IConfirmationListener l : _confirmationListeners) {
 			String redirect = l.confirm(notification);
 			if (redirect != null) {
+				if (!redirect.startsWith("/")) {
+					throw new IllegalArgumentException("redirect path must be absolute, was " + redirect);
+				}
 				return redirect;
 			}
 		}

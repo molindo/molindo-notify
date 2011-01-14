@@ -35,6 +35,8 @@ public interface INotifyService {
 
 	public static final Param<String> NOTIFY_UNKNOWN = Param.pString("unknown");
 
+	public static final Param<String> CONFIRMATION_URL = Param.pString("confirmationUrl");
+
 	IPreferences getPreferences(@Nonnull String userId);
 
 	@Nonnull
