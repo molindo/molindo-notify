@@ -65,7 +65,7 @@ public class DispatchService implements IDispatchService, ServletContextAware {
 		if (_servletContext != null && notification.getConfirmation() != null) {
 			try {
 				params.set(INotifyService.CONFIRMATION_URL,
-						NotifyFilter.getFilter(_servletContext).getConfirmationUrl(notification.getConfirmation()));
+						NotifyFilter.getFilter(_servletContext).toConfirmPath(notification.getConfirmation()));
 			} catch (IllegalStateException e) {
 				// no filter
 				log.warn("can't set confirmation URL without NotifyFilter");

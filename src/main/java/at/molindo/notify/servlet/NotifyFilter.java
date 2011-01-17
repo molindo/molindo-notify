@@ -18,6 +18,8 @@ package at.molindo.notify.servlet;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -60,6 +62,9 @@ public class NotifyFilter implements Filter {
 	private static final String ATTRIBUTE_CHANNEL = NotifyFilter.class.getName() + ".channel";
 	private static final String ATTRIBUTE_CONFIRM_SERVICE = NotifyFilter.class.getName() + ".confirmService";
 
+	static final String PARAMTER_BASE_URL_PROPERTY = "baseUrlProperty";
+	static final String PARAMTER_BASE_URL = "baseUrl";
+
 	static final String DEFAULT_MOUNT_PATH = "notify";
 	static final String PARAMTER_MOUNT_PATH = "mountPath";
 
@@ -68,6 +73,8 @@ public class NotifyFilter implements Filter {
 
 	static final String DEFAULT_CONFIRM_PREFIX = "confirm";
 	static final String PARAMTER_CONFIRM_PREFIX = "confirmPrefix";
+
+	private String _baseUrl;
 
 	private String _mountPath;
 
@@ -85,11 +92,31 @@ public class NotifyFilter implements Filter {
 		_context.setAttribute(ATTRIBUTE_FILTER, this);
 
 		{
+			String baseUrl = null;
+			String baseUrlProperty = filterConfig.getInitParameter(PARAMTER_BASE_URL_PROPERTY);
+			if (!StringUtils.empty(baseUrlProperty)) {
+				baseUrl = System.getProperty(baseUrlProperty);
+			} else {
+				baseUrl = filterConfig.getInitParameter(PARAMTER_BASE_URL);
+				if (StringUtils.empty(baseUrl)) {
+					throw new ServletException(String.format("parameter %s is required", PARAMTER_BASE_URL));
+				}
+			}
+
+			try {
+				_baseUrl = StringUtils.stripTrailing(new URL(baseUrl).toString(), "/");
+			} catch (MalformedURLException e) {
+				throw new ServletException(String.format("illegal value for parameter %s: '%s'", PARAMTER_BASE_URL,
+						baseUrl), e);
+			}
+		}
+
+		{
 			String mountPath = filterConfig.getInitParameter(PARAMTER_MOUNT_PATH);
 			if (StringUtils.empty(mountPath)) {
 				mountPath = DEFAULT_MOUNT_PATH;
 			}
-			_mountPath = StringUtils.startWith(mountPath, "/");
+			_mountPath = StringUtils.stripTrailing(StringUtils.startWith(mountPath, "/"), "/");
 		}
 
 		{
@@ -97,8 +124,8 @@ public class NotifyFilter implements Filter {
 			if (StringUtils.empty(pullPrefix)) {
 				pullPrefix = DEFAULT_PULL_PREFIX;
 			}
-			_pullPrefix = StringUtils.startWith(pullPrefix, "/");
-			_pullPattern = Pattern.compile("^" + Pattern.quote(_pullPrefix) + "/([^/?]+)/([^/?]+).*$");
+			_pullPrefix = StringUtils.endWith(StringUtils.startWith(pullPrefix, "/"), "/");
+			_pullPattern = Pattern.compile("^" + Pattern.quote(_pullPrefix) + "([^/?]+)/([^/?]+).*$");
 		}
 
 		{
@@ -335,7 +362,7 @@ public class NotifyFilter implements Filter {
 
 		IParams fullParams = new Params().setAll(cPrefs.getParams()).setAll(params);
 
-		StringBuilder buf = new StringBuilder();
+		StringBuilder buf = new StringBuilder(_baseUrl);
 		buf.append(_mountPath).append(_pullPrefix).append(channelId).append("/").append(userId);
 		buf.append("?");
 		for (final ParamValue pv : fullParams) {
@@ -352,8 +379,7 @@ public class NotifyFilter implements Filter {
 		return buf.toString();
 	}
 
-	public String getConfirmationUrl(Confirmation confirmation) {
-		// TODO
-		return _confirmPrefix + confirmation.getKey();
+	public String toConfirmPath(Confirmation confirmation) {
+		return _baseUrl + _mountPath + _confirmPrefix + confirmation.getKey();
 	}
 }

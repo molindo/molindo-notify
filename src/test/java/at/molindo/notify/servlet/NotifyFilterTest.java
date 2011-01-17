@@ -34,8 +34,11 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import at.molindo.notify.channel.IPullChannel;
 import at.molindo.notify.channel.feed.AbstractPullChannel;
 import at.molindo.notify.model.ConfigurableChannelPreferences;
+import at.molindo.notify.model.Confirmation;
+import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Params;
+import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
@@ -61,6 +64,7 @@ public class NotifyFilterTest {
 				filter = new NotifyFilter();
 				mockFilterChain = new MockFilterChain();
 				config = new MockFilterConfig();
+				config.addInitParameter(NotifyFilter.PARAMTER_BASE_URL, "http://www.example.com/");
 
 				context.create(IPullChannel.class);
 
@@ -90,6 +94,9 @@ public class NotifyFilterTest {
 
 				expect(context.get(IPullChannel.class).isConfigured(eq(USERID), anyObject(Params.class))).andReturn(
 						true);
+
+				// toPullPath
+				expect(context.get(IPullChannel.class).newDefaultPreferences()).andReturn(new PushChannelPreferences());
 			}
 
 			@Override
@@ -109,6 +116,13 @@ public class NotifyFilterTest {
 
 				assertEquals(200, response.getStatus());
 				assertEquals(BODY, response.getContentAsString());
+
+				Confirmation confirmation = new Confirmation(new Notification());
+				assertEquals("http://www.example.com/notify/confirm/" + confirmation.getKey(),
+						filter.toConfirmPath(confirmation));
+
+				assertEquals("http://www.example.com/notify/pull/test-channel/test-user",
+						filter.toPullPath(CHANNELID, USERID, new Params()));
 			}
 
 		}.run();
