@@ -54,7 +54,7 @@ import at.molindo.utils.io.CharsetUtils;
 
 import com.google.common.collect.Maps;
 
-public class NotifyFilter implements Filter {
+public class NotifyFilter implements Filter, INotifyUrlFactory {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(NotifyFilter.class);
 

@@ -45,7 +45,7 @@ public abstract class AbstractServletPullChannel extends AbstractPullChannel imp
 		_servletContext = servletContext;
 	}
 
-	public NotifyFilter getFilter() {
+	protected NotifyFilter getFilter() {
 		if (_servletContext == null) {
 			throw new IllegalStateException("servlet context not available");
 		}

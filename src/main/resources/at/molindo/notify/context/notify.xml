@@ -33,7 +33,10 @@
 		<property name="notificationDAO" ref="notificationDAO" />
 		<property name="preferencesDAO" ref="preferencesDAO" />
 		<property name="confirmationService" ref="confirmationService" />
+		<property name="notifyUrlFactory" ref="notifyUrlFactory" />
 	</bean>
+
+	<bean id="notifyUrlFactory" class="at.molindo.notify.servlet.DefaultNotifyUrlFactory" autowire="byType" />
 
 	<bean id="dispatcher" class="at.molindo.notify.dispatch.PollingPushDispatcher">
 		<property name="pushChannels">
@@ -56,6 +59,7 @@
 
 	<bean id="dispatchService" class="at.molindo.notify.dispatch.DispatchService">
 		<property name="renderService" ref="renderService" />
+		<property name="notifyUrlFactory" ref="notifyUrlFactory" />
 		<property name="paramsFactories">
 			<bean class="at.molindo.notify.util.ParamFactoriesFactory" autowire="byType" />
 		</property>

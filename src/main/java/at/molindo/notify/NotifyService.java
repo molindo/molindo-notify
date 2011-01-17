@@ -20,10 +20,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import javax.servlet.ServletContext;
-
-import org.springframework.web.context.ServletContextAware;
-
 import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.IPushChannel.PushException;
 import at.molindo.notify.confirm.IConfirmationService;
@@ -35,9 +31,9 @@ import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.IPreferences;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Preferences;
-import at.molindo.notify.servlet.NotifyFilter;
+import at.molindo.notify.servlet.INotifyUrlFactory;
 
-public class NotifyService implements INotifyService, INotifyService.IErrorListener, ServletContextAware {
+public class NotifyService implements INotifyService, INotifyService.IErrorListener {
 
 	private IPreferencesDAO _preferencesDAO;
 	private INotificationDAO _notificationDAO;
@@ -49,14 +45,9 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 
 	private IConfirmationService _confirmationService;
 
+	private INotifyUrlFactory _notifyUrlFactory;
+
 	private Preferences _defaultPreferences = new Preferences();
-
-	private ServletContext _servletContext;
-
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		_servletContext = servletContext;
-	}
 
 	@Override
 	public IPreferences getPreferences(String userId) {
@@ -165,10 +156,7 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 
 	@Override
 	public String toPullPath(String channelId, String userId, IParams params) {
-		if (_servletContext == null) {
-			throw new IllegalStateException("servlet context not available");
-		}
-		return NotifyFilter.getFilter(_servletContext).toPullPath(channelId, userId, params);
+		return _notifyUrlFactory.toPullPath(channelId, userId, params);
 	}
 
 	public void setInstantDispatcher(IPushDispatcher instantDispatcher) {
@@ -192,6 +180,10 @@ public class NotifyService implements INotifyService, INotifyService.IErrorListe
 
 	public void setConfirmationService(IConfirmationService confirmationService) {
 		_confirmationService = confirmationService;
+	}
+
+	public void setNotifyUrlFactory(INotifyUrlFactory notifyUrlFactory) {
+		_notifyUrlFactory = notifyUrlFactory;
 	}
 
 }

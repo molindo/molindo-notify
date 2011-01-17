@@ -28,7 +28,9 @@
 
 	<import resource="daos.xml" />
 
-	<alias name="velocityRenderService" alias="renderService"/>
+	<alias name="velocityRenderService" alias="renderService" />
+
+	<bean id="notifyUrlFactory" class="at.molindo.notify.servlet.dummy.DummyNotifyUrlFactory" />
 
 	<bean id="mailChannel" class="at.molindo.notify.channel.mail.MailChannel">
 		<property name="mailClient" ref="mailClient" />
@@ -65,7 +67,7 @@
 		<property name="preferencesDAO" ref="preferencesDAO" />
 		<property name="dispatchService" ref="dispatchService" />
 	</bean>
-	
+
 	<bean id="dummyConfirmationListener" class="at.molindo.notify.confirm.dummy.DummyConfirmationListener" />
-	
+
 </beans>
