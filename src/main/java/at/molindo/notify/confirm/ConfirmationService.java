@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContext;
 
@@ -33,11 +34,15 @@ import at.molindo.notify.servlet.NotifyFilter;
 
 public class ConfirmationService implements IConfirmationService, ServletContextAware, DisposableBean {
 
+	private static final long DEFAULT_CONFIRMATION_MAX_AGE_MS = TimeUnit.DAYS.toMillis(14);
+
 	private INotificationDAO _notificationDAO;
 
 	private final List<IConfirmationListener> _confirmationListeners = new CopyOnWriteArrayList<IConfirmationListener>();
 
 	private ServletContext _servletContext;
+
+	private long _confirmationMaxAgeMs = DEFAULT_CONFIRMATION_MAX_AGE_MS;
 
 	@Override
 	public void setServletContext(ServletContext servletContext) {
@@ -85,6 +90,10 @@ public class ConfirmationService implements IConfirmationService, ServletContext
 			return null;
 		}
 
+		if (System.currentTimeMillis() - notification.getDate().getTime() > _confirmationMaxAgeMs) {
+			return null;
+		}
+
 		for (IConfirmationListener l : _confirmationListeners) {
 			String redirect = l.confirm(notification);
 			if (redirect != null) {
@@ -100,6 +109,14 @@ public class ConfirmationService implements IConfirmationService, ServletContext
 
 	public void setNotificationDAO(INotificationDAO notificationDAO) {
 		_notificationDAO = notificationDAO;
+	}
+
+	protected long getConfirmationMaxAgeMs() {
+		return _confirmationMaxAgeMs;
+	}
+
+	protected void setConfirmationMaxAgeMs(long confirmationMaxAgeMs) {
+		_confirmationMaxAgeMs = confirmationMaxAgeMs;
 	}
 
 }

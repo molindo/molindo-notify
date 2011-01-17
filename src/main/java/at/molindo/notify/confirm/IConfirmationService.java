@@ -20,6 +20,15 @@ import at.molindo.notify.INotifyService.IConfirmationListener;
 
 public interface IConfirmationService {
 
+	/**
+	 * 
+	 * @param key
+	 *            confirmation key
+	 * @return null if no confirmation exists or confirmation expired, redirect
+	 *         path otherwise
+	 * @throws ConfirmationException
+	 *             if confirmation exists but wasn't handled
+	 */
 	String confirm(String key) throws ConfirmationException;
 
 	void addConfirmationListener(IConfirmationListener listener);
