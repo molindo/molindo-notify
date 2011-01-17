@@ -41,6 +41,7 @@ import at.molindo.notify.model.Preferences;
 import at.molindo.notify.model.PushChannelPreferences.Frequency;
 import at.molindo.notify.model.PushState;
 import at.molindo.notify.render.IRenderService.RenderException;
+import at.molindo.utils.data.ExceptionUtils;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -120,7 +121,7 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 				}
 			} catch (RenderException e) {
 				log.error("failed to render notification " + notification, e);
-				temporaryChannels.put(channel.getId(), e.getMessage());
+				temporaryChannels.put(channel.getId(), ExceptionUtils.getAllMessages(e));
 			}
 		}
 
@@ -193,7 +194,7 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 		if (ignoreFrequency && rm.getResult() != PushResult.SUCCESS) {
 			// only record success of dispatchNow as failed notifications must
 			// not be stored for later use
-			throw new NotifyException("failed to dispatch now: " + notification);
+			throw new NotifyException("failed to dispatch now: " + notification + " (" + rm.getMessage() + ")");
 		} else {
 			recordPushAttempt(notification, rm);
 		}
