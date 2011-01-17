@@ -65,4 +65,7 @@
 		<property name="preferencesDAO" ref="preferencesDAO" />
 		<property name="dispatchService" ref="dispatchService" />
 	</bean>
+	
+	<bean id="dummyConfirmationListener" class="at.molindo.notify.confirm.dummy.DummyConfirmationListener" />
+	
 </beans>
