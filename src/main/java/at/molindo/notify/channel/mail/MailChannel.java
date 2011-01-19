@@ -40,6 +40,8 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	public static final String CHANNEL_ID = INotifyService.MAIL_CHANNEL;
 
+	private IMailFilter _mailFilter;
+
 	private IPushChannelPreferences _defaultPreferences;
 
 	private IMailClient _mailClient;
@@ -118,6 +120,10 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	@Override
 	public boolean isConfigured(String userId, Params params) {
+		if (_mailFilter != null) {
+			return _mailFilter.isAllowed(userId, params);
+		}
+
 		return params.containsAll(RECIPIENT);
 	}
 
@@ -143,6 +149,10 @@ public class MailChannel implements IPushChannel, InitializingBean {
 
 	public void setDisabled(boolean disabled) {
 		_disabled = disabled;
+	}
+
+	protected void setMailFilter(IMailFilter mailFilter) {
+		_mailFilter = mailFilter;
 	}
 
 }
