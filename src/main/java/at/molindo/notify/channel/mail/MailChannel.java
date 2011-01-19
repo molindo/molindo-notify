@@ -151,7 +151,7 @@ public class MailChannel implements IPushChannel, InitializingBean {
 		_disabled = disabled;
 	}
 
-	protected void setMailFilter(IMailFilter mailFilter) {
+	public void setMailFilter(IMailFilter mailFilter) {
 		_mailFilter = mailFilter;
 	}
 
