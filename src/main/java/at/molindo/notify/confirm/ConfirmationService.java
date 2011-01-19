@@ -107,6 +107,11 @@ public class ConfirmationService implements IConfirmationService, ServletContext
 		throw new ConfirmationException("unhandled notification " + notification);
 	}
 
+	@Override
+	public Notification getNotificationByKey(String key) {
+		return key == null ? null : _notificationDAO.getByConfirmationKey(key);
+	}
+
 	public void setNotificationDAO(INotificationDAO notificationDAO) {
 		_notificationDAO = notificationDAO;
 	}

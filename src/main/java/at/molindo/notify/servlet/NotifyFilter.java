@@ -199,7 +199,9 @@ public class NotifyFilter implements Filter, INotifyUrlFactory {
 		if (path.startsWith(_pullPrefix)) {
 			pull(request, response, path);
 		} else if (path.startsWith(_confirmPrefix)) {
-			confirm(request, response, path);
+			if (!confirm(request, response, path)) {
+				chain.doFilter(request, response);
+			}
 		} else {
 			chain.doFilter(request, response);
 		}
@@ -264,12 +266,11 @@ public class NotifyFilter implements Filter, INotifyUrlFactory {
 		}
 	}
 
-	protected void confirm(HttpServletRequest request, HttpServletResponse response, String path) throws IOException,
-			ServletException {
+	protected boolean confirm(HttpServletRequest request, HttpServletResponse response, String path)
+			throws IOException, ServletException {
 		Matcher m = _confirmPattern.matcher(path);
 		if (!m.matches()) {
-			response.sendError(404);
-			return;
+			return false;
 		}
 
 		String key = decode(m.group(1));
@@ -277,13 +278,16 @@ public class NotifyFilter implements Filter, INotifyUrlFactory {
 		String confirmPath;
 		try {
 			confirmPath = getConfirmationService().confirm(key);
-			if (confirmPath == null) {
-				response.sendError(404);
-			} else {
+			if (confirmPath != null) {
 				response.sendRedirect(confirmPath);
+			} else {
+				// handled, but not a valid confirmation
+				response.sendError(404);
 			}
+			return true;
 		} catch (ConfirmationException e) {
-			throw new ServletException("can't confirm key " + key, e);
+			// not handled by confirmation service, follow filter chain
+			return false;
 		}
 	}
 
@@ -352,6 +356,7 @@ public class NotifyFilter implements Filter, INotifyUrlFactory {
 		}
 	}
 
+	@Override
 	public String toPullPath(String channelId, String userId, IParams params) {
 		IPullChannel channel = getChannel(channelId);
 		if (channel == null) {
@@ -379,6 +384,7 @@ public class NotifyFilter implements Filter, INotifyUrlFactory {
 		return buf.toString();
 	}
 
+	@Override
 	public String toConfirmPath(Confirmation confirmation) {
 		return _baseUrl + _mountPath + _confirmPrefix + confirmation.getKey();
 	}

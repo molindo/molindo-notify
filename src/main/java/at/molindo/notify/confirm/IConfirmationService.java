@@ -17,6 +17,7 @@
 package at.molindo.notify.confirm;
 
 import at.molindo.notify.INotifyService.IConfirmationListener;
+import at.molindo.notify.model.Notification;
 
 public interface IConfirmationService {
 
@@ -30,6 +31,8 @@ public interface IConfirmationService {
 	 *             if confirmation exists but wasn't handled
 	 */
 	String confirm(String key) throws ConfirmationException;
+
+	Notification getNotificationByKey(String key);
 
 	void addConfirmationListener(IConfirmationListener listener);
 
