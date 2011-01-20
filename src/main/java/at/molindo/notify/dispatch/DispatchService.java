@@ -46,17 +46,10 @@ public class DispatchService implements IDispatchService {
 			throws RenderException {
 
 		Params params = new Params();
+
 		params.setAll(prefs.getParams());
 		params.setAll(cPrefs.getParams());
 		params.setAll(notification.getParams());
-
-		for (IParamsFactory factory : _paramsFactories) {
-			try {
-				factory.params(params);
-			} catch (NotifyException e) {
-				throw new RenderException("params unavailable", e);
-			}
-		}
 
 		params.set(INotifyService.NOTIFICATION, notification);
 		params.set(INotifyService.PREFERENCES, prefs);
@@ -68,6 +61,14 @@ public class DispatchService implements IDispatchService {
 						_notifyUrlFactory.toConfirmPath(notification.getConfirmation()));
 			} else {
 				log.warn("can't set confirmation URL without NotifyFilter");
+			}
+		}
+
+		for (IParamsFactory factory : _paramsFactories) {
+			try {
+				factory.params(params);
+			} catch (NotifyException e) {
+				throw new RenderException("params unavailable", e);
 			}
 		}
 
