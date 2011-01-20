@@ -33,8 +33,19 @@ public interface INotifyService {
 	public static final String PRIVATE_FEED_CHANNEL = "private-feed";
 	public static final String PUBLIC_FEED_CHANNEL = "public-feed";
 
+	// reserved params
+	public static final Param<Object> NOTIFICATION = Param.pObject("notification");
+	public static final Param<Object> PREFERENCES = Param.pObject("preferences");
+	public static final Param<Object> CHANNEL_PREFERENCES = Param.pObject("channelPreferences");
+
+	/**
+	 * force notifying of unknown user id
+	 */
 	public static final Param<String> NOTIFY_UNKNOWN = Param.pString("unknown");
 
+	/**
+	 * URL for confirmations
+	 */
 	public static final Param<String> CONFIRMATION_URL = Param.pString("confirmationUrl");
 
 	IPreferences getPreferences(@Nonnull String userId);

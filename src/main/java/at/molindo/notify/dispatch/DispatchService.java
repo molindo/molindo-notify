@@ -58,6 +58,10 @@ public class DispatchService implements IDispatchService {
 			}
 		}
 
+		params.set(INotifyService.NOTIFICATION, notification);
+		params.set(INotifyService.PREFERENCES, prefs);
+		params.set(INotifyService.CHANNEL_PREFERENCES, cPrefs);
+
 		if (notification.getConfirmation() != null) {
 			if (_notifyUrlFactory != null) {
 				params.set(INotifyService.CONFIRMATION_URL,
