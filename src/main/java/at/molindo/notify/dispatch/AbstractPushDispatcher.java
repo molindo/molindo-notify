@@ -154,7 +154,7 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 
 		Dispatch dispatch = _dispatchService.create(notification, prefs, cPrefs);
 
-		if (!channel.isConfigured(notification.getUserId(), dispatch.getParams())) {
+		if (!channel.isConfigured(dispatch.getParams())) {
 			// not configured, don't push by default or prefs not complete, e.g.
 			// recipient address missing
 			PushResultMessage.persistent("channel not configured for user");

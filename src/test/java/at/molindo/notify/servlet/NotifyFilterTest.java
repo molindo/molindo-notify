@@ -92,8 +92,7 @@ public class NotifyFilterTest {
 				});
 				expect(context.get(IPullChannel.class).isAuthorized(null, null)).andReturn(true);
 
-				expect(context.get(IPullChannel.class).isConfigured(eq(USERID), anyObject(Params.class))).andReturn(
-						true);
+				expect(context.get(IPullChannel.class).isConfigured(anyObject(Params.class))).andReturn(true);
 
 				// toPullPath
 				expect(context.get(IPullChannel.class).newDefaultPreferences()).andReturn(new PushChannelPreferences());

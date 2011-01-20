@@ -249,7 +249,7 @@ public class NotifyFilter implements Filter, INotifyUrlFactory {
 
 		if (channel.getNotificationTypes().contains(Type.PRIVATE) && !channel.isAuthorized(userId, prefs)) {
 			response.sendError(403);
-		} else if (channel.isConfigured(userId, new Params(prefs.getParams()))) {
+		} else if (channel.isConfigured(new Params(prefs.getParams()))) {
 			try {
 				String output = channel.pull(userId, prefs);
 				if (StringUtils.empty(output)) {

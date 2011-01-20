@@ -57,7 +57,7 @@ public class DummyChannel extends AbstractPullChannel implements IPushChannel, I
 	}
 
 	@Override
-	public boolean isConfigured(String userId, Params params) {
+	public boolean isConfigured(Params params) {
 		return true;
 	}
 

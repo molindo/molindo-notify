@@ -63,7 +63,7 @@ public abstract class AbstractPullChannel implements IPullChannel {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, Params params) {
+	public boolean isConfigured(Params params) {
 		return true;
 	}
 

@@ -39,6 +39,6 @@ public interface IChannel {
 	/**
 	 * @return true if channel is sufficiently configured
 	 */
-	boolean isConfigured(@Nonnull String userId, @Nonnull Params params);
+	boolean isConfigured(@Nonnull Params params);
 
 }

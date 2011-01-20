@@ -21,5 +21,5 @@ import javax.annotation.Nonnull;
 import at.molindo.notify.model.Params;
 
 public interface IMailFilter {
-	boolean isAllowed(@Nonnull String userId, @Nonnull Params params);
+	boolean isAllowed(@Nonnull Params params);
 }

@@ -119,8 +119,8 @@ public class MailChannel implements IPushChannel, InitializingBean {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, Params params) {
-		if (_mailFilter != null && !_mailFilter.isAllowed(userId, params)) {
+	public boolean isConfigured(Params params) {
+		if (_mailFilter != null && !_mailFilter.isAllowed(params)) {
 			return false;
 		}
 

@@ -90,9 +90,9 @@ public abstract class AbstractFeedChannel extends AbstractServletPullChannel {
 	}
 
 	@Override
-	public boolean isConfigured(String userId, Params params) {
+	public boolean isConfigured(Params params) {
 		// TODO validation
-		return super.isConfigured(userId, params);
+		return super.isConfigured(params);
 	}
 
 	public String getAuthorName() {
