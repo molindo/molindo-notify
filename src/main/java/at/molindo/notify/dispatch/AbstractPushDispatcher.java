@@ -144,7 +144,8 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 		if (cPrefs == null) {
 			cPrefs = channel.newDefaultPreferences();
 			if (cPrefs == null) {
-				throw new PushException("channel not configured for user", true);
+				// don't flood user after he configures this channel
+				throw new PushException("channel not configured for user", false);
 			}
 		}
 
@@ -156,9 +157,8 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 		Dispatch dispatch = _dispatchService.create(notification, prefs, cPrefs);
 
 		if (!channel.isConfigured(dispatch.getParams())) {
-			// not configured, don't push by default or prefs not complete, e.g.
-			// recipient address missing
-			throw new PushException("channel not configured for user", true);
+			// don't flood user after he configures this channel
+			throw new PushException("channel not configured for user", false);
 		}
 
 		if (!ignoreFrequency && !Frequency.INSTANT.equals(cPrefs.getFrequency())) {
