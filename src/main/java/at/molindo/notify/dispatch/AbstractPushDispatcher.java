@@ -143,13 +143,13 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 		if (cPrefs == null) {
 			cPrefs = channel.newDefaultPreferences();
 			if (cPrefs == null) {
-				PushResultMessage.persistent("channel not configured for user");
+				throw new PushException("channel not configured for user", true);
 			}
 		}
 
 		if (!channel.getNotificationTypes().contains(notification.getType())) {
 			// channel not applicable for type
-			PushResultMessage.persistent("channel not applicable for type " + notification.getType());
+			throw new PushException("channel not applicable for type " + notification.getType(), false);
 		}
 
 		Dispatch dispatch = _dispatchService.create(notification, prefs, cPrefs);
@@ -157,12 +157,12 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 		if (!channel.isConfigured(dispatch.getParams())) {
 			// not configured, don't push by default or prefs not complete, e.g.
 			// recipient address missing
-			PushResultMessage.persistent("channel not configured for user");
+			throw new PushException("channel not configured for user", true);
 		}
 
 		if (!ignoreFrequency && !Frequency.INSTANT.equals(cPrefs.getFrequency())) {
 			// temporary as other dispatcher will handle this
-			PushResultMessage.temporary("channel not configured for this frequency");
+			throw new PushException("channel not configured for this frequency", true);
 		}
 
 		channel.push(dispatch);
