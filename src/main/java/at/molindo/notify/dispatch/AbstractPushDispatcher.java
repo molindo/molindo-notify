@@ -117,7 +117,8 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 				if (_errorListener != null) {
 					_errorListener.error(notification, channel, e);
 				} else {
-					log.warn("failed to deliver notification " + notification + " on channel " + channel.getId(), e);
+					log.info("failed to deliver notification " + notification + " on channel " + channel.getId() + ": "
+							+ ExceptionUtils.getAllMessages(e));
 				}
 			} catch (RenderException e) {
 				log.error("failed to render notification " + notification, e);
