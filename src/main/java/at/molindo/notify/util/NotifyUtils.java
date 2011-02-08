@@ -20,17 +20,57 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import net.htmlparser.jericho.Renderer;
+import net.htmlparser.jericho.Source;
+import net.htmlparser.jericho.StartTag;
 import at.molindo.notify.model.Template;
 import at.molindo.notify.render.IRenderService.Version;
+import at.molindo.utils.data.StringUtils;
 
 public class NotifyUtils {
 
 	private NotifyUtils() {
 	};
 
+	/**
+	 * TODO this should become customizable
+	 * 
+	 * @param html
+	 * @return
+	 */
 	public static String html2text(String html) {
-		// TODO convert html to text
-		return html.replaceAll("\\<.*?>", "");
+
+		Renderer renderer = new Renderer(new Source(html)) {
+
+			{
+				setIncludeHyperlinkURLs(true);
+			}
+
+			@Override
+			public String renderHyperlinkURL(StartTag startTag) {
+				final String href = startTag.getAttributeValue("href");
+				if (href == null || href.equals("#") || href.startsWith("javascript:")) {
+					return null;
+				}
+				// TODO customize?
+				return '<' + href + '>';
+			}
+
+		};
+
+		String text = renderer.toString();
+
+		String newLine = renderer.getNewLine();
+
+		// strip leading new lines
+		while (text != (text = StringUtils.stripLeading(text, newLine))) {
+		}
+
+		// strip trailing new lines
+		while (text != (text = StringUtils.stripTrailing(text, newLine))) {
+		}
+
+		return text;
 	}
 
 	public static String text2html(String text) {

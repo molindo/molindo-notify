@@ -31,6 +31,7 @@ public class Notification {
 	}
 
 	private Long _id;
+
 	private String _userId;
 	private String _key;
 	private Type _type = Type.PRIVATE;
