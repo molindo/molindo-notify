@@ -33,8 +33,10 @@ import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import at.molindo.notify.INotifyService.NotifyRuntimeException;
 import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.Message;
+import at.molindo.notify.render.IRenderService.Type;
 import at.molindo.utils.io.CharsetUtils;
 
 public abstract class AbstractMailClient implements IMailClient, InitializingBean {
@@ -113,14 +115,14 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 					new InternetAddress(recipient, recipientName, CharsetUtils.UTF_8.displayName()));
 			mm.setSubject(subject, CharsetUtils.UTF_8.displayName());
 
-			switch (_format) {
-			case HTML:
+			if (_format == Format.HTML) {
+				if (message.getType() == Type.TEXT) {
+					throw new MailException("can't send HTML mail from TEXT message", false);
+				}
 				mm.setText(message.getHtml(), CharsetUtils.UTF_8.displayName(), "html");
-				break;
-			case TEXT:
+			} else if (_format == Format.TEXT || _format == Format.MULTI && message.getType() == Type.TEXT) {
 				mm.setText(message.getText(), CharsetUtils.UTF_8.displayName());
-				break;
-			case MULTI:
+			} else if (_format == Format.MULTI) {
 				MimeBodyPart html = new MimeBodyPart();
 				html.setText(message.getHtml(), CharsetUtils.UTF_8.displayName(), "html");
 
@@ -139,8 +141,9 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 				mmp.addBodyPart(html);
 
 				mm.setContent(mmp);
-
-				break;
+			} else {
+				throw new NotifyRuntimeException("unexpected format (" + _format + ") or type (" + message.getType()
+						+ ")");
 			}
 
 			send(mm);
@@ -215,6 +218,9 @@ public abstract class AbstractMailClient implements IMailClient, InitializingBea
 	}
 
 	public AbstractMailClient setFormat(Format format) {
+		if (format == null) {
+			throw new NullPointerException("format");
+		}
 		_format = format;
 		return this;
 	}

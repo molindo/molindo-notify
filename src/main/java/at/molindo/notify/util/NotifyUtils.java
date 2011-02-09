@@ -74,7 +74,7 @@ public class NotifyUtils {
 	}
 
 	public static String text2html(String text) {
-		// TODO convert text to html
+		// TODO anything smarter than that?
 		return text.replaceAll("\n", "<br />");
 	}
 
