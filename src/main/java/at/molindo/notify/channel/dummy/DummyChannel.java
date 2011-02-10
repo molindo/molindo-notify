@@ -19,8 +19,6 @@ package at.molindo.notify.channel.dummy;
 import java.util.Date;
 import java.util.List;
 
-import at.molindo.notify.channel.IPullChannel;
-import at.molindo.notify.channel.IPushChannel;
 import at.molindo.notify.channel.feed.AbstractPullChannel;
 import at.molindo.notify.model.Dispatch;
 import at.molindo.notify.model.IChannelPreferences;
@@ -32,11 +30,13 @@ import at.molindo.notify.model.PushChannelPreferences;
 
 import com.google.common.collect.ImmutableSet;
 
-public class DummyChannel extends AbstractPullChannel implements IPushChannel, IPullChannel {
+public class DummyChannel extends AbstractPullChannel implements IDummyChannel {
 
 	public static final String DEFAULT_CHANNEL_ID = DummyChannel.class.getSimpleName();
 
 	private String _id = DEFAULT_CHANNEL_ID;
+
+	private volatile Dispatch _lastDispatch;
 
 	public DummyChannel setId(String id) {
 		if (id == null) {
@@ -68,7 +68,13 @@ public class DummyChannel extends AbstractPullChannel implements IPushChannel, I
 
 	@Override
 	public void push(Dispatch dispatch) throws PushException {
+		_lastDispatch = dispatch;
 		System.out.println(dispatch.getMessage());
+	}
+
+	@Override
+	public Dispatch getLastDispatch() {
+		return _lastDispatch;
 	}
 
 	@Override
