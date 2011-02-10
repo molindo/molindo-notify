@@ -16,28 +16,18 @@
 
 package at.molindo.notify.render.velocity;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
-import org.apache.velocity.exception.MethodInvocationException;
-import org.apache.velocity.exception.ParseErrorException;
-import org.apache.velocity.exception.ResourceNotFoundException;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.RuntimeInstance;
 import org.apache.velocity.runtime.RuntimeServices;
-import org.apache.velocity.runtime.parser.ParseException;
-import org.apache.velocity.runtime.parser.node.SimpleNode;
 import org.springframework.beans.factory.InitializingBean;
 
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Template;
 import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.ITemplateRenderer;
+import at.molindo.notify.util.VelocityUtils;
 
 import com.google.common.collect.MapMaker;
 
@@ -57,34 +47,14 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 		init();
 	}
 
-	public VelocityTemplateRenderer init() throws Exception {
-		_runtime = new RuntimeInstance();
-		_runtime.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, new SLF4JLogChute());
-		_runtime.setProperty(RuntimeConstants.RUNTIME_REFERENCES_STRICT, true);
-		_runtime.init();
+	public VelocityTemplateRenderer init() {
+		_runtime = VelocityUtils.newRuntime();
 		return this;
 	}
 
 	@Override
 	public String render(Template template, IParams params) throws RenderException {
-
-		try {
-			StringWriter writer = new StringWriter();
-			getVelocityTemplate(template).merge(buildContext(params), writer);
-			return writer.toString();
-		} catch (ResourceNotFoundException e) {
-			throw new RenderException("failed to render template " + template, e);
-		} catch (ParseErrorException e) {
-			throw new RenderException("failed to render template " + template, e);
-		} catch (MethodInvocationException e) {
-			throw new RenderException("failed to render template " + template, e);
-		} catch (IOException e) {
-			throw new RenderException("failed to render template " + template, e);
-		}
-	}
-
-	private Context buildContext(IParams params) {
-		return new VelocityContext(params.newMap());
+		return VelocityUtils.merge(getVelocityTemplate(template), params);
 	}
 
 	private org.apache.velocity.Template getVelocityTemplate(Template template) throws RenderException {
@@ -99,17 +69,8 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 	}
 
 	private org.apache.velocity.Template toVelocityTemplate(Template template) throws RenderException {
-		try {
-			StringReader reader = new StringReader(template.getContent());
-			SimpleNode node = _runtime.parse(reader, template.getKey() + "." + template.getVersion());
-			org.apache.velocity.Template vt = new org.apache.velocity.Template();
-			vt.setRuntimeServices(_runtime);
-			vt.setData(node);
-			vt.initDocument();
-			return vt;
-		} catch (ParseException e) {
-			throw new RenderException("failed to parse template", e);
-		}
+		return VelocityUtils.newTemplate(_runtime, template.getContent(),
+				template.getKey() + "." + template.getVersion());
 	}
 
 }
