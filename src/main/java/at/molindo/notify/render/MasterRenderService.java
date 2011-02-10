@@ -25,11 +25,11 @@ import at.molindo.utils.data.StringUtils;
 public class MasterRenderService implements IRenderService {
 
 	public static final String DEFAULT_TEMPLATE_KEY = "masterTemplate";
-	public static final String DEFAULT_TEMPLATE_CONTENT = "content";
+	public static final String DEFAULT_TEMPLATE_CONTENT = "message";
 
 	private IRenderService _renderService;
 	private String _masterTemplateKey = DEFAULT_TEMPLATE_KEY;
-	private String _masterTemplateContent = DEFAULT_TEMPLATE_CONTENT;
+	private String _masterTemplateMessage = DEFAULT_TEMPLATE_CONTENT;
 	private IParams _masterParams;
 
 	@Override
@@ -38,13 +38,13 @@ public class MasterRenderService implements IRenderService {
 		Message mRaw = _renderService.render(key, version, params);
 
 		Params masterParams = new Params();
-		masterParams.set(Param.pString(_masterTemplateContent), mRaw.getMessage());
 		if (_masterParams != null) {
 			masterParams.setAll(_masterParams);
 		}
+		masterParams.set(getMasterTemplateMessageParam(), mRaw);
 
 		Message m = _renderService.render(_masterTemplateKey, version, masterParams);
-		if (!StringUtils.empty(mRaw.getSubject())) {
+		if (StringUtils.empty(m.getSubject()) && !StringUtils.empty(mRaw.getSubject())) {
 			m.setSubject(mRaw.getSubject());
 		}
 
@@ -60,15 +60,18 @@ public class MasterRenderService implements IRenderService {
 	}
 
 	public void setMasterTemplateKey(String masterTemplateKey) {
+		if (StringUtils.empty(masterTemplateKey)) {
+			throw new IllegalArgumentException("masterTemplateKey must not be empty");
+		}
 		_masterTemplateKey = masterTemplateKey;
 	}
 
-	public String getMasterTemplateContent() {
-		return _masterTemplateContent;
+	public Param<Object> getMasterTemplateMessageParam() {
+		return Param.pObject(_masterTemplateMessage);
 	}
 
-	public void setMasterTemplateContent(String masterTemplateContent) {
-		_masterTemplateContent = masterTemplateContent;
+	public void setMasterTemplateMessage(String masterTemplateMessage) {
+		_masterTemplateMessage = masterTemplateMessage;
 	}
 
 	public IParams getMasterParams() {

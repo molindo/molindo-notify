@@ -30,6 +30,7 @@ import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Template;
 import at.molindo.notify.render.IRenderService.RenderException;
+import at.molindo.notify.render.IRenderService.Type;
 import at.molindo.notify.render.IRenderService.Version;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
@@ -49,13 +50,14 @@ public class TemplateRenderServiceTest {
 		Template t = new Template();
 		t.setKey("test");
 		t.setLastModified(START);
+		t.setType(Type.TEXT);
 		t.setVersion(Version.LONG);
 		t.setContent("Subject: Test\n\nthis is a ${word}");
 		return t;
 	}
 
 	public static Message result() {
-		return new Message("Test", "this is a test", IRenderService.Type.HTML);
+		return new Message("Test", "this is a test", IRenderService.Type.TEXT);
 	}
 
 	@Test

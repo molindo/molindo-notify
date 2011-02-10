@@ -42,7 +42,7 @@ public class TemplateRenderService implements IRenderService, InitializingBean {
 	@Override
 	public Message render(String key, Version version, IParams params) throws RenderException {
 
-		Template template = NotifyUtils.choose(_templateDAO.findTemplates(key), version);
+		Template template = NotifyUtils.choose(_templateDAO.findTemplates(key), null, version);
 
 		if (template == null) {
 			throw new RenderException("no template available for '" + key + "' (" + version + ")");

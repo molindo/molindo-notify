@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Message;
-import at.molindo.notify.model.Param;
 import at.molindo.notify.model.Params;
 import at.molindo.notify.model.Template;
 import at.molindo.notify.render.IRenderService.Type;
@@ -49,6 +48,7 @@ public class MasterRenderServiceTest {
 		Template t = new Template();
 		t.setKey("test");
 		t.setLastModified(START);
+		t.setType(Type.TEXT);
 		t.setVersion(Version.LONG);
 		t.setContent("${orig} \n\nBrought to you by molindo-notify");
 		return t;
@@ -68,12 +68,16 @@ public class MasterRenderServiceTest {
 
 				expect(
 						context.get(IRenderService.class).render(eq(_t.getKey()), eq(_t.getVersion()),
-								anyObject(IParams.class))).andReturn(new Message("expected", "raw message", Type.TEXT));
+								anyObject(IParams.class))).andReturn(m());
 
 				expect(
 						context.get(IRenderService.class).render(eq(_svc.getMasterTemplateKey()), eq(_t.getVersion()),
-								eq(new Params().set(Param.pString(_svc.getMasterTemplateContent()), "raw message"))))
-						.andReturn(new Message("template subject", "raw message + footer", Type.TEXT));
+								eq(new Params().set(_svc.getMasterTemplateMessageParam(), m())))).andReturn(
+						new Message("expected", "raw message + footer", Type.TEXT));
+			}
+
+			protected Message m() {
+				return new Message("expected", "raw message", Type.TEXT);
 			}
 
 			@Override

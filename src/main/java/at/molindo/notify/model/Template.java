@@ -35,6 +35,15 @@ public class Template implements Cloneable {
 
 	}
 
+	public Template(String key, Type type, Version version, Locale locale, String content) {
+		setKey(key);
+		setType(type);
+		setVersion(version);
+		setLocale(locale);
+		setContent(content);
+		setLastModified(new Date());
+	}
+
 	public String getKey() {
 		return _key;
 	}
