@@ -36,7 +36,7 @@
 		<property name="notifyUrlFactory" ref="notifyUrlFactory" />
 	</bean>
 
-	<bean id="notifyUrlFactory" class="at.molindo.notify.servlet.DefaultNotifyUrlFactory" autowire="byType" />
+	<bean id="notifyUrlFactory" class="at.molindo.notify.util.NotifyUrlFactoryFactory" autowire="byType" />
 
 	<bean id="dispatcher" class="at.molindo.notify.dispatch.PollingPushDispatcher">
 		<property name="pushChannels">
