@@ -16,20 +16,52 @@
 
 package at.molindo.notify.servlet;
 
+import java.io.IOException;
+
 import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
-public class NotifyFilter extends DelegatingFilterProxy {
+/**
+ * simplistic version of {@link DelegatingFilterProxy}
+ * 
+ * @author stf
+ */
+public class NotifyFilter implements Filter {
+
+	private NotifyFilterBean _notifyFilterBean;
 
 	@Override
-	protected Filter initDelegate(WebApplicationContext wac) throws ServletException {
-		NotifyFilterBean delegate = wac.getBean(getTargetBeanName(), NotifyFilterBean.class);
-		if (isTargetFilterLifecycle()) {
-			delegate.init(getFilterConfig());
+	public void init(FilterConfig filterConfig) throws ServletException {
+		_notifyFilterBean = findNotifyFilterBean(findWebApplicationContext(filterConfig.getServletContext()));
+		if (_notifyFilterBean == null) {
+			throw new ServletException("couldn't find NotifyFilterBean");
 		}
-		return delegate;
+	}
+
+	protected NotifyFilterBean findNotifyFilterBean(WebApplicationContext webApplicationContext) {
+		return webApplicationContext.getBean(NotifyFilterBean.class);
+	}
+
+	protected WebApplicationContext findWebApplicationContext(ServletContext servletContext) {
+		return WebApplicationContextUtils.getWebApplicationContext(servletContext);
+	}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+			ServletException {
+		_notifyFilterBean.doFilter(request, response, chain);
+	}
+
+	@Override
+	public void destroy() {
 	}
 }
