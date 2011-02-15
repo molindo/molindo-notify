@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package at.molindo.notify.servlet;
+package at.molindo.notify.util;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletException;
+import java.util.List;
 
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
+import at.molindo.notify.channel.IPullChannel;
 
-public class NotifyFilter extends DelegatingFilterProxy {
+public class PullChannelsFactory extends AbstractListFactory<IPullChannel> {
 
-	@Override
-	protected Filter initDelegate(WebApplicationContext wac) throws ServletException {
-		NotifyFilterBean delegate = wac.getBean(getTargetBeanName(), NotifyFilterBean.class);
-		if (isTargetFilterLifecycle()) {
-			delegate.init(getFilterConfig());
-		}
-		return delegate;
+	public void setPushChannels(List<IPullChannel> pullChannels) {
+		set(pullChannels);
 	}
+
 }

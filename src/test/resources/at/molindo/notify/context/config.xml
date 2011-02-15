@@ -70,4 +70,7 @@
 
 	<bean id="dummyConfirmationListener" class="at.molindo.notify.confirm.dummy.DummyConfirmationListener" />
 
+	<bean class="at.molindo.notify.servlet.NotifyFilterBean">
+		<property name="baseUrl" value="http://www.example.com/" />
+	</bean>
 </beans>

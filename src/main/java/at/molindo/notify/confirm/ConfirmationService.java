@@ -22,17 +22,11 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.ServletContext;
-
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.web.context.ServletContextAware;
-
 import at.molindo.notify.INotifyService.IConfirmationListener;
 import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.model.Notification;
-import at.molindo.notify.servlet.NotifyFilter;
 
-public class ConfirmationService implements IConfirmationService, ServletContextAware, DisposableBean {
+public class ConfirmationService implements IConfirmationService {
 
 	private static final long DEFAULT_CONFIRMATION_MAX_AGE_MS = TimeUnit.DAYS.toMillis(14);
 
@@ -40,31 +34,7 @@ public class ConfirmationService implements IConfirmationService, ServletContext
 
 	private final List<IConfirmationListener> _confirmationListeners = new CopyOnWriteArrayList<IConfirmationListener>();
 
-	private ServletContext _servletContext;
-
 	private long _confirmationMaxAgeMs = DEFAULT_CONFIRMATION_MAX_AGE_MS;
-
-	@Override
-	public void setServletContext(ServletContext servletContext) {
-		if (servletContext == _servletContext) {
-			return;
-		}
-
-		if (_servletContext != null) {
-			NotifyFilter.setConfirmationService(this, _servletContext);
-		}
-
-		if (servletContext != null) {
-			NotifyFilter.setConfirmationService(this, servletContext);
-		}
-
-		_servletContext = servletContext;
-	}
-
-	@Override
-	public void destroy() throws Exception {
-		setServletContext(null);
-	}
 
 	public void setConfirmationListeners(Collection<? extends IConfirmationListener> listeners) {
 		if (_confirmationListeners.size() > 0) {

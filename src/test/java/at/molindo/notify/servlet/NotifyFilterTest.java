@@ -41,6 +41,7 @@ import at.molindo.notify.model.Params;
 import at.molindo.notify.model.PushChannelPreferences;
 import at.molindo.notify.test.util.EasyMockContext;
 import at.molindo.notify.test.util.MockTest;
+import at.molindo.utils.collections.CollectionUtils;
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 public class NotifyFilterTest {
@@ -54,17 +55,17 @@ public class NotifyFilterTest {
 	public void pull() throws Exception {
 		new MockTest() {
 
-			NotifyFilter filter;
+			NotifyFilterBean filter;
 			FilterChain mockFilterChain;
 			MockFilterConfig config;
 
 			@Override
 			@SuppressWarnings(value = "NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS", justification = "mocks accept null")
 			protected void setup(EasyMockContext context) throws Exception {
-				filter = new NotifyFilter();
+				filter = new NotifyFilterBean();
 				mockFilterChain = new MockFilterChain();
 				config = new MockFilterConfig();
-				config.addInitParameter(NotifyFilter.PARAMTER_BASE_URL, "http://www.example.com/");
+				config.addInitParameter(NotifyFilterBean.PARAMTER_BASE_URL, "http://www.example.com/");
 
 				context.create(IPullChannel.class);
 
@@ -100,11 +101,11 @@ public class NotifyFilterTest {
 
 			@Override
 			protected void test(EasyMockContext context) throws Exception {
-				NotifyFilter.addChannel(context.get(IPullChannel.class), config.getServletContext());
+				filter.setChannels(CollectionUtils.set(context.get(IPullChannel.class)));
 				filter.init(config);
 
 				MockHttpServletRequest request = new MockHttpServletRequest("GET", "/notify/"
-						+ NotifyFilter.DEFAULT_PULL_PREFIX + "/" + CHANNELID + "/" + USERID);
+						+ NotifyFilterBean.DEFAULT_PULL_PREFIX + "/" + CHANNELID + "/" + USERID);
 
 				request.setServletPath("/notify");
 				request.setParameter(AbstractPullChannel.SECRET.getName(), SECRET);
