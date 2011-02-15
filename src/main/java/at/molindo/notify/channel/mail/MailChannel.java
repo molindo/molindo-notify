@@ -64,6 +64,22 @@ public class MailChannel implements IPushChannel, InitializingBean {
 		params.set(RECIPIENT_NAME, recipientName);
 	}
 
+	public static void getRecipient(IPushChannelPreferences cPrefs) {
+		getRecipient(cPrefs.getParams());
+	}
+
+	public static void getRecipientName(IPushChannelPreferences cPrefs) {
+		getRecipientName(cPrefs.getParams());
+	}
+
+	public static void getRecipient(IParams params) {
+		params.get(RECIPIENT);
+	}
+
+	public static void getRecipientName(IParams params) {
+		params.get(RECIPIENT_NAME);
+	}
+
 	public MailChannel() {
 	}
 
