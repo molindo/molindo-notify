@@ -48,6 +48,8 @@ public interface INotifyService {
 	 */
 	public static final Param<String> CONFIRMATION_URL = Param.pString("confirmationUrl");
 
+	public static final Param<Boolean> RENDER_MASTER_TEMPLATE = Param.pBoolean("renderMaster");
+
 	IPreferences getPreferences(@Nonnull String userId);
 
 	@Nonnull

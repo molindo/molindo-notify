@@ -16,6 +16,7 @@
 
 package at.molindo.notify.render;
 
+import at.molindo.notify.INotifyService;
 import at.molindo.notify.model.IParams;
 import at.molindo.notify.model.Message;
 import at.molindo.notify.model.Param;
@@ -43,11 +44,17 @@ public class MasterRenderService implements IRenderService {
 		}
 		masterParams.set(getMasterTemplateMessageParam(), mRaw);
 
-		Message m = _renderService.render(_masterTemplateKey, version, masterParams);
-		if (StringUtils.empty(m.getSubject()) && !StringUtils.empty(mRaw.getSubject())) {
-			m.setSubject(mRaw.getSubject());
-		}
+		Boolean renderMaster = params.get(INotifyService.RENDER_MASTER_TEMPLATE);
 
+		Message m;
+		if (!Boolean.FALSE.equals(renderMaster)) {
+			m = _renderService.render(_masterTemplateKey, version, masterParams);
+			if (StringUtils.empty(m.getSubject()) && !StringUtils.empty(mRaw.getSubject())) {
+				m.setSubject(mRaw.getSubject());
+			}
+		} else {
+			m = mRaw;
+		}
 		return m;
 	}
 
