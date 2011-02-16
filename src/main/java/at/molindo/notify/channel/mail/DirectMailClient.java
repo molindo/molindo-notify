@@ -35,6 +35,7 @@ import at.molindo.utils.data.ExceptionUtils;
 import at.molindo.utils.net.DnsUtils;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ComputationException;
 import com.google.common.collect.MapMaker;
 import com.sun.mail.smtp.SMTPAddressFailedException;
 import com.sun.mail.smtp.SMTPSendFailedException;
@@ -74,7 +75,7 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 						try {
 							return createSmtpSession(domain);
 						} catch (MailException e) {
-							throw new WrapException(e);
+							throw new ComputationException(e);
 						}
 					}
 				});
@@ -85,7 +86,7 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 	protected Session getSmtpSession(String recipient) throws MailException {
 		try {
 			return _sessionCache.get(MailUtils.domainFromAddress(recipient));
-		} catch (WrapException e) {
+		} catch (ComputationException e) {
 			throw (MailException) e.getCause();
 		}
 	}
@@ -118,7 +119,7 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 			// props.put("mail.debug", "true");
 			return Session.getInstance(props);
 		} catch (NamingException e) {
-			throw new MailException("can't lookup mail host", e, true);
+			throw new MailException("can't lookup mail host: " + domain, e, true);
 		}
 	}
 
@@ -223,15 +224,5 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 
 	private Boolean getProxySet() {
 		return _proxySet;
-	}
-
-	private static class WrapException extends RuntimeException {
-
-		private static final long serialVersionUID = 1L;
-
-		public WrapException(MailException e) {
-			super(e);
-		}
-
 	}
 }
