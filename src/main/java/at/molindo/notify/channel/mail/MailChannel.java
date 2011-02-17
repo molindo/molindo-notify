@@ -123,12 +123,12 @@ public class MailChannel implements IPushChannel, InitializingBean {
 		try {
 			_mailClient.send(dispatch);
 
-			if (log.isDebugEnabled()) {
-				log.debug("successfully pushed mail:\n" + dispatch.getMessage());
+			if (log.isTraceEnabled()) {
+				log.trace("successfully pushed mail:\n" + dispatch.getMessage());
 			}
 		} catch (PushException e) {
-			if (log.isDebugEnabled()) {
-				log.debug("failed to push mail:\n" + dispatch.getMessage(), e);
+			if (log.isTraceEnabled()) {
+				log.trace("failed to push mail:\n" + dispatch.getMessage(), e);
 			}
 			throw e;
 		}
