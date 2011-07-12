@@ -29,6 +29,8 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class SimpleMailClient extends AbstractMailClient implements InitializingBean {
 
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SimpleMailClient.class);
+
 	// server config
 	private String _server;
 	private Integer _port;
@@ -37,6 +39,8 @@ public class SimpleMailClient extends AbstractMailClient implements Initializing
 	private Security _security = Security.NONE;
 
 	private Session _smtpSession = null;
+
+	private boolean _failOnConnectError = true;
 
 	public SimpleMailClient() {
 
@@ -54,17 +58,31 @@ public class SimpleMailClient extends AbstractMailClient implements Initializing
 		if (_smtpSession == null) {
 			_smtpSession = createSmtpSession();
 
-			Transport t;
 			try {
-				t = _smtpSession.getTransport("smtp");
-				t.connect();
-			} catch (NoSuchProviderException e) {
-				throw new RuntimeException("no SMTP provider?", e);
-			} catch (MessagingException e) {
-				throw new MailException("can't connect to SMTP server", e, true);
+				connectTransport();
+			} catch (MailException e) {
+				if (_failOnConnectError) {
+					throw e;
+				} else {
+					log.warn("failed to connect transport", e);
+				}
 			}
 		}
 		return this;
+	}
+
+	private Transport connectTransport() throws MailException {
+		try {
+			Transport t = _smtpSession.getTransport("smtp");
+			if (!t.isConnected()) {
+				t.connect();
+			}
+			return t;
+		} catch (NoSuchProviderException e) {
+			throw new RuntimeException("no SMTP provider?", e);
+		} catch (MessagingException e) {
+			throw new MailException("can't connect to SMTP server", e, true);
+		}
 	}
 
 	protected Session createSmtpSession() {
@@ -93,7 +111,8 @@ public class SimpleMailClient extends AbstractMailClient implements Initializing
 	}
 
 	@Override
-	protected Session getSmtpSession(String recipient) {
+	protected Session getSmtpSession(String recipient) throws MailException {
+		connectTransport();
 		return _smtpSession;
 	}
 
@@ -139,6 +158,15 @@ public class SimpleMailClient extends AbstractMailClient implements Initializing
 
 	public SimpleMailClient setSecurity(Security security) {
 		_security = security;
+		return this;
+	}
+
+	public boolean isFailOnConnectError() {
+		return _failOnConnectError;
+	}
+
+	public SimpleMailClient setFailOnConnectError(boolean failOnConnectError) {
+		_failOnConnectError = failOnConnectError;
 		return this;
 	}
 
