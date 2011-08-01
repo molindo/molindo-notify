@@ -64,6 +64,7 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 	private String _socksProxyPort;
 	private Boolean _proxySet;
 	private String _localHost;
+	private boolean _startTLSEnabled = false;
 
 	@Override
 	public DirectMailClient init() throws MailException {
@@ -97,10 +98,10 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 			props.setProperty("mail.smtp.host", DnsUtils.lookupMailHosts(domain)[0]);
 			props.setProperty("mail.smtp.port", "25");
 			props.setProperty("mail.smtp.auth", "false");
-			props.setProperty("mail.smtp.starttls.enable", "true");
+			props.setProperty("mail.smtp.starttls.enable", Boolean.toString(getStartTLSEnabled()));
 
 			// set proxy
-			if (getProxySet() != null && getProxySet()) {
+			if (Boolean.TRUE.equals(getProxySet())) {
 				props.setProperty("proxySet", "true");
 				props.setProperty("socksProxyHost", getSocksProxyHost());
 				props.setProperty("socksProxyPort", getSocksProxyPort());
@@ -194,12 +195,20 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 		_localHost = localHost;
 	}
 
-	private String getLocalAddress() {
+	public String getLocalAddress() {
 		return _localAddress;
 	}
 
-	private String getLocalHost() {
+	public String getLocalHost() {
 		return _localHost;
+	}
+
+	public void setStartTLSEnabled(boolean startTLSEnabled) {
+		_startTLSEnabled = startTLSEnabled;
+	}
+
+	public boolean getStartTLSEnabled() {
+		return _startTLSEnabled;
 	}
 
 	public void setSocksProxyHost(final String socksProxyHost) {
