@@ -16,7 +16,6 @@
 
 package at.molindo.notify.render.velocity;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.velocity.runtime.RuntimeInstance;
@@ -29,12 +28,13 @@ import at.molindo.notify.render.IRenderService.RenderException;
 import at.molindo.notify.render.ITemplateRenderer;
 import at.molindo.notify.util.VelocityUtils;
 
-import com.google.common.collect.MapMaker;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 public class VelocityTemplateRenderer implements ITemplateRenderer, InitializingBean {
 
-	private final Map<Template.Key, org.apache.velocity.Template> _templateCache = new MapMaker()
-			.expiration(1, TimeUnit.HOURS).concurrencyLevel(4).makeMap();
+	private final Cache<Template.Key, org.apache.velocity.Template> _templateCache = CacheBuilder.newBuilder()
+			.expireAfterAccess(1, TimeUnit.HOURS).concurrencyLevel(4).build();
 
 	private RuntimeServices _runtime = new RuntimeInstance();
 
@@ -60,7 +60,7 @@ public class VelocityTemplateRenderer implements ITemplateRenderer, Initializing
 	private org.apache.velocity.Template getVelocityTemplate(Template template) throws RenderException {
 		Template.Key key = template.key();
 
-		org.apache.velocity.Template vt = _templateCache.get(key);
+		org.apache.velocity.Template vt = _templateCache.getIfPresent(key);
 		if (vt == null) {
 			_templateCache.put(key, vt = toVelocityTemplate(template));
 		}
