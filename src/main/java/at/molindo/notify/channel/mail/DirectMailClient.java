@@ -19,6 +19,7 @@ package at.molindo.notify.channel.mail;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import javax.mail.Address;
@@ -33,10 +34,9 @@ import at.molindo.utils.collections.CollectionUtils;
 import at.molindo.utils.data.ExceptionUtils;
 import at.molindo.utils.net.DnsUtils;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import com.google.common.collect.ComputationException;
+import com.google.common.cache.LoadingCache;
 import com.sun.mail.smtp.SMTPAddressFailedException;
 import com.sun.mail.smtp.SMTPSendFailedException;
 
@@ -56,7 +56,7 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 	private static final Set<Integer> PERMANENT_ERROR_CODES = Collections.unmodifiableSet(CollectionUtils.set(
 			MAILBOX_UNAVAILABLE, MAILBOX_NOT_LOCAL, MAILBOX_NAME_NOT_ALLOWED, TRANSACTION_FAILED));
 
-	private Cache<String, Session> _sessionCache;
+	private LoadingCache<String, Session> _sessionCache;
 	private int _cacheConcurrency = DEFAULT_CACHE_CONCURRENCY;
 	private long _cacheExpirationMin = DEFAULT_CACHE_EXPIRATION_MIN;
 	private String _localAddress;
@@ -72,12 +72,8 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 		_sessionCache = CacheBuilder.newBuilder().concurrencyLevel(_cacheConcurrency)
 				.expireAfterAccess(_cacheExpirationMin, TimeUnit.MINUTES).build(new CacheLoader<String, Session>() {
 					@Override
-					public Session load(String domain) {
-						try {
-							return createSmtpSession(domain);
-						} catch (MailException e) {
-							throw new ComputationException(e);
-						}
+					public Session load(String domain) throws MailException {
+						return createSmtpSession(domain);
 					}
 				});
 		return this;
@@ -86,9 +82,13 @@ public class DirectMailClient extends AbstractMailClient implements Initializing
 	@Override
 	protected Session getSmtpSession(String recipient) throws MailException {
 		try {
-			return _sessionCache.getIfPresent(MailUtils.domainFromAddress(recipient));
-		} catch (ComputationException e) {
-			throw (MailException) e.getCause();
+			return _sessionCache.get(MailUtils.domainFromAddress(recipient));
+		} catch (ExecutionException e) {
+			if (e.getCause() instanceof MailException) {
+				throw (MailException) e.getCause();
+			} else {
+				throw new RuntimeException("unexpected exception while getting SMTP session for " + recipient, e);
+			}
 		}
 	}
 
