@@ -57,6 +57,7 @@ public class AbstractFeedChannelTest {
 
 	private static final String NOTIFICATION_KEY = "some.key";
 	private static final String USER_ID = "JohnDoe";
+	private static final Date DATE = new Date(1363269794236L);
 
 	public static AbstractFeedChannel c() {
 		AbstractFeedChannel c = new AbstractFeedChannel() {
@@ -91,7 +92,7 @@ public class AbstractFeedChannelTest {
 
 	protected static Notification n() {
 		Notification n = new Notification();
-		n.setDate(new Date());
+		n.setDate(DATE);
 		n.setKey(NOTIFICATION_KEY);
 		n.setType(Type.PRIVATE);
 		n.setUserId(USER_ID);
