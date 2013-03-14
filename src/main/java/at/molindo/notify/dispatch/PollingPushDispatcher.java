@@ -23,16 +23,18 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.SmartLifecycle;
 
 import at.molindo.notify.INotifyService;
 import at.molindo.notify.INotifyService.NotifyRuntimeException;
 import at.molindo.notify.model.Notification;
+import at.molindo.notify.util.AbstractSmartLifecycle;
 import at.molindo.utils.concurrent.FactoryThread;
 import at.molindo.utils.concurrent.FactoryThread.FactoryThreadGroup;
 import at.molindo.utils.concurrent.KeyLock;
 
 public class PollingPushDispatcher extends AbstractPushDispatcher implements INotifyService.INotificationListner,
-		DisposableBean {
+		DisposableBean, SmartLifecycle {
 
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PollingPushDispatcher.class);
 
@@ -47,6 +49,8 @@ public class PollingPushDispatcher extends AbstractPushDispatcher implements INo
 
 	private FactoryThreadGroup _threadGroup;
 
+	private final Lifecycle _lifecycle = new Lifecycle();
+
 	@Override
 	public void afterPropertiesSet() {
 		super.afterPropertiesSet();
@@ -57,27 +61,15 @@ public class PollingPushDispatcher extends AbstractPushDispatcher implements INo
 					public Runnable newRunnable() {
 						return new Polling();
 					}
-				}).start();
+				});
 
 		_notifyService.addNotificationListener(this);
 	}
 
 	@Override
 	public void destroy() {
+		stop();
 		_notifyService.removeNotificationListener(this);
-
-		_threadGroup.setInactive();
-		synchronized (_wait) {
-			_wait.notifyAll();
-		}
-		try {
-			log.info("waiting for termination of running notification tasks");
-			_threadGroup.join();
-			log.info("all running notification tasks terminated");
-		} catch (InterruptedException e1) {
-			log.warn("interrupted while waiting for termination of notificaiton tasks");
-		}
-
 	}
 
 	@Override
@@ -148,4 +140,66 @@ public class PollingPushDispatcher extends AbstractPushDispatcher implements INo
 
 	}
 
+	@Override
+	public void start() {
+		_lifecycle.start();
+	}
+
+	@Override
+	public void stop() {
+		_lifecycle.stop();
+	}
+
+	@Override
+	public boolean isRunning() {
+		return _lifecycle.isRunning();
+	}
+
+	@Override
+	public int getPhase() {
+		return _lifecycle.getPhase();
+	}
+
+	@Override
+	public boolean isAutoStartup() {
+		return _lifecycle.isAutoStartup();
+	}
+
+	@Override
+	public void stop(Runnable callback) {
+		_lifecycle.stop(callback);
+	}
+
+	private class Lifecycle extends AbstractSmartLifecycle {
+
+		private volatile boolean _running = false;
+
+		@Override
+		public boolean isRunning() {
+			return _running;
+		}
+
+		@Override
+		protected void doStart() {
+			_threadGroup.start();
+			_running = true;
+		}
+
+		@Override
+		protected void doStop() {
+			_threadGroup.setInactive();
+			_running = false;
+			synchronized (_wait) {
+				_wait.notifyAll();
+			}
+			try {
+				log.info("waiting for termination of running notification tasks");
+				_threadGroup.join();
+				log.info("all running notification tasks terminated");
+			} catch (InterruptedException e1) {
+				log.warn("interrupted while waiting for termination of notificaiton tasks");
+			}
+		}
+
+	}
 }
