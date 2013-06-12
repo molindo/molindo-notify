@@ -32,6 +32,7 @@ import at.molindo.notify.util.AbstractSmartLifecycle;
 import at.molindo.utils.concurrent.FactoryThread;
 import at.molindo.utils.concurrent.FactoryThread.FactoryThreadGroup;
 import at.molindo.utils.concurrent.KeyLock;
+import at.molindo.utils.concurrent.KeyLock.KeyLockedException;
 
 public class PollingPushDispatcher extends AbstractPushDispatcher implements INotifyService.INotificationListner,
 		DisposableBean, SmartLifecycle {
@@ -45,7 +46,7 @@ public class PollingPushDispatcher extends AbstractPushDispatcher implements INo
 	private INotifyService _notifyService;
 
 	private final Object _wait = new Object();
-	private final KeyLock<Long, Void> _notificationLock = KeyLock.newKeyLock();
+	private final KeyLock<Long, Void> _notificationLock = KeyLock.newKeyLock(false);
 
 	private FactoryThreadGroup _threadGroup;
 
@@ -120,6 +121,13 @@ public class PollingPushDispatcher extends AbstractPushDispatcher implements INo
 						return null;
 					}
 				});
+			} catch (KeyLockedException e) {
+				/*
+				 * INotificationDAO implementation should avoid this but it
+				 * might happen if a push takes an unusual amount of time to
+				 * finish
+				 */
+				log.info("notification id currently locked: " + e.getKey());
 			} catch (Exception e) {
 				throw new NotifyRuntimeException("unexepcted exception from doPush()", e);
 			}
