@@ -22,7 +22,9 @@ script:  "target/travis-settings/tasks/script.sh"
 notifications:
   hipchat: 
     rooms:
-      - secure: "Jh9vUNeqO0s1NfdgaRimxdGoim7V0VVGX2JwAWyhV1ECJUka3hENwpVQh6fkM3qaf7c7RqLCAWwHagh9Nw306CexRmarpKZMg8gLF8Q03Ms62a7J2lBuqWYkgapXkdpZdxVNWHtTHLNwTz0nImekUs+pW+cVEH+3kNk6jLfWPlI="
+      - secure: "aWLQqnNxpKJEroC6aGfTPgoPatg8GWw8IlH+ylwB9AOEinaoM9FUSc40rsvAtSS7JlXrQ1ItScviI+hVtsEt7ZHCmt/TPpTaZOP2btI4iR6BnWAkU+bEMkYYzLuhCcEToN9dWosJERHcnDeE5aEKGitSwBhkGYs/2GM6g6jh+r0="
+    on_success: always
+    on_failure: always
 
 # travis encrypt 'CI_DEPLOY_USERNAME=username'
 # travis encrypt 'CI_DEPLOY_PASSWORD=password'
