@@ -20,9 +20,10 @@ script:  "target/travis-settings/tasks/script.sh"
 
 # travis encrypt 'token@room'
 notifications:
+  email: false
   hipchat: 
     rooms:
-      - secure: "aWLQqnNxpKJEroC6aGfTPgoPatg8GWw8IlH+ylwB9AOEinaoM9FUSc40rsvAtSS7JlXrQ1ItScviI+hVtsEt7ZHCmt/TPpTaZOP2btI4iR6BnWAkU+bEMkYYzLuhCcEToN9dWosJERHcnDeE5aEKGitSwBhkGYs/2GM6g6jh+r0="
+      - secure: "eOySHvqBhpe/O27fT+josVo7lHJ+hfZWQ3/OWrvHBlK0xCBBOlFp3ThGHAiJ8RIT1lm3WolmFS4DYOvyyHGDJed73QZyzdWhKsr26TnBxx65O8ll/FT6TDUj8sV4CjxsAcCpVYSB0j7z3VQXcNH1uev9/+05igg6XN80D4dLDoo="
     template:
       - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message} (<a href="%{build_url}">Details</a>/<a href="%{compare_url}">Change view</a>)'
     format: html
@@ -33,5 +34,5 @@ notifications:
 # travis encrypt 'CI_DEPLOY_PASSWORD=password'
 env:
   global:
-    - secure: "DUe1QaERsJimcIczkx+dR0XAnq7v4FEsVtqDcKOKeuRsgJK1bRmjljHSQGrMsZQlZD6qiC3Ngn1Xjr4OKgac5JxcQAaGKOcnp0mdu/KuYZXbAUjvWlDBpdkPC2Dd9edT3CK9yanHGJUxhGzm8d1JYTkstRhS/5lSwb0u/9hSQ/M="
-    - secure: "QoMPxxI0jrj1cqFYljvrBL8egHWyuv4r9YGw5OfNtcrXUAhe98IGIA6VrsMajJDZCdbU79w+OttuuEv+1IFwNHicMotmonifxJ8JHPzf8tdAhNcBdYYpAxB5hoZVPc/68BC9WHie0y9e50x30sAsydpYqW1pjqLMI7Px+2/fkXk="
+    - secure: "VdQPgGNvEM7LQ436KY18ms/fcnAARSEKOhepjm++giQQ+ivuVi14F6N0wFIm2hksd5iRClkHxwyue+z9nMNQnqDWM7iXGgJeAk6fiXFQYEO9eqGEeXjE1RHbpwFLS55vrD9EG0VHL2skqnVCPvc7QtYoMmMLfzduxgTtkTURnF8="
+    - secure: "camNZKc8xlw1M6E2EEW4sLKSSfKMgVHrI774bd2m8gdMiwn0kX/XxV8jUzCl07C3jvC9dlqWZ7qtlFa/P6f7iJnw8CnOo+ta21FrmF97CYqEDjfLKHPj3itIXiQTYHvZnPl2Y1G6MnLmM/pTKFurBxWoe4iKD/rvgPq/BGEA7hk="
