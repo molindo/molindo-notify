@@ -36,15 +36,7 @@
 		<property name="mailClient" ref="mailClient" />
 	</bean>
 
-	<bean id="mailClient" class="at.molindo.notify.channel.mail.DirectMailClient">
-		<property name="from">
-			<bean class="javax.mail.internet.InternetAddress">
-				<constructor-arg value="test@test.molindo.at" />
-				<constructor-arg value="molindo-notify (channels.xml)" />
-				<constructor-arg value="UTF-8" />
-			</bean>
-		</property>
-	</bean>
+	<bean id="mailClient" class="at.molindo.notify.channel.mail.DummyMailClient" />
 
 	<bean id="publicFeedChannel" class="at.molindo.notify.channel.feed.PublicFeedChannel">
 		<property name="authorName" value="molindo-notify" />
