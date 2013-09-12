@@ -40,6 +40,7 @@ public class SimpleMailClient extends AbstractMailClient implements Initializing
 
 	private Session _smtpSession = null;
 
+	private boolean _connect = true;
 	private boolean _failOnConnectError = true;
 
 	public SimpleMailClient() {
@@ -74,7 +75,7 @@ public class SimpleMailClient extends AbstractMailClient implements Initializing
 	private Transport connectTransport() throws MailException {
 		try {
 			Transport t = _smtpSession.getTransport("smtp");
-			if (!t.isConnected()) {
+			if (isConnect() && !t.isConnected()) {
 				t.connect();
 			}
 			return t;
@@ -158,6 +159,19 @@ public class SimpleMailClient extends AbstractMailClient implements Initializing
 
 	public SimpleMailClient setSecurity(Security security) {
 		_security = security;
+		return this;
+	}
+
+	public boolean isConnect() {
+		return _connect;
+	}
+
+	/**
+	 * disable for testing, as connecting shouldn't be necessary. We want to
+	 * detect misconfiguration early in production though
+	 */
+	public SimpleMailClient setConnect(boolean connect) {
+		_connect = connect;
 		return this;
 	}
 

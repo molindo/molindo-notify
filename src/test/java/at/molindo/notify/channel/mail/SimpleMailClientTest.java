@@ -64,7 +64,7 @@ public class SimpleMailClientTest {
 
 				sent[0] = true;
 			}
-		}.setServer(DnsUtils.lookupMailHosts("molindo.at")[0])
+		}.setConnect(false).setServer(DnsUtils.lookupMailHosts("molindo.at")[0])
 				.setFrom("test@test.molindo.at", SimpleMailClientTest.class.getSimpleName()).init();
 
 		Message message = Message.parse("Subject: Test\n\nThis is a <strong>test</strong>", Type.HTML);
