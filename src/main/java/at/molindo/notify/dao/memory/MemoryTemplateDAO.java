@@ -50,7 +50,7 @@ public class MemoryTemplateDAO implements ITemplateDAO {
 		synchronized (_templates) {
 			_templates.clear();
 			for (Template template : templates) {
-				_templates.put(template.getKey(), template);
+				_templates.add(template.getKey(), template);
 			}
 		}
 	}
