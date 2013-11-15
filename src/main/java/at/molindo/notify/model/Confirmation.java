@@ -21,8 +21,6 @@ import java.util.UUID;
 
 public class Confirmation {
 
-	private static final long serialVersionUID = 1L;
-
 	private Notification _notification;
 
 	private String _key;
