@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>at.molindo</groupId>
 		<artifactId>molindo-oss-pom</artifactId>
-		<version>4-SNAPSHOT</version>
+		<version>4</version>
 	</parent>
 
 	<artifactId>molindo-notify</artifactId>
@@ -37,6 +37,7 @@
 		<dependency>
 			<groupId>at.molindo</groupId>
 			<artifactId>molindo-utils</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 
 		<dependency>
