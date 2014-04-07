@@ -22,6 +22,7 @@ import java.io.StringWriter;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.context.Context;
 import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
@@ -58,9 +59,13 @@ public class VelocityUtils {
 	}
 
 	public static String merge(Template template, IParams params) throws RenderException {
+		return merge(template, params, null);
+	}
+
+	public static String merge(Template template, IParams params, Context nestedContext) throws RenderException {
 		try {
 			StringWriter writer = new StringWriter();
-			template.merge(new VelocityContext(params.newMap()), writer);
+			template.merge(new VelocityContext(params.newMap(), nestedContext), writer);
 			return writer.toString();
 		} catch (ResourceNotFoundException e) {
 			throw new RenderException("failed to render template " + template, e);
