@@ -16,7 +16,6 @@
 
 package at.molindo.notify.util;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
@@ -72,8 +71,6 @@ public class VelocityUtils {
 		} catch (ParseErrorException e) {
 			throw new RenderException("failed to render template " + template, e);
 		} catch (MethodInvocationException e) {
-			throw new RenderException("failed to render template " + template, e);
-		} catch (IOException e) {
 			throw new RenderException("failed to render template " + template, e);
 		}
 	}
