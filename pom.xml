@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
@@ -86,19 +87,34 @@
 			<artifactId>velocity</artifactId>
 			<version>1.7</version>
 		</dependency>
-		
+
 		<dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-tools</artifactId>
-            <version>2.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-            
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-tools</artifactId>
+			<version>2.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>struts-core</artifactId>
+					<groupId>org.apache.struts</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>struts-taglib</artifactId>
+					<groupId>org.apache.struts</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>struts-tiles</artifactId>
+					<groupId>org.apache.struts</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -114,8 +130,8 @@
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.5</version>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -182,7 +198,7 @@
 	</dependencies>
 
 	<properties>
-		<spring.version>3.0.4.RELEASE</spring.version>
+		<spring.version>4.0.4.RELEASE</spring.version>
 	</properties>
 
 </project>
