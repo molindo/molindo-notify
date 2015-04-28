@@ -25,6 +25,7 @@ import at.molindo.notify.dao.INotificationDAO;
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
 import at.molindo.notify.model.Param;
+import at.molindo.notify.model.PushState;
 
 import com.google.common.collect.Lists;
 
@@ -44,6 +45,11 @@ public class DummyNotificationDAO implements INotificationDAO {
 
 	@Override
 	public void delete(Notification notification) {
+		// do nothing
+	}
+
+	@Override
+	public void deleteAll(Date maxAge, PushState... statesToDelete) {
 		// do nothing
 	}
 

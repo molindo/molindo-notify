@@ -190,6 +190,8 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 	 *             only if ignoreFrequency is true
 	 */
 	private void dispatch(Notification notification, boolean ignoreFrequency) throws NotifyException {
+		// XXX: shouldn't that be push(notification, ignoreFrequency) instead of
+		// push(notification, true)?
 		PushResultMessage rm = push(notification, true);
 
 		if (ignoreFrequency && rm.getResult() != PushResult.SUCCESS) {

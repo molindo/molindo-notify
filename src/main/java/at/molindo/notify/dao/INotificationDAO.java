@@ -16,6 +16,7 @@
 
 package at.molindo.notify.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,7 @@ import javax.annotation.Nonnull;
 
 import at.molindo.notify.model.Notification;
 import at.molindo.notify.model.Notification.Type;
+import at.molindo.notify.model.PushState;
 
 public interface INotificationDAO {
 
@@ -32,6 +34,16 @@ public interface INotificationDAO {
 	void update(@Nonnull Notification notification);
 
 	void delete(@Nonnull Notification notification);
+
+	/**
+	 * Delete all notifications with pushDate older than maxAge and with the
+	 * given PushState.
+	 *
+	 * @param maxAge
+	 * @param statesToDelete
+	 *            states to delete, omit to delete all states
+	 */
+	void deleteAll(Date maxAge, PushState... statesToDelete);
 
 	/**
 	 * @return next notification from push queue
