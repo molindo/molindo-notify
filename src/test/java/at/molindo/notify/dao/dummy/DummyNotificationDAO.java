@@ -49,8 +49,9 @@ public class DummyNotificationDAO implements INotificationDAO {
 	}
 
 	@Override
-	public void deleteAll(Date maxAge, PushState... statesToDelete) {
+	public int deleteAll(Date maxAge, PushState... statesToDelete) {
 		// do nothing
+		return 0;
 	}
 
 	@Override

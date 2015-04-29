@@ -150,13 +150,14 @@ public class MemoryNotificationDAO implements INotificationDAO {
 	}
 
 	@Override
-	public void deleteAll(Date maxAge, PushState... statesToDelete) {
+	public int deleteAll(Date maxAge, PushState... statesToDelete) {
 		final HashSet<PushState> states = new HashSet<PushState>();
 
 		if (statesToDelete != null && statesToDelete.length > 0) {
 			states.addAll(Arrays.asList(statesToDelete));
 		}
 
+		int removed = 0;
 		synchronized (_queue) {
 			ListIterator<Notification> iter = _queue.listIterator();
 			while (iter.hasNext()) {
@@ -164,10 +165,12 @@ public class MemoryNotificationDAO implements INotificationDAO {
 
 				if (n.getPushDate() != null && n.getPushDate().before(maxAge) && states.contains(n.getPushState())) {
 					iter.remove();
+					++removed;
 				}
 
 			}
 		}
+		return removed;
 
 	}
 

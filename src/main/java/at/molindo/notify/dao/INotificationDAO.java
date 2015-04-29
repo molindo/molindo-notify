@@ -42,8 +42,9 @@ public interface INotificationDAO {
 	 * @param maxAge
 	 * @param statesToDelete
 	 *            states to delete, omit to delete all states
+	 * @return amount of deleted notifications
 	 */
-	void deleteAll(Date maxAge, PushState... statesToDelete);
+	int deleteAll(Date maxAge, PushState... statesToDelete);
 
 	/**
 	 * @return next notification from push queue
