@@ -16,7 +16,8 @@
 
 package at.molindo.notify.dao.memory;
 
-import java.util.Arrays;
+import static at.molindo.utils.collections.ArrayUtils.empty;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -151,11 +152,11 @@ public class MemoryNotificationDAO implements INotificationDAO {
 
 	@Override
 	public int deleteAll(Date maxAge, PushState... statesToDelete) {
-		final HashSet<PushState> states = new HashSet<PushState>();
-
-		if (statesToDelete != null && statesToDelete.length > 0) {
-			states.addAll(Arrays.asList(statesToDelete));
+		if (empty(statesToDelete)) {
+			return 0;
 		}
+
+		final HashSet<PushState> states = CollectionUtils.set(statesToDelete);
 
 		int removed = 0;
 		synchronized (_queue) {
