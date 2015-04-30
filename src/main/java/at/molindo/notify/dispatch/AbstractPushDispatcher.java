@@ -183,14 +183,14 @@ public abstract class AbstractPushDispatcher implements IPushDispatcher, Initial
 	}
 
 	/**
-	 * 
+	 *
 	 * @param notification
 	 * @param ignoreFrequency
 	 * @throws NotifyException
 	 *             only if ignoreFrequency is true
 	 */
 	private void dispatch(Notification notification, boolean ignoreFrequency) throws NotifyException {
-		PushResultMessage rm = push(notification, true);
+		PushResultMessage rm = push(notification, ignoreFrequency);
 
 		if (ignoreFrequency && rm.getResult() != PushResult.SUCCESS) {
 			// only record success of dispatchNow as failed notifications must

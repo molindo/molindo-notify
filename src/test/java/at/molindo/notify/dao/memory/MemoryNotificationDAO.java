@@ -16,9 +16,12 @@
 
 package at.molindo.notify.dao.memory;
 
+import static at.molindo.utils.collections.ArrayUtils.empty;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -94,7 +97,7 @@ public class MemoryNotificationDAO implements INotificationDAO {
 
 	@Override
 	public Notification getNext() {
-		synchronized (this) {
+		synchronized (_queue) {
 			Collections.sort(_queue, new Comparator<Notification>() {
 				@Override
 				public int compare(Notification o1, Notification o2) {
@@ -145,6 +148,31 @@ public class MemoryNotificationDAO implements INotificationDAO {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public int deleteAll(Date maxAge, PushState... statesToDelete) {
+		if (empty(statesToDelete)) {
+			return 0;
+		}
+
+		final HashSet<PushState> states = CollectionUtils.set(statesToDelete);
+
+		int removed = 0;
+		synchronized (_queue) {
+			ListIterator<Notification> iter = _queue.listIterator();
+			while (iter.hasNext()) {
+				Notification n = iter.next();
+
+				if (n.getPushDate() != null && n.getPushDate().before(maxAge) && states.contains(n.getPushState())) {
+					iter.remove();
+					++removed;
+				}
+
+			}
+		}
+		return removed;
+
 	}
 
 }
