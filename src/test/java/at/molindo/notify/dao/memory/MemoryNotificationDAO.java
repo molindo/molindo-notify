@@ -96,7 +96,7 @@ public class MemoryNotificationDAO implements INotificationDAO {
 
 	@Override
 	public Notification getNext() {
-		synchronized (this) {
+		synchronized (_queue) {
 			Collections.sort(_queue, new Comparator<Notification>() {
 				@Override
 				public int compare(Notification o1, Notification o2) {
