@@ -2,12 +2,8 @@
 language: java
 
 jdk:
-  - openjdk6
-
-# whitelist
-branches:
-  only:
-    - master
+  - openjdk7
+  - oraclejdk8
 
 # checkout settings
 before_install: 
