@@ -34,6 +34,8 @@ import at.molindo.utils.data.StringUtils;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+
 public class NotifyUtils {
 
 	private static final Comparator<Template> TEMPLATE_COMPARATOR = new Comparator<Template>() {
@@ -56,10 +58,11 @@ public class NotifyUtils {
 
 	/**
 	 * TODO this should become customizable
-	 * 
+	 *
 	 * @param html
 	 * @return
 	 */
+	@SuppressWarnings("ES_COMPARING_STRINGS_WITH_EQ")
 	public static String html2text(String html) {
 
 		Renderer renderer = new Renderer(new Source(html)) {
@@ -107,7 +110,7 @@ public class NotifyUtils {
 	 *            null if not required, prefers HTML over TEXT
 	 * @param version
 	 *            null if not required, prefers LONG over SHORT
-	 * 
+	 *
 	 * @return the best matching template from list. type is more important than
 	 *         version
 	 */

@@ -16,6 +16,8 @@
 
 package at.molindo.notify.dao.file;
 
+import static at.molindo.utils.collections.ArrayUtils.iterable;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -39,7 +41,7 @@ public class FileTemplateDAO implements ITemplateDAO {
 	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FileTemplateDAO.class);
 
 	/**
-	 * 
+	 *
 	 * requires file names being long.en.txt
 	 */
 	private static final Pattern PATTERN;
@@ -86,7 +88,7 @@ public class FileTemplateDAO implements ITemplateDAO {
 			return templates;
 		}
 
-		for (File template : keyDir.listFiles()) {
+		for (File template : iterable(keyDir.listFiles())) {
 			Matcher m = PATTERN.matcher(template.getName());
 			if (m.matches()) {
 				try {
